@@ -7,12 +7,12 @@ import {
 } from 'lucide-react';
 
 const P = {
-  darkRed: '#BE4B60',
-  coral:   '#EF849A',
+  darkRed: '#A33550',
+  coral:   '#D46280',
   yellow:  '#FFF6A6',
   hotPink: '#FFDDE9',
-  orange:  '#F5A056',
-  rose:    '#E0526A',
+  orange:  '#D97E3A',
+  rose:    '#C94060',
 };
 
 const TOOLS = [
@@ -56,10 +56,10 @@ const GALLERY = [
 type GalleryItem = typeof GALLERY[0];
 
 const TEMPLATES = [
-  { label: 'Cinematic Trailer',    nodes: 6, bg: 'linear-gradient(135deg,#F9B4BE,#F08090)', accent: '#7E1730', Icon: Video     },
-  { label: 'Product Ad Generator', nodes: 8, bg: 'linear-gradient(135deg,#FECFA0,#F5A860)', accent: '#7C3410', Icon: ImageIcon },
-  { label: 'Consistent Character', nodes: 7, bg: 'linear-gradient(135deg,#F9B4D4,#EF80B8)', accent: '#7E1740', Icon: Users     },
-  { label: 'AI Music Video',       nodes: 9, bg: 'linear-gradient(135deg,#C8BFFC,#A892F5)', accent: '#3B1494', Icon: Mic       },
+  { label: 'Cinematic Trailer',    nodes: 6, bg: 'linear-gradient(135deg,#E8748A,#C94060)', accent: '#ffffff', Icon: Video     },
+  { label: 'Product Ad Generator', nodes: 8, bg: 'linear-gradient(135deg,#E89850,#C97030)', accent: '#ffffff', Icon: ImageIcon },
+  { label: 'Consistent Character', nodes: 7, bg: 'linear-gradient(135deg,#E870A8,#C84080)', accent: '#ffffff', Icon: Users     },
+  { label: 'AI Music Video',       nodes: 9, bg: 'linear-gradient(135deg,#9880E8,#7050C0)', accent: '#ffffff', Icon: Mic       },
 ];
 
 /* ── Animated Node Diagram ─────────────────────────────────────────────────── */
@@ -261,12 +261,12 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
         </div>
         <div className="absolute right-[24%] bottom-[18%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg"
           style={{ background: P.orange }}>
-          <Video className="w-3 h-3" style={{ color: '#92400E' }} />
-          <span className="text-[10px] font-bold" style={{ color: '#92400E' }}>Text-to-Video</span>
+          <Video className="w-3 h-3 text-white" />
+          <span className="text-[10px] font-bold text-white">Text-to-Video</span>
         </div>
         <div className="absolute right-[40%] top-[22%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg"
           style={{ background: P.coral }}>
-          <span className="text-[10px] font-bold" style={{ color: '#881337' }}>✦ Relight</span>
+          <span className="text-[10px] font-bold text-white">✦ Relight</span>
         </div>
       </section>
 
