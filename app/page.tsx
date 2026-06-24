@@ -107,7 +107,7 @@ const CookiesBanner = () => {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 80, opacity: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-3rem)] max-w-xl bg-white/95 backdrop-blur-md border border-zinc-200 rounded-2xl px-5 py-4 shadow-xl flex items-center justify-between gap-4"
+      className="fixed bottom-6 right-6 z-50 max-w-sm bg-white/95 backdrop-blur-md border border-zinc-200 rounded-2xl px-5 py-4 shadow-xl flex items-center justify-between gap-4"
     >
       <p className="text-[11px] text-zinc-500 leading-relaxed">
         We use cookies to enhance your experience and analyze platform performance.{" "}
@@ -132,10 +132,10 @@ const processSteps = [
 ];
 
 const whyInvest = [
-  { num: "01", title: "$2.2 Trillion USD", body: "Tap into a massive, globally integral maritime trade market with full transparency." },
-  { num: "02", title: "80% Global Trade", body: "80% of all trade in the world is carried with deep-sea cargo vessels." },
-  { num: "03", title: "Million-Dollar Assets", body: "Become an owner of a multi-million dollar asset and earn yield with only $1,000." },
-  { num: "04", title: "Profitable Vessels", body: "Vessel fleet ownership has been one of the most protected strategies for millennia." },
+  { num: "01", title: "Advanced Prompt Control", body: "Add a descriptive text prompt to your upscale to guide our AI engine on exactly what fine details, textures, or features to intelligently invent." },
+  { num: "02", title: "Multi-Model Engine", body: "Switch seamlessly between specialized rendering models optimized specifically for Portraits, Sci-Fi/Fantasy, Landscapes, Product Photography, or 3D assets." },
+  { num: "03", title: "Creativity & Resemblance Sliders", body: "Take absolute control over the generation. Dial it down for a subtle, razor-sharp clean up, or turn it up to let the AI completely hallucinate stunning new high-def details." },
+  { num: "04", title: "Lightning-Fast Rendering", body: "Skip the hours of manual rendering. Our optimized enterprise GPU clusters generate ultra-high-resolution, publication-ready visuals in mere seconds." },
 ];
 
 const testimonials = [
@@ -150,17 +150,17 @@ const testimonials = [
 ];
 
 const team = [
-  { name: "Marvin McKinney", role: "Co-Founder & CEO", img: "/pexels-didsss-2791056.jpg", bio: "15 years in maritime logistics. Pioneer in tokenized real-world asset deployment." },
-  { name: "Lukas Weber", role: "Lead Engineer", img: "/pexels-ganajp-15698413.jpg", bio: "Smart contract architect. Former core dev at a top-5 blockchain protocol." },
-  { name: "Eleanor Pena", role: "Legal & Compliance", img: "/pexels-olga-178200755-12367292.jpg", bio: "Maritime law specialist. Navigated regulatory frameworks across 12 jurisdictions." },
-  { name: "Dr. Alok Verma", role: "Quant Analyst", img: "/pexels-prathsnap-3168209.jpg", bio: "Ex-IMF economist. Designs yield models grounded in 30 years of freight rate data." },
-  { name: "Guy Hawkins", role: "Blockchain Dev", img: "/pexels-didsss-2791056.jpg", bio: "Solidity engineer. Built the automated dividend distribution engine from scratch." },
-  { name: "Bessie Cooper", role: "Investor Relations", img: "/pexels-ganajp-15698413.jpg", bio: "Manages institutional partnerships and oversees payout settlement globally." },
+  { name: "Marvin McKinney", role: "Co-Founder & CEO", img: "/pexels-didsss-2791056.jpg", bio: "15 years in computer vision and machine learning. Pioneer in generative AI scaling frameworks." },
+  { name: "Lukas Weber", role: "Senior AI Infra Engineer", img: "/pexels-ganajp-15698413.jpg", bio: "Senior AI Infra Engineer. Specialist in custom diffusion architectures and high-throughput GPU orchestration." },
+  { name: "Eleanor Pena", role: "Legal & Compliance", img: "/pexels-olga-178200755-12367292.jpg", bio: "AI Copyright & Compliance Counsel. Expert in ethical datasets, data privacy, and commercial IP licensing." },
+  { name: "Dr. Alok Verma", role: "Lead AI Researcher", img: "/pexels-prathsnap-3168209.jpg", bio: "Lead AI Researcher. Designing proprietary generative model weights for ultra-high-resolution texture synthesis." },
+  { name: "Guy Hawkins", role: "Full-Stack AI UI Engineer", img: "/pexels-didsss-2791056.jpg", bio: "Full-Stack AI UI Engineer. Specialist in high-performance canvas interfaces and node-based visual workflows." },
+  { name: "Bessie Cooper", role: "Head of Creator Relations", img: "/pexels-ganajp-15698413.jpg", bio: "Head of Creator Relations. Managing global studio partnerships and enterprise platform adoption." },
 ];
 
-const ticker = Array(3).fill([
-  "$2.2T Global Maritime Market", "21%+ Annual APY", "80% of All Global Trade",
-  "$1B+ Daily Vessel Volume", "100% On-Chain Transparency", "KYC & AML Compliant", "Time Charter Backed",
+const ticker = Array(4).fill([
+  "⚡ 8× Max Upscale", "Proprietary Diffusion Engine v2.1", "Real-Time Texture Recovery",
+  "Commercial Licensing Included", "Advanced Prompt Guidance", "4K & 8K Resolution", "Zero Artifacts",
 ]).flat();
 
 // ─── Ghost Mouse Demo Section ─────────────────────────────────────────────────
@@ -176,7 +176,8 @@ function GhostMouseSection() {
     if (!cursor || !container) return;
 
     // Steps: upload zone → mode select → enhance button → result
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 1.5, paused: true });
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.75, paused: true });
+    tl.timeScale(2);
     tlRef.current = tl;
 
     // Move to upload zone
@@ -350,18 +351,18 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
-  const [route, setRoute] = useState("North America - Africa");
-  const [size, setSize] = useState("1/2 container");
-  const [length, setLength] = useState("24 months");
+  const [route, setRoute] = useState("enhance");
+  const [size, setSize] = useState("2x");
+  const [length, setLength] = useState("photo");
   const [tickets, setTickets] = useState(5);
   const [calculating, setCalculating] = useState(false);
 
   let mult = 1000, apy = 21.45;
-  if (route === "Asia - Europe Express") { mult *= 1.25; apy += 2.1; }
-  else if (route === "Transpacific Superlane") { mult *= 1.45; apy += 3.5; }
-  if (size === "full container") { mult *= 1.8; apy += 1.5; }
-  if (length === "12 months") apy -= 1.8;
-  else if (length === "36 months") { mult *= 1.15; apy += 2.2; }
+  if (route === "denoise") { mult *= 1.25; apy += 2.1; }
+  else if (route === "colorize") { mult *= 1.45; apy += 3.5; }
+  if (size === "4x") { mult *= 1.8; apy += 1.5; }
+  if (length === "standard") apy -= 1.8;
+  else if (length === "cinematic") { mult *= 1.15; apy += 2.2; }
   const yieldResult = Math.floor(tickets * mult * (1 + apy / 100));
 
   const [email, setEmail] = useState("");
@@ -474,7 +475,7 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
             <span className={`font-semibold text-[14px] tracking-[-0.02em] transition-colors duration-300 ${scrolled ? "text-zinc-900" : "text-white"}`}>Spectrum AI</span>
           </a>
           <nav className="hidden md:flex items-center gap-8">
-            {[["Business", "#who-we-are"], ["How it works", "#how-it-works"], ["Vessels", "#vessel-1"], ["Team", "#team"]].map(([l, h]) => (
+            {[["Business", "#who-we-are"], ["How it works", "#how-it-works"], ["Gallery", "#vessel-1"], ["Team", "#team"]].map(([l, h]) => (
               <a key={h} href={h} className={`text-[13px] font-medium transition-colors duration-300 ${scrolled ? "text-zinc-500 hover:text-zinc-900" : "text-white/70 hover:text-white"}`}>{l}</a>
             ))}
           </nav>
@@ -563,16 +564,16 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
                   <div className="relative">
                     <select value={route} onChange={e => setRoute(e.target.value)}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-[11px] text-white appearance-none focus:outline-none focus:border-blue-500 cursor-pointer">
-                      <option className="bg-zinc-900" value="North America - Africa">Enhance — AI Upscale</option>
-                      <option className="bg-zinc-900" value="Asia - Europe Express">Denoise — Clean & Restore</option>
-                      <option className="bg-zinc-900" value="Transpacific Superlane">Colorize — Add Color</option>
+                      <option className="bg-zinc-900" value="enhance">Enhance — AI Upscale</option>
+                      <option className="bg-zinc-900" value="denoise">Denoise — Clean & Restore</option>
+                      <option className="bg-zinc-900" value="colorize">Colorize — Add Color</option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-white/30 pointer-events-none" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2.5">
-                  {[{ label: "Scale", val: size, set: setSize, opts: [["1/2 container", "2× Upscale"], ["full container", "4× Upscale"]] },
-                    { label: "Style", val: length, set: setLength, opts: [["12 months", "Standard"], ["24 months", "Photo"], ["36 months", "Cinematic"]] }
+                  {[{ label: "Scale", val: size, set: setSize, opts: [["2x", "2× Upscale"], ["4x", "4× Upscale"]] },
+                    { label: "Style", val: length, set: setLength, opts: [["standard", "Standard"], ["photo", "Photo"], ["cinematic", "Cinematic"]] }
                   ].map(f => (
                     <div key={f.label}>
                       <label className="block text-[8.5px] font-bold uppercase tracking-widest text-white/35 mb-1.5">{f.label}</label>
