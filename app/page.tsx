@@ -342,6 +342,239 @@ function GhostMouseSection() {
   );
 }
 
+// ─── Video Split Slider ────────────────────────────────────────────────────────
+function VideoSlider() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rawRef    = useRef<HTMLVideoElement>(null);
+  const enhRef    = useRef<HTMLVideoElement>(null);
+  const [pos, setPos] = useState(50);
+  const dragging  = useRef(false);
+
+  // Keep both videos frame-locked
+  useEffect(() => {
+    const id = setInterval(() => {
+      const raw = rawRef.current, enh = enhRef.current;
+      if (!raw || !enh) return;
+      if (Math.abs(raw.currentTime - enh.currentTime) > 0.15)
+        enh.currentTime = raw.currentTime;
+    }, 250);
+    return () => clearInterval(id);
+  }, []);
+
+  const calcPos = (clientX: number) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return 50;
+    return Math.max(2, Math.min(98, ((clientX - rect.left) / rect.width) * 100));
+  };
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => { if (dragging.current) setPos(calcPos(e.clientX)); };
+    const onUp   = () => { dragging.current = false; };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup",   onUp);
+    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div ref={containerRef}
+      className="relative w-full h-full select-none overflow-hidden cursor-ew-resize"
+      onMouseDown={e => { dragging.current = true; setPos(calcPos(e.clientX)); }}>
+
+      {/* Bottom layer — enhanced / sharp */}
+      <video ref={enhRef} autoPlay loop muted playsInline
+        className="absolute inset-0 w-full h-full object-cover">
+        <source src="/15498647_trimmed_4s.mp4" type="video/mp4" />
+      </video>
+
+      {/* Top layer — raw / blurry, clipped to left portion */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none"
+        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
+        <video ref={rawRef} autoPlay loop muted playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: "blur(2.5px) saturate(0.25) brightness(0.75)" }}>
+          <source src="/15498647_trimmed_4s.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      {/* Divider line + draggable handle */}
+      <div className="absolute inset-y-0 pointer-events-none"
+        style={{ left: `${pos}%`, transform: "translateX(-50%)" }}>
+        <div className="absolute inset-y-0 left-1/2 w-[1px] bg-white/70" />
+        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 bg-white rounded-full shadow-xl flex items-center justify-center text-[9px] text-zinc-700 font-bold pointer-events-auto cursor-ew-resize"
+          onMouseDown={e => { e.stopPropagation(); dragging.current = true; }}>⟺</div>
+      </div>
+
+      <span className="absolute top-2 left-2 text-[6px] font-bold text-white/50 bg-black/50 px-1.5 py-0.5 rounded-full pointer-events-none">Before</span>
+      <span className="absolute top-2 right-2 text-[6px] font-bold text-white/50 bg-black/50 px-1.5 py-0.5 rounded-full pointer-events-none">After</span>
+    </div>
+  );
+}
+
+// ─── Interactive Advantage Cards ───────────────────────────────────────────────
+const MODELS_LIST = ["Portrait", "Landscape", "Sci-Fi", "Product"];
+const PROMPT_TEXT = "portrait, sharp eyes, golden hour, 8K skin texture, ultra-detailed pores...";
+
+function AdvantageCards() {
+  const [active, setActive]       = useState<number | null>(null);
+  const [typed,  setTyped]        = useState("");
+  const [slider, setSlider]       = useState(8);
+  const [prog,   setProg]         = useState(0);
+  const [model,  setModel]        = useState(0);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const clear = () => { if (timer.current) clearInterval(timer.current); };
+
+  const start = (i: number) => {
+    clear();
+    setActive(i); setTyped(""); setSlider(8); setProg(0); setModel(0);
+    if (i === 0) {
+      let idx = 0;
+      timer.current = setInterval(() => {
+        idx++;
+        setTyped(PROMPT_TEXT.slice(0, idx));
+        if (idx >= PROMPT_TEXT.length) clear();
+      }, 48);
+    } else if (i === 1) {
+      let m = 0;
+      timer.current = setInterval(() => { m = (m + 1) % 4; setModel(m); }, 650);
+    } else if (i === 2) {
+      let v = 8;
+      timer.current = setInterval(() => {
+        v = Math.min(92, v + 2);
+        setSlider(v);
+        if (v >= 92) clear();
+      }, 22);
+    } else {
+      let p = 0;
+      timer.current = setInterval(() => {
+        p = Math.min(100, p + 2);
+        setProg(p);
+        if (p >= 100) clear();
+      }, 18);
+    }
+  };
+
+  const stop = () => { clear(); setActive(null); setTyped(""); setSlider(8); setProg(0); setModel(0); };
+
+  useEffect(() => () => clear(), []);
+
+  const overlays = [
+    /* 0 — Prompt Control */
+    <div key={0} className="absolute inset-0 p-4 flex flex-col gap-2 pointer-events-none z-20">
+      <p className="text-[8px] font-bold text-emerald-400 uppercase tracking-widest">⚡ Prompt</p>
+      <div className="flex-1 bg-black/60 rounded-xl border border-white/10 p-3 overflow-hidden">
+        <span className="text-[10px] text-white/90 font-mono leading-relaxed break-words">
+          {typed}<span className="animate-pulse ml-px text-white">▍</span>
+        </span>
+      </div>
+      <div className="grid grid-cols-3 gap-1.5">
+        {["Eyes","Skin","Light"].map((t, ti) => (
+          <div key={t} className="h-10 rounded-lg border flex items-end p-1.5 overflow-hidden transition-all duration-500"
+            style={{ borderColor: typed.length > ti * 18 ? "rgba(59,130,246,0.5)" : "rgba(255,255,255,0.07)", background: typed.length > ti * 18 ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.03)" }}>
+            <span className="text-[7px] font-bold" style={{ color: typed.length > ti * 18 ? "#93c5fd" : "rgba(255,255,255,0.25)" }}>{t}</span>
+          </div>
+        ))}
+      </div>
+    </div>,
+
+    /* 1 — Multi-Model */
+    <div key={1} className="absolute inset-0 p-4 flex flex-col gap-3 pointer-events-none z-20">
+      <p className="text-[8px] font-bold text-blue-400 uppercase tracking-widest">Active Model</p>
+      <div className="grid grid-cols-2 gap-2 flex-1">
+        {MODELS_LIST.map((m, mi) => (
+          <div key={m} className="rounded-xl border flex items-center justify-center text-[10px] font-bold transition-all duration-400"
+            style={{ background: mi === model ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.03)", borderColor: mi === model ? "rgba(96,165,250,0.55)" : "rgba(255,255,255,0.07)", color: mi === model ? "#93c5fd" : "rgba(255,255,255,0.25)", transform: mi === model ? "scale(1.05)" : "scale(1)" }}>
+            {m}
+          </div>
+        ))}
+      </div>
+      <p className="text-[8px] font-mono text-white/30">switching → <span className="text-blue-400">{MODELS_LIST[model]}</span></p>
+    </div>,
+
+    /* 2 — Sliders */
+    <div key={2} className="absolute inset-0 p-4 flex flex-col gap-2.5 pointer-events-none z-20">
+      <p className="text-[8px] font-bold text-white/50 uppercase tracking-widest">Live Preview</p>
+      <div className="flex-1 relative rounded-xl overflow-hidden border border-white/10 min-h-0">
+        {/* blurry left */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg,#0f0c29,#302b63,#24243e)", filter: "blur(3px) saturate(0.2)" }} />
+        {/* sharp right */}
+        <div className="absolute inset-y-0 right-0 overflow-hidden" style={{ left: `${slider}%` }}>
+          <div className="absolute inset-0" style={{ left: `-${slider}%`, background: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)", filter: "none" }} />
+        </div>
+        {/* handle */}
+        <div className="absolute inset-y-0 w-[1px] bg-white/60" style={{ left: `${slider}%` }}>
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center text-[7px] text-zinc-700 font-bold">⟺</div>
+        </div>
+        <span className="absolute top-1.5 left-2 text-[6px] text-white/40 bg-black/40 px-1 py-0.5 rounded">Raw</span>
+        <span className="absolute top-1.5 right-2 text-[6px] text-white/40 bg-black/40 px-1 py-0.5 rounded">8K</span>
+      </div>
+      {[["Creativity", slider * 0.9], ["Resemblance", 100 - slider * 0.45]].map(([lbl, val]) => (
+        <div key={String(lbl)} className="space-y-0.5">
+          <div className="flex justify-between">
+            <span className="text-[8px] text-white/35 font-bold uppercase tracking-wide">{lbl}</span>
+            <span className="text-[8px] text-blue-400 font-bold">{Math.round(Number(val))}%</span>
+          </div>
+          <div className="h-[2px] bg-white/10 rounded-full"><div className="h-full bg-blue-500 rounded-full" style={{ width: `${Number(val)}%` }} /></div>
+        </div>
+      ))}
+    </div>,
+
+    /* 3 — Lightning Fast */
+    <div key={3} className="absolute inset-0 p-4 flex flex-col gap-2 pointer-events-none z-20">
+      <p className="text-[8px] font-bold text-amber-400 uppercase tracking-widest">⚡ Rendering</p>
+      <div className="flex-1 bg-black/40 rounded-xl border border-white/8 p-3 flex flex-col justify-around">
+        {["Loading model","Diffusing","Upscaling","Post-process"].map((stage, si) => {
+          const start = si * 25, end = start + 25;
+          const pct   = Math.max(0, Math.min(100, (prog - start) / 25 * 100));
+          const done  = prog >= end;
+          return (
+            <div key={stage} className="flex items-center gap-2">
+              <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] shrink-0 font-bold transition-all duration-300 ${done ? "bg-emerald-500 text-white" : pct > 0 ? "bg-blue-500 animate-pulse" : "bg-white/8"}`}>
+                {done ? "✓" : ""}
+              </div>
+              <div className="flex-1">
+                <p className="text-[8px] text-white/50 mb-0.5">{stage}</p>
+                <div className="h-[2px] bg-white/10 rounded-full"><div className="h-full bg-blue-500 rounded-full transition-none" style={{ width: `${pct}%` }} /></div>
+              </div>
+              {done && <span className="text-[7px] text-white/30 font-mono">{(end / 100 * 0.8).toFixed(1)}s</span>}
+            </div>
+          );
+        })}
+      </div>
+      {prog >= 100 && (
+        <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-xl py-2 text-center">
+          <span className="text-[9px] font-bold text-emerald-400">✓ Enhanced in 0.8s</span>
+        </div>
+      )}
+    </div>,
+  ];
+
+  return (
+    <div className="h-full grid grid-cols-2 grid-rows-2 border-l border-white/10">
+      {whyInvest.map((w, i) => (
+        <div key={i}
+          onMouseEnter={() => start(i)}
+          onMouseLeave={stop}
+          className={`stagger-item group relative overflow-hidden flex flex-col justify-between p-7 border-white/10 cursor-pointer
+            ${i % 2 === 1 ? "border-l" : ""} ${i < 2 ? "border-b" : ""}`}>
+          <span className="absolute inset-0 bg-zinc-900 translate-y-[102%] group-hover:translate-y-0 transition-transform duration-500 ease-out origin-bottom z-0" />
+          <div className="relative z-10">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-zinc-400 transition-colors mb-4">{w.num} — Advantages</p>
+            <h4 className="text-xl md:text-2xl font-bold text-white tracking-[-0.03em] mb-2">{w.title}</h4>
+            <p className="text-[12px] text-zinc-500 group-hover:text-zinc-400 transition-colors leading-relaxed">{w.body}</p>
+          </div>
+          {/* Animation overlay */}
+          <div className={`absolute inset-0 transition-opacity duration-300 ${active === i ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+            <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px]" />
+            {overlays[i]}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── Landing Page ─────────────────────────────────────────────────────────────
 function LandingPage({ onSignIn }: { onSignIn: () => void }) {
   const [scrolled, setScrolled] = useState(false);
@@ -820,14 +1053,7 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
                     <span className="text-[7px] text-yellow-400 font-semibold">⚡ 250</span>
                   </div>
                   <div className="flex-1 relative overflow-hidden">
-                    <video autoPlay loop muted playsInline className="w-full h-full object-cover">
-                      <source src="/15498647_trimmed_4s.mp4" type="video/mp4" />
-                    </video>
-                    <div className="absolute inset-y-0 left-1/2 w-[1px] bg-white/60 pointer-events-none">
-                      <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 bg-white rounded-full shadow-xl flex items-center justify-center text-[8px] text-zinc-700 font-bold select-none">⟺</div>
-                    </div>
-                    <span className="absolute top-2 left-2 text-[6px] font-bold text-white/50 bg-black/50 px-1.5 py-0.5 rounded-full">Before</span>
-                    <span className="absolute top-2 right-2 text-[6px] font-bold text-white/50 bg-black/50 px-1.5 py-0.5 rounded-full">After</span>
+                    <VideoSlider />
                   </div>
                   <div className="h-6 border-t border-white/5 flex items-center px-3 gap-3 shrink-0 bg-[#0a0a0a]">
                     <span className="text-[6.5px] text-white/20 font-mono">4× · Photo · Creativity 7</span>
@@ -956,18 +1182,7 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
             </div>
 
             <div className="lg:col-span-7 h-full reveal stagger-grid">
-              <div className="h-full grid grid-cols-2 grid-rows-2 border-l border-white/10">
-                {whyInvest.map((w, i) => (
-                  <div key={i} className={`stagger-item group relative overflow-hidden flex flex-col justify-between p-7 border-white/10 ${i % 2 === 1 ? "border-l" : ""} ${i < 2 ? "border-b" : ""}`}>
-                    <span className="absolute inset-0 bg-zinc-900 translate-y-[102%] group-hover:translate-y-0 transition-transform duration-500 ease-out origin-bottom z-0" />
-                    <div className="relative z-10">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-zinc-400 transition-colors mb-4">{w.num} — Advantages</p>
-                      <h4 className="text-xl md:text-2xl font-bold text-white tracking-[-0.03em] mb-2">{w.title}</h4>
-                      <p className="text-[12px] text-zinc-500 group-hover:text-zinc-400 transition-colors leading-relaxed">{w.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <AdvantageCards />
             </div>
           </div>
         </div>
