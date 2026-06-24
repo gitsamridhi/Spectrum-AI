@@ -32,14 +32,14 @@ export default function ScreenDescribeYourself() {
           return (
             <button key={role.id} onClick={() => updateAnswers({ role: role.id })}
               className={`w-full flex items-center justify-between px-5 h-16 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
-                sel ? "border-zinc-900 bg-zinc-900 shadow-md" : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50"
+                sel ? "border-orange-400 bg-orange-50 shadow-sm" : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50"
               }`}>
               <div className="space-y-0.5">
-                <p className={`text-[13px] font-bold ${sel ? "text-white" : "text-zinc-900"}`}>{role.title}</p>
-                <p className={`text-[11px] ${sel ? "text-white/60" : "text-zinc-400"}`}>{role.desc}</p>
+                <p className={`text-[13px] font-bold ${sel ? "text-orange-900" : "text-zinc-900"}`}>{role.title}</p>
+                <p className={`text-[11px] ${sel ? "text-orange-600/70" : "text-zinc-400"}`}>{role.desc}</p>
               </div>
               <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ml-4 transition-all ${
-                sel ? "border-white" : "border-zinc-300"
+                sel ? "border-orange-400 bg-orange-400" : "border-zinc-300"
               }`}>
                 {sel && <div className="w-2 h-2 rounded-full bg-white" />}
               </div>

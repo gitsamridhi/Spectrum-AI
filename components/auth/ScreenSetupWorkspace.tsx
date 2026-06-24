@@ -61,7 +61,7 @@ export default function ScreenSetupWorkspace() {
             onDragLeave={() => setIsDragOver(false)} onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             className={`w-20 h-20 rounded-full border-2 border-dashed flex flex-col items-center justify-center relative cursor-pointer overflow-hidden transition-all duration-200 ${
-              isDragOver ? "border-zinc-900 bg-zinc-100 scale-105" : answers.profilePicture ? "border-zinc-900" : "border-zinc-300 bg-zinc-50 hover:border-zinc-500"
+              isDragOver ? "border-orange-400 bg-orange-50 scale-105" : answers.profilePicture ? "border-orange-400" : "border-zinc-300 bg-zinc-50 hover:border-zinc-500"
             }`}>
             {answers.profilePicture ? (
               <img src={answers.profilePicture} alt="Profile" className="w-full h-full object-cover" />
@@ -89,7 +89,7 @@ export default function ScreenSetupWorkspace() {
           </div>
           <input type="text" value={answers.displayName || ""} onChange={(e) => updateAnswers({ displayName: e.target.value })}
             placeholder="Your creative alias"
-            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl h-11 px-4 text-[13px] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900/20 transition-all" />
+            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl h-11 px-4 text-[13px] placeholder-zinc-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/20 transition-all" />
         </div>
 
         {/* Workspace Name */}
@@ -97,7 +97,7 @@ export default function ScreenSetupWorkspace() {
           <label className="text-[11px] font-semibold text-zinc-600 uppercase tracking-widest block">Workspace Name</label>
           <input type="text" value={answers.workspaceName || ""} onChange={(e) => updateAnswers({ workspaceName: e.target.value })}
             placeholder="My Spectrum Studio"
-            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl h-11 px-4 text-[13px] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900/20 transition-all" />
+            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl h-11 px-4 text-[13px] placeholder-zinc-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/20 transition-all" />
         </div>
 
         {/* Primary Use Case */}
@@ -105,7 +105,7 @@ export default function ScreenSetupWorkspace() {
           <label className="text-[11px] font-semibold text-zinc-600 uppercase tracking-widest block">Primary Use Case</label>
           <div className="relative">
             <select value={answers.primaryUseCase || "exploring"} onChange={(e) => updateAnswers({ primaryUseCase: e.target.value })}
-              className="w-full h-11 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl px-4 text-[13px] focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900/20 cursor-pointer appearance-none transition-all">
+              className="w-full h-11 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl px-4 text-[13px] focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/20 cursor-pointer appearance-none transition-all">
               <option value="images">Image Upscaling & Enhancement</option>
               <option value="videos">Video Quality & Rendering</option>
               <option value="marketing">Marketing & Brand Assets</option>

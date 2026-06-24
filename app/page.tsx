@@ -412,16 +412,16 @@ function VideoSlider() {
 }
 
 // ─── Interactive Advantage Cards ───────────────────────────────────────────────
-const MODELS_LIST = ["Portrait", "Landscape", "Sci-Fi", "Product"];
-const PROMPT_TEXT = "portrait, sharp eyes, golden hour, 8K skin texture, ultra-detailed pores...";
-
 function AdvantageCards() {
-  const [active, setActive]       = useState<number | null>(null);
-  const [typed,  setTyped]        = useState("");
-  const [slider, setSlider]       = useState(8);
-  const [prog,   setProg]         = useState(0);
-  const [model,  setModel]        = useState(0);
+  const [active, setActive] = useState<number | null>(null);
+  const [typed,  setTyped]  = useState("");
+  const [slider, setSlider] = useState(8);
+  const [prog,   setProg]   = useState(0);
+  const [model,  setModel]  = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const MODELS = ["Portrait", "Landscape", "Sci-Fi", "Product"];
+  const PROMPT = "portrait, golden hour, sharp eyes, 8K skin texture...";
 
   const clear = () => { if (timer.current) clearInterval(timer.current); };
 
@@ -430,123 +430,92 @@ function AdvantageCards() {
     setActive(i); setTyped(""); setSlider(8); setProg(0); setModel(0);
     if (i === 0) {
       let idx = 0;
-      timer.current = setInterval(() => {
-        idx++;
-        setTyped(PROMPT_TEXT.slice(0, idx));
-        if (idx >= PROMPT_TEXT.length) clear();
-      }, 48);
+      timer.current = setInterval(() => { idx++; setTyped(PROMPT.slice(0, idx)); if (idx >= PROMPT.length) clear(); }, 55);
     } else if (i === 1) {
       let m = 0;
-      timer.current = setInterval(() => { m = (m + 1) % 4; setModel(m); }, 650);
+      timer.current = setInterval(() => { m = (m + 1) % 4; setModel(m); }, 700);
     } else if (i === 2) {
       let v = 8;
-      timer.current = setInterval(() => {
-        v = Math.min(92, v + 2);
-        setSlider(v);
-        if (v >= 92) clear();
-      }, 22);
+      timer.current = setInterval(() => { v = Math.min(90, v + 1.5); setSlider(v); if (v >= 90) clear(); }, 20);
     } else {
       let p = 0;
-      timer.current = setInterval(() => {
-        p = Math.min(100, p + 2);
-        setProg(p);
-        if (p >= 100) clear();
-      }, 18);
+      timer.current = setInterval(() => { p = Math.min(100, p + 1.5); setProg(p); if (p >= 100) clear(); }, 16);
     }
   };
 
   const stop = () => { clear(); setActive(null); setTyped(""); setSlider(8); setProg(0); setModel(0); };
-
   useEffect(() => () => clear(), []);
 
   const overlays = [
-    /* 0 — Prompt Control */
-    <div key={0} className="absolute inset-0 p-4 flex flex-col gap-2 pointer-events-none z-20">
-      <p className="text-[8px] font-bold text-emerald-400 uppercase tracking-widest">⚡ Prompt</p>
-      <div className="flex-1 bg-black/60 rounded-xl border border-white/10 p-3 overflow-hidden">
-        <span className="text-[10px] text-white/90 font-mono leading-relaxed break-words">
-          {typed}<span className="animate-pulse ml-px text-white">▍</span>
-        </span>
-      </div>
-      <div className="grid grid-cols-3 gap-1.5">
-        {["Eyes","Skin","Light"].map((t, ti) => (
-          <div key={t} className="h-10 rounded-lg border flex items-end p-1.5 overflow-hidden transition-all duration-500"
-            style={{ borderColor: typed.length > ti * 18 ? "rgba(59,130,246,0.5)" : "rgba(255,255,255,0.07)", background: typed.length > ti * 18 ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.03)" }}>
-            <span className="text-[7px] font-bold" style={{ color: typed.length > ti * 18 ? "#93c5fd" : "rgba(255,255,255,0.25)" }}>{t}</span>
-          </div>
-        ))}
+    /* 0 — Prompt Control: ghost typing */
+    <div key={0} className="absolute inset-0 p-6 flex flex-col gap-3 pointer-events-none">
+      <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-widest">Prompt</p>
+      <div className="flex-1 rounded-lg border border-zinc-700 bg-zinc-900/80 p-3.5 overflow-hidden">
+        <p className="text-[11px] text-white/75 font-mono leading-relaxed">
+          {typed}<span className="animate-pulse text-white/90">▍</span>
+        </p>
       </div>
     </div>,
 
-    /* 1 — Multi-Model */
-    <div key={1} className="absolute inset-0 p-4 flex flex-col gap-3 pointer-events-none z-20">
-      <p className="text-[8px] font-bold text-blue-400 uppercase tracking-widest">Active Model</p>
+    /* 1 — Multi-Model: clean cycling pills */
+    <div key={1} className="absolute inset-0 p-6 flex flex-col gap-3 pointer-events-none">
+      <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-widest">Select Model</p>
       <div className="grid grid-cols-2 gap-2 flex-1">
-        {MODELS_LIST.map((m, mi) => (
-          <div key={m} className="rounded-xl border flex items-center justify-center text-[10px] font-bold transition-all duration-400"
-            style={{ background: mi === model ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.03)", borderColor: mi === model ? "rgba(96,165,250,0.55)" : "rgba(255,255,255,0.07)", color: mi === model ? "#93c5fd" : "rgba(255,255,255,0.25)", transform: mi === model ? "scale(1.05)" : "scale(1)" }}>
+        {MODELS.map((m, mi) => (
+          <div key={m} className="rounded-lg flex items-center justify-center text-[11px] font-semibold border transition-all duration-300"
+            style={{
+              background: mi === model ? "rgba(255,255,255,0.07)" : "transparent",
+              borderColor: mi === model ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.06)",
+              color: mi === model ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.22)",
+            }}>
             {m}
           </div>
         ))}
       </div>
-      <p className="text-[8px] font-mono text-white/30">switching → <span className="text-blue-400">{MODELS_LIST[model]}</span></p>
     </div>,
 
-    /* 2 — Sliders */
-    <div key={2} className="absolute inset-0 p-4 flex flex-col gap-2.5 pointer-events-none z-20">
-      <p className="text-[8px] font-bold text-white/50 uppercase tracking-widest">Live Preview</p>
-      <div className="flex-1 relative rounded-xl overflow-hidden border border-white/10 min-h-0">
-        {/* blurry left */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg,#0f0c29,#302b63,#24243e)", filter: "blur(3px) saturate(0.2)" }} />
-        {/* sharp right */}
-        <div className="absolute inset-y-0 right-0 overflow-hidden" style={{ left: `${slider}%` }}>
-          <div className="absolute inset-0" style={{ left: `-${slider}%`, background: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)", filter: "none" }} />
-        </div>
-        {/* handle */}
-        <div className="absolute inset-y-0 w-[1px] bg-white/60" style={{ left: `${slider}%` }}>
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center text-[7px] text-zinc-700 font-bold">⟺</div>
-        </div>
-        <span className="absolute top-1.5 left-2 text-[6px] text-white/40 bg-black/40 px-1 py-0.5 rounded">Raw</span>
-        <span className="absolute top-1.5 right-2 text-[6px] text-white/40 bg-black/40 px-1 py-0.5 rounded">8K</span>
-      </div>
-      {[["Creativity", slider * 0.9], ["Resemblance", 100 - slider * 0.45]].map(([lbl, val]) => (
-        <div key={String(lbl)} className="space-y-0.5">
-          <div className="flex justify-between">
-            <span className="text-[8px] text-white/35 font-bold uppercase tracking-wide">{lbl}</span>
-            <span className="text-[8px] text-blue-400 font-bold">{Math.round(Number(val))}%</span>
-          </div>
-          <div className="h-[2px] bg-white/10 rounded-full"><div className="h-full bg-blue-500 rounded-full" style={{ width: `${Number(val)}%` }} /></div>
-        </div>
-      ))}
-    </div>,
-
-    /* 3 — Lightning Fast */
-    <div key={3} className="absolute inset-0 p-4 flex flex-col gap-2 pointer-events-none z-20">
-      <p className="text-[8px] font-bold text-amber-400 uppercase tracking-widest">⚡ Rendering</p>
-      <div className="flex-1 bg-black/40 rounded-xl border border-white/8 p-3 flex flex-col justify-around">
-        {["Loading model","Diffusing","Upscaling","Post-process"].map((stage, si) => {
-          const start = si * 25, end = start + 25;
-          const pct   = Math.max(0, Math.min(100, (prog - start) / 25 * 100));
-          const done  = prog >= end;
-          return (
-            <div key={stage} className="flex items-center gap-2">
-              <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] shrink-0 font-bold transition-all duration-300 ${done ? "bg-emerald-500 text-white" : pct > 0 ? "bg-blue-500 animate-pulse" : "bg-white/8"}`}>
-                {done ? "✓" : ""}
-              </div>
-              <div className="flex-1">
-                <p className="text-[8px] text-white/50 mb-0.5">{stage}</p>
-                <div className="h-[2px] bg-white/10 rounded-full"><div className="h-full bg-blue-500 rounded-full transition-none" style={{ width: `${pct}%` }} /></div>
-              </div>
-              {done && <span className="text-[7px] text-white/30 font-mono">{(end / 100 * 0.8).toFixed(1)}s</span>}
+    /* 2 — Sliders: two clean labeled sliders */
+    <div key={2} className="absolute inset-0 p-6 flex flex-col gap-3 pointer-events-none">
+      <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-widest">Control</p>
+      <div className="flex flex-col gap-5 flex-1 justify-center">
+        {[["Creativity", slider], ["Resemblance", 100 - slider * 0.45]].map(([lbl, val]) => (
+          <div key={String(lbl)}>
+            <div className="flex justify-between mb-2">
+              <span className="text-[11px] text-white/55 font-medium">{lbl}</span>
+              <span className="text-[11px] text-white/70 font-mono tabular-nums">{Math.round(Number(val))}</span>
             </div>
-          );
-        })}
+            <div className="relative h-[2px] bg-zinc-700 rounded-full">
+              <div className="absolute inset-y-0 left-0 bg-white rounded-full" style={{ width: `${Number(val)}%` }} />
+              <div className="absolute top-1/2 w-3 h-3 bg-white rounded-full border-2 border-zinc-900 shadow-md"
+                style={{ left: `${Number(val)}%`, transform: "translate(-50%, -50%)" }} />
+            </div>
+          </div>
+        ))}
       </div>
-      {prog >= 100 && (
-        <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-xl py-2 text-center">
-          <span className="text-[9px] font-bold text-emerald-400">✓ Enhanced in 0.8s</span>
-        </div>
-      )}
+    </div>,
+
+    /* 3 — Lightning Fast: single progress bar + stage chips */
+    <div key={3} className="absolute inset-0 p-6 flex flex-col gap-3 pointer-events-none">
+      <div className="flex items-center justify-between">
+        <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-widest">Processing</p>
+        <span className="text-[10px] font-mono text-white/55 tabular-nums">{(prog / 100 * 0.8).toFixed(2)}s</span>
+      </div>
+      <div className="h-[2px] bg-zinc-700 rounded-full overflow-hidden">
+        <div className="h-full bg-white rounded-full transition-none" style={{ width: `${prog}%` }} />
+      </div>
+      <div className="flex gap-2 flex-wrap mt-1">
+        {["Loading", "Diffusing", "Upscaling", "Output"].map((s, si) => (
+          <span key={s} className="text-[9px] font-medium px-2 py-0.5 rounded-full border transition-all duration-300"
+            style={{
+              background: prog >= si * 25 + 25 ? "rgba(255,255,255,0.07)" : "transparent",
+              borderColor: prog >= si * 25 ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)",
+              color: prog >= si * 25 ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.2)",
+            }}>
+            {s}{prog >= si * 25 + 25 ? " ✓" : ""}
+          </span>
+        ))}
+      </div>
+      {prog >= 100 && <p className="text-[11px] text-white/60 font-medium mt-auto">Done in 0.8s</p>}
     </div>,
   ];
 
@@ -558,15 +527,16 @@ function AdvantageCards() {
           onMouseLeave={stop}
           className={`stagger-item group relative overflow-hidden flex flex-col justify-between p-7 border-white/10 cursor-pointer
             ${i % 2 === 1 ? "border-l" : ""} ${i < 2 ? "border-b" : ""}`}>
+          {/* Swipe-up background */}
           <span className="absolute inset-0 bg-zinc-900 translate-y-[102%] group-hover:translate-y-0 transition-transform duration-500 ease-out origin-bottom z-0" />
-          <div className="relative z-10">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-zinc-400 transition-colors mb-4">{w.num} — Advantages</p>
+          {/* Static text — fades out when animation is active */}
+          <div className={`relative z-10 transition-opacity duration-200 ${active === i ? "opacity-0" : "opacity-100"}`}>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 mb-4">{w.num} — Advantages</p>
             <h4 className="text-xl md:text-2xl font-bold text-white tracking-[-0.03em] mb-2">{w.title}</h4>
-            <p className="text-[12px] text-zinc-500 group-hover:text-zinc-400 transition-colors leading-relaxed">{w.body}</p>
+            <p className="text-[12px] text-zinc-500 leading-relaxed">{w.body}</p>
           </div>
-          {/* Animation overlay */}
-          <div className={`absolute inset-0 transition-opacity duration-300 ${active === i ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-            <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px]" />
+          {/* Animation overlay — z-20, fades in over the text */}
+          <div className={`absolute inset-0 z-20 transition-opacity duration-200 ${active === i ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             {overlays[i]}
           </div>
         </div>
@@ -932,7 +902,8 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
               {processSteps.map((step, i) => (
                 <div key={i}
                   className="border-b border-white/10 cursor-pointer select-none"
-                  onClick={() => setOpenStep(i)}>
+                  onClick={() => setOpenStep(i)}
+                  onMouseEnter={() => setOpenStep(i)}>
 
                   <div className="flex items-center justify-between py-5">
                     {/* Slide-up ONLY on this left inner div */}
@@ -1081,9 +1052,9 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
                 <div className="w-full h-full rounded-xl overflow-hidden border border-white/8 shadow-2xl flex flex-col bg-[#0c0c0c]">
                   <div className="h-8 border-b border-white/5 flex items-center px-3 gap-2 shrink-0 bg-[#0a0a0a]">
                     <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-white/50"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" /></svg>
-                    <span className="text-[7.5px] text-white/25 font-medium">Spectrum AI — Restore</span>
+                    <span className="text-[7.5px] text-white/25 font-medium">Spectrum AI — Video Gen</span>
                     <div className="flex gap-0.5 ml-1">
-                      {["Restore","Colorize","Denoise"].map((t,ti) => (
+                      {["Text-to-Video","Img-to-Video","AI Interpolate"].map((t,ti) => (
                         <span key={t} className={`text-[6.5px] px-1.5 py-0.5 rounded font-semibold ${ti===0 ? "bg-white text-zinc-900" : "text-white/20"}`}>{t}</span>
                       ))}
                     </div>
@@ -1096,35 +1067,35 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
                     <div className="absolute bottom-3 left-3 right-3">
                       <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2.5 border border-white/10">
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[7px] text-white/50 font-mono">Noise Reduction</span>
+                          <span className="text-[7px] text-white/50 font-mono">Motion Synthesis</span>
                           <span className="text-[7px] text-white/70 font-bold">7 / 10</span>
                         </div>
                         <div className="h-1 bg-white/10 rounded-full"><div className="h-full w-[70%] bg-violet-400 rounded-full" /></div>
                         <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-[7px] text-white/50 font-mono">Damage Repair</span>
+                          <span className="text-[7px] text-white/50 font-mono">Temporal Consistency</span>
                           <span className="text-[7px] text-emerald-400 font-bold">Active</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="h-6 border-t border-white/5 flex items-center px-3 shrink-0 bg-[#0a0a0a]">
-                    <span className="text-[6.5px] text-white/20 font-mono">Restoration complete · 2× output</span>
+                    <span className="text-[6.5px] text-white/20 font-mono">Generation complete · 4K cinematic</span>
                     <div className="flex-1" />
-                    <span className="text-[6.5px] text-emerald-400 font-bold">Restored ✓</span>
+                    <span className="text-[6.5px] text-emerald-400 font-bold">Generated ✓</span>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col justify-between p-8 md:p-12 lg:p-14">
                 <div className="flex flex-col gap-5">
-                  <Label>Spectrum Restore</Label>
-                  <h3 className="text-3xl md:text-4xl font-bold tracking-[-0.04em] text-[#09090b]">Restoration Engine</h3>
+                  <Label>Spectrum Video Gen</Label>
+                  <h3 className="text-3xl md:text-4xl font-bold tracking-[-0.04em] text-[#09090b]">Video Generation Engine</h3>
                   <p className="text-zinc-500 text-[13px] leading-relaxed max-w-sm">
-                    Restore scratched, damaged, or old photographs with AI-driven repair. Remove artifacts, rebuild lost detail, and bring historical images back to life with stunning precision.
+                    Create cinematic, high-fidelity videos entirely from text prompts. Our advanced diffusion models generate fluid motion, photorealistic lighting, and stunning visual effects in seconds.
                   </p>
                 </div>
                 <div>
                   <div className="grid grid-cols-3 gap-6 py-6 border-y border-zinc-100">
-                    {[{ v: "4K+", l: "Max output" }, { v: "Real", l: "Time processing" }, { v: "100%", l: "Lossless" }].map(s => (
+                    {[{ v: "4K", l: "Cinematic" }, { v: "60", l: "FPS Generation" }, { v: "100%", l: "Prompt Matching" }].map(s => (
                       <div key={s.l}>
                         <p className="text-xl md:text-2xl font-bold text-zinc-900 tracking-[-0.03em]">{s.v}</p>
                         <p className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold mt-1">{s.l}</p>

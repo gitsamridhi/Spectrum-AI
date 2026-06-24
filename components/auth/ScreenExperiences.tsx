@@ -42,7 +42,7 @@ export default function ScreenExperiences() {
         <div className="space-y-4">
           <div className="relative">
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[3px] bg-zinc-200 rounded-full" />
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[3px] bg-zinc-900 rounded-full transition-all duration-300"
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[3px] bg-orange-400 rounded-full transition-all duration-300"
               style={{ width: `${(currentLevel / 3) * 100}%` }} />
             <div className="relative flex justify-between">
               {stops.map((stop) => {
@@ -52,7 +52,7 @@ export default function ScreenExperiences() {
                   <button key={stop.value} onClick={() => updateAnswers({ experienceLevel: stop.value })}
                     className="relative focus:outline-none" type="button">
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 cursor-pointer ${
-                      isSelected ? "bg-zinc-900 border-zinc-900 scale-110 shadow-md" : isActive ? "bg-zinc-700 border-zinc-700" : "bg-white border-zinc-300 hover:border-zinc-500"
+                      isSelected ? "bg-orange-400 border-orange-400 scale-110 shadow-md" : isActive ? "bg-orange-200 border-orange-300" : "bg-white border-zinc-300 hover:border-zinc-500"
                     }`}>
                       <div className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-white" : "bg-transparent"}`} />
                     </div>

@@ -36,23 +36,23 @@ export default function ScreenWhatCreating() {
           return (
             <button key={tile.id} onClick={() => toggleSelect(tile.id)}
               className={`relative flex flex-col justify-between items-start text-left p-5 rounded-2xl border h-[130px] w-full transition-all duration-200 cursor-pointer ${
-                sel ? "border-zinc-900 bg-zinc-900 shadow-lg scale-[1.01]" : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50"
+                sel ? "border-orange-400 bg-orange-50 shadow-md scale-[1.01]" : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50"
               }`}>
               <div className="flex justify-between items-center w-full">
-                <div className={`p-2 rounded-lg ${sel ? "bg-white/10 text-white" : "bg-zinc-100 text-zinc-500"}`}>
+                <div className={`p-2 rounded-lg ${sel ? "bg-orange-100 text-orange-500" : "bg-zinc-100 text-zinc-500"}`}>
                   {tile.icon}
                 </div>
                 {sel && (
-                  <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center">
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="#09090b" strokeWidth="3">
+                  <div className="w-5 h-5 rounded-full bg-orange-400 flex items-center justify-center">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="3">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                 )}
               </div>
               <div>
-                <p className={`text-[13px] font-bold leading-snug ${sel ? "text-white" : "text-zinc-900"}`}>{tile.title}</p>
-                <p className={`text-[11px] mt-0.5 ${sel ? "text-white/60" : "text-zinc-400"}`}>{tile.desc}</p>
+                <p className={`text-[13px] font-bold leading-snug ${sel ? "text-orange-900" : "text-zinc-900"}`}>{tile.title}</p>
+                <p className={`text-[11px] mt-0.5 ${sel ? "text-orange-600/70" : "text-zinc-400"}`}>{tile.desc}</p>
               </div>
             </button>
           );

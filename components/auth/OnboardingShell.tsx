@@ -44,7 +44,7 @@ export default function OnboardingShell() {
 
       {/* Progress bar at top */}
       <div className="h-1 bg-zinc-100 shrink-0">
-        <div className="h-full bg-zinc-900 transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }} />
+        <div className="h-full transition-all duration-500 ease-out" style={{ width: `${progressPct}%`, background: 'linear-gradient(to right, #FFB347, #FF7000)' }} />
       </div>
 
       {/* Header */}
@@ -80,7 +80,8 @@ export default function OnboardingShell() {
 
           {/* Continue button */}
           <button onClick={handleNext}
-            className="w-full h-12 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-[11px] transition-all cursor-pointer">
+            className="w-full h-12 text-white rounded-full flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-[11px] transition-all cursor-pointer hover:opacity-90"
+            style={{ background: 'linear-gradient(to right, #FFB347, #FF7000)' }}>
             <span>{onboardingStep === 6 ? "Go to Spectrum AI →" : "Continue"}</span>
             {onboardingStep < 6 && <ChevronRight className="w-4 h-4" />}
           </button>
