@@ -7,21 +7,21 @@ import {
 } from 'lucide-react';
 
 const P = {
-  darkRed: '#C97A8A',
-  coral:   '#F0A4AF',
+  darkRed: '#BE4B60',
+  coral:   '#EF849A',
   yellow:  '#FFF6A6',
   hotPink: '#FFDDE9',
-  orange:  '#F5B080',
-  rose:    '#D97B8C',
+  orange:  '#F5A056',
+  rose:    '#E0526A',
 };
 
 const TOOLS = [
-  { id: 'image',      Icon: ImageIcon, label: 'Image Generation', desc: 'Text to Image',      bg: P.rose,    fg: '#7B2E40' },
-  { id: 'video',      Icon: Video,     label: 'Video Generation', desc: 'Text/Img to Video',  bg: P.orange,  fg: '#92400E' },
+  { id: 'image',      Icon: ImageIcon, label: 'Image Generation', desc: 'Text to Image',      bg: P.rose,    fg: '#fff'    },
+  { id: 'video',      Icon: Video,     label: 'Video Generation', desc: 'Text/Img to Video',  bg: P.orange,  fg: '#fff'    },
   { id: 'spaces',     Icon: Layers,    label: 'Workflow Canvas',  desc: 'Build AI Pipelines', bg: P.yellow,  fg: '#78350f' },
   { id: 'characters', Icon: Users,     label: 'Characters',       desc: 'Create & Manage',    bg: P.hotPink, fg: '#C2185B' },
-  { id: 'all',        Icon: Wand2,     label: 'Studio',           desc: 'Edit & Enhance',     bg: P.coral,   fg: '#881337' },
-  { id: 'library',    Icon: BookOpen,  label: 'Assets',           desc: 'Your Libraries',     bg: P.darkRed, fg: '#5B1C2B' },
+  { id: 'all',        Icon: Wand2,     label: 'Studio',           desc: 'Edit & Enhance',     bg: P.coral,   fg: '#fff'    },
+  { id: 'library',    Icon: BookOpen,  label: 'Assets',           desc: 'Your Libraries',     bg: P.darkRed, fg: '#fff'    },
 ];
 
 const GALLERY_TABS = ['All', 'Images', 'Videos', 'Character', 'Concept Art', 'Product', 'Fashion'];
@@ -56,10 +56,10 @@ const GALLERY = [
 type GalleryItem = typeof GALLERY[0];
 
 const TEMPLATES = [
-  { label: 'Cinematic Trailer',    nodes: 6, bg: '#FDE8EC', accent: '#C96B7A', Icon: Video     },
-  { label: 'Product Ad Generator', nodes: 8, bg: '#FEF3E7', accent: '#A86020', Icon: ImageIcon },
-  { label: 'Consistent Character', nodes: 7, bg: '#FDE9F2', accent: '#9D174D', Icon: Users     },
-  { label: 'AI Music Video',       nodes: 9, bg: '#EEEAFD', accent: '#5B21B6', Icon: Mic       },
+  { label: 'Cinematic Trailer',    nodes: 6, bg: 'linear-gradient(135deg,#F9B4BE,#F08090)', accent: '#7E1730', Icon: Video     },
+  { label: 'Product Ad Generator', nodes: 8, bg: 'linear-gradient(135deg,#FECFA0,#F5A860)', accent: '#7C3410', Icon: ImageIcon },
+  { label: 'Consistent Character', nodes: 7, bg: 'linear-gradient(135deg,#F9B4D4,#EF80B8)', accent: '#7E1740', Icon: Users     },
+  { label: 'AI Music Video',       nodes: 9, bg: 'linear-gradient(135deg,#C8BFFC,#A892F5)', accent: '#3B1494', Icon: Mic       },
 ];
 
 /* ── Animated Node Diagram ─────────────────────────────────────────────────── */

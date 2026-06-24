@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { ArrowRight, Heart, Zap, Film, Wand2, Users, Check } from 'lucide-react';
 
 const P = {
-  rose: '#D97B8C', orange: '#F5B080', hotPink: '#F093AA',
-  coral: '#F0A4AF', peach: '#FFBF80', vivid: '#F5956A',
-  magenta: '#D490CC', yellow: '#FFF6A6',
+  rose: '#E0526A', orange: '#F5A056', hotPink: '#E86090',
+  coral: '#EF849A', peach: '#FFBF80', vivid: '#EF7D42',
+  magenta: '#CC70D8', yellow: '#FFF6A6',
 };
 
 const IMGS = [
