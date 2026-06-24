@@ -56,15 +56,15 @@ const GALLERY = [
 type GalleryItem = typeof GALLERY[0];
 
 const TEMPLATES = [
-  { label: 'Cinematic Trailer',    nodes: 6, gradient: 'from-rose-300 to-pink-400',     Icon: Video     },
-  { label: 'Product Ad Generator', nodes: 8, gradient: 'from-orange-300 to-amber-300',  Icon: ImageIcon },
-  { label: 'Consistent Character', nodes: 7, gradient: 'from-pink-300 to-rose-300',     Icon: Users     },
-  { label: 'AI Music Video',       nodes: 9, gradient: 'from-violet-400 to-purple-400', Icon: Mic       },
+  { label: 'Cinematic Trailer',    nodes: 6, bg: '#FDE8EC', accent: '#C96B7A', Icon: Video     },
+  { label: 'Product Ad Generator', nodes: 8, bg: '#FEF3E7', accent: '#A86020', Icon: ImageIcon },
+  { label: 'Consistent Character', nodes: 7, bg: '#FDE9F2', accent: '#9D174D', Icon: Users     },
+  { label: 'AI Music Video',       nodes: 9, bg: '#EEEAFD', accent: '#5B21B6', Icon: Mic       },
 ];
 
 /* ── Animated Node Diagram ─────────────────────────────────────────────────── */
 
-function NodeDiagram({ n, cardId }: { n: number; cardId: string }) {
+function NodeDiagram({ n, cardId, color = 'rgba(255,255,255,0.22)' }: { n: number; cardId: string; color?: string }) {
   const all: [number, number][] = [
     [15, 50], [35, 28], [35, 72], [55, 50], [75, 28], [75, 72], [90, 50], [55, 15], [55, 85],
   ];
@@ -97,13 +97,13 @@ function NodeDiagram({ n, cardId }: { n: number; cardId: string }) {
 
       {connections.map((c, i) => (
         <line key={i} x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}
-          stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" />
+          stroke={color} strokeWidth="1.2" />
       ))}
 
       {connections.map((c, i) =>
         React.createElement(
           'circle',
-          { key: `dot${i}`, r: 2.5, fill: 'white', opacity: 0.9, filter: `url(#${filterId})` },
+          { key: `dot${i}`, r: 2.5, fill: color, opacity: 0.9, filter: `url(#${filterId})` },
           React.createElement('animateMotion', {
             dur: `${c.dur}s`,
             repeatCount: 'indefinite',
@@ -114,7 +114,7 @@ function NodeDiagram({ n, cardId }: { n: number; cardId: string }) {
       )}
 
       {pts.map(([x, y], i) => (
-        <rect key={i} x={x - 9} y={y - 6} width="18" height="12" rx="2.5" fill="rgba(255,255,255,0.30)" />
+        <rect key={i} x={x - 9} y={y - 6} width="18" height="12" rx="2.5" fill={color} fillOpacity="0.35" />
       ))}
     </svg>
   );
@@ -336,25 +336,26 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
           </button>
         </div>
         <div className="grid grid-cols-4 gap-3">
-          {TEMPLATES.map(({ label, nodes, gradient, Icon }, i) => (
+          {TEMPLATES.map(({ label, nodes, bg, accent, Icon }, i) => (
             <div key={i}
               onClick={() => onToolClick('spaces')}
-              className={`group relative bg-gradient-to-br ${gradient} rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-200`}
-              style={{ height: 130 }}>
-              <div className="absolute inset-0 opacity-30 p-2">
-                <NodeDiagram n={nodes} cardId={`tmpl-${i}`} />
+              className="group relative rounded-2xl overflow-hidden cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-200 border"
+              style={{ height: 130, background: bg, borderColor: accent + '30' }}>
+              <div className="absolute inset-0 opacity-40 p-2">
+                <NodeDiagram n={nodes} cardId={`tmpl-${i}`} color={accent + '55'} />
               </div>
               <div className="relative z-10 p-4 h-full flex flex-col justify-between">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
-                    <Icon className="w-3 h-3 text-white" />
+                  <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: accent + '18' }}>
+                    <Icon className="w-3 h-3" style={{ color: accent }} />
                   </div>
-                  <span className="text-[9px] font-bold text-white/60 uppercase tracking-wider">{nodes} Nodes</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: accent + 'aa' }}>{nodes} Nodes</span>
                 </div>
                 <div>
-                  <p className="text-[12.5px] font-bold text-white leading-snug">{label}</p>
+                  <p className="text-[12.5px] font-bold leading-snug" style={{ color: accent }}>{label}</p>
                   <button onClick={e => { e.stopPropagation(); onToolClick('spaces'); }}
-                    className="mt-1 flex items-center gap-1 text-[9.5px] font-semibold text-white/60 hover:text-white transition-colors cursor-pointer">
+                    className="mt-1 flex items-center gap-1 text-[9.5px] font-semibold transition-colors cursor-pointer"
+                    style={{ color: accent + '99' }}>
                     Use template <ArrowRight className="w-2.5 h-2.5" />
                   </button>
                 </div>
