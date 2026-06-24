@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-sans), "Inter", sans-serif;
+  --font-display: var(--font-display), "Space Grotesk", sans-serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", monospace;
+}
+
+:root {
+  --bg-base: #f2f4f5; /* White and grey default background */
+  --bg-card: #ffffff; 
+  --bg-subtle: #e9ecef;
+  --text-main: #0a0a0c;
+  --text-muted: #52525b;
+  --text-sky: #0284c7;
+  --border-main: rgba(0, 0, 0, 0.08);
+}
+
+.dark {
+  --bg-base: #050505; /* Charcoal/black dark mode */
+  --bg-card: #0a0a0c;
+  --bg-subtle: #1c1c1e;
+  --text-main: #f3f4f6;
+  --text-muted: #a1a1aa;
+  --text-sky: #38bdf8;
+  --border-main: rgba(255, 255, 255, 0.06);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  
+  pre, code, .tech-label {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Custom styles matching the high-end premium video aesthetic */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-main);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  border-color: var(--text-sky);
+  box-shadow: 0 12px 40px -12px rgba(2, 132, 199, 0.15);
+}
+
+.glow-violet {
+  box-shadow: 0 0 60px -15px rgba(2, 132, 199, 0.1);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--text-main) 30%, var(--text-sky) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Technical Blueprint Grid line elements */
+.blueprint-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, var(--border-main) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border-main) 1px, transparent 1px);
+}
+
+.blueprint-grid-fine {
+  background-size: 10px 10px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+}
+
+.dark .blueprint-grid-fine {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+}
+
+/* Custom marquee matching the partners logo bar */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  opacity: 0.3;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-main);
+}
+
+/* Hide scrollbar for testimonial carousel */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Perspective for hero word reveal */
+.perspective-hero {
+  perspective: 800px;
+}
+
+/* Prevent layout shift on marquee */
+.marquee-track {
+  will-change: transform;
+}
+
+
+

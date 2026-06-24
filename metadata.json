@@ -1,0 +1,8 @@
+{
+  "name": "Spectrum AI",
+  "description": "Transfoms global maritime shipping investments by tokenizing them into smaller, affordable, high-yield digital fractions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
