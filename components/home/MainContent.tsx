@@ -7,21 +7,21 @@ import {
 } from 'lucide-react';
 
 const P = {
-  darkRed: '#C62828',
-  coral:   '#FF6B86',
+  darkRed: '#C97A8A',
+  coral:   '#F0A4AF',
   yellow:  '#FFF6A6',
-  hotPink: '#FFDDE9',   // was #FF2D6B — now soft pastel pink
-  orange:  '#FFB347',
-  rose:    '#e11d48',
+  hotPink: '#FFDDE9',
+  orange:  '#F5B080',
+  rose:    '#D97B8C',
 };
 
 const TOOLS = [
-  { id: 'image',      Icon: ImageIcon, label: 'Image Generation', desc: 'Text to Image',      bg: P.rose,    fg: '#fff'    },
-  { id: 'video',      Icon: Video,     label: 'Video Generation', desc: 'Text/Img to Video',  bg: P.orange,  fg: '#fff'    },
+  { id: 'image',      Icon: ImageIcon, label: 'Image Generation', desc: 'Text to Image',      bg: P.rose,    fg: '#7B2E40' },
+  { id: 'video',      Icon: Video,     label: 'Video Generation', desc: 'Text/Img to Video',  bg: P.orange,  fg: '#92400E' },
   { id: 'spaces',     Icon: Layers,    label: 'Workflow Canvas',  desc: 'Build AI Pipelines', bg: P.yellow,  fg: '#78350f' },
   { id: 'characters', Icon: Users,     label: 'Characters',       desc: 'Create & Manage',    bg: P.hotPink, fg: '#C2185B' },
-  { id: 'all',        Icon: Wand2,     label: 'Studio',           desc: 'Edit & Enhance',     bg: P.coral,   fg: '#fff'    },
-  { id: 'library',    Icon: BookOpen,  label: 'Assets',           desc: 'Your Libraries',     bg: P.darkRed, fg: '#fff'    },
+  { id: 'all',        Icon: Wand2,     label: 'Studio',           desc: 'Edit & Enhance',     bg: P.coral,   fg: '#881337' },
+  { id: 'library',    Icon: BookOpen,  label: 'Assets',           desc: 'Your Libraries',     bg: P.darkRed, fg: '#5B1C2B' },
 ];
 
 const GALLERY_TABS = ['All', 'Images', 'Videos', 'Character', 'Concept Art', 'Product', 'Fashion'];
@@ -37,29 +37,29 @@ const GALLERY = [
     src: '/pexels-ganajp-15698413.jpg',
     videoSrc: '/14674120_trimmed_4s.mp4',
     views: '987', likes: 214, label: 'Forest Concept Art', tab: 'Concept Art',
-    creator: { initial: 'S', color: '#FF7000' },
+    creator: { initial: 'S', color: '#F5956A' },
   },
   {
     src: '/pexels-olga-178200755-12367292.jpg',
     videoSrc: '/8312047_trimmed_4s.mp4',
     views: '1.2K', likes: 320, label: 'Product Photography', tab: 'Product',
-    creator: { initial: 'A', color: '#DB2777' },
+    creator: { initial: 'A', color: '#E07A9A' },
   },
   {
     src: '/pexels-prathsnap-3168209.jpg',
     videoSrc: '/18120715_trimmed_4s.mp4',
     views: '756', likes: 189, label: 'Character Design', tab: 'Character',
-    creator: { initial: 'M', color: '#F060EE' },
+    creator: { initial: 'M', color: '#D490CC' },
   },
 ];
 
 type GalleryItem = typeof GALLERY[0];
 
 const TEMPLATES = [
-  { label: 'Cinematic Trailer',    nodes: 6, gradient: 'from-rose-500 to-red-700',      Icon: Video     },
-  { label: 'Product Ad Generator', nodes: 8, gradient: 'from-orange-400 to-orange-600', Icon: ImageIcon },
-  { label: 'Consistent Character', nodes: 7, gradient: 'from-pink-500 to-rose-600',     Icon: Users     },
-  { label: 'AI Music Video',       nodes: 9, gradient: 'from-violet-500 to-purple-700', Icon: Mic       },
+  { label: 'Cinematic Trailer',    nodes: 6, gradient: 'from-rose-300 to-pink-400',     Icon: Video     },
+  { label: 'Product Ad Generator', nodes: 8, gradient: 'from-orange-300 to-amber-300',  Icon: ImageIcon },
+  { label: 'Consistent Character', nodes: 7, gradient: 'from-pink-300 to-rose-300',     Icon: Users     },
+  { label: 'AI Music Video',       nodes: 9, gradient: 'from-violet-400 to-purple-400', Icon: Mic       },
 ];
 
 /* ── Animated Node Diagram ─────────────────────────────────────────────────── */
@@ -261,12 +261,12 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
         </div>
         <div className="absolute right-[24%] bottom-[18%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg"
           style={{ background: P.orange }}>
-          <Video className="w-3 h-3 text-white" />
-          <span className="text-[10px] font-bold text-white">Text-to-Video</span>
+          <Video className="w-3 h-3" style={{ color: '#92400E' }} />
+          <span className="text-[10px] font-bold" style={{ color: '#92400E' }}>Text-to-Video</span>
         </div>
         <div className="absolute right-[40%] top-[22%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg"
           style={{ background: P.coral }}>
-          <span className="text-[10px] font-bold text-white">✦ Relight</span>
+          <span className="text-[10px] font-bold" style={{ color: '#881337' }}>✦ Relight</span>
         </div>
       </section>
 

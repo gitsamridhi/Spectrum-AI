@@ -8,12 +8,12 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 const P = {
-  rose:    '#e11d48',
-  orange:  '#FFB347',
-  coral:   '#FF6B86',
+  rose:    '#D97B8C',
+  orange:  '#F5B080',
+  coral:   '#F0A4AF',
   peach:   '#FFBF80',
-  vivid:   '#FF7000',
-  magenta: '#F060EE',
+  vivid:   '#F5956A',
+  magenta: '#D490CC',
   yellow:  '#FFF6A6',
 };
 
