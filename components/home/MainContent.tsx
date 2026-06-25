@@ -7,12 +7,12 @@ import {
 } from 'lucide-react';
 
 const P = {
-  darkRed: '#C62828',
-  coral:   '#FF6B86',
+  darkRed: '#A33550',
+  coral:   '#D46280',
   yellow:  '#FFF6A6',
-  hotPink: '#FFDDE9',   // was #FF2D6B — now soft pastel pink
-  orange:  '#FFB347',
-  rose:    '#e11d48',
+  hotPink: '#FFDDE9',
+  orange:  '#D97E3A',
+  rose:    '#C94060',
 };
 
 const TOOLS = [
@@ -24,47 +24,47 @@ const TOOLS = [
   { id: 'library',    Icon: BookOpen,  label: 'Assets',           desc: 'Your Libraries',     bg: P.darkRed, fg: '#fff'    },
 ];
 
-const GALLERY_TABS = ['All', 'Images', 'Videos', 'Character', 'Concept Art', 'Product', 'Fashion'];
+const GALLERY_TABS = ['All', 'Portrait', 'Fashion', 'Cinematic', 'Character'];
 
 const GALLERY = [
   {
     src: '/pexels-didsss-2791056.jpg',
     videoSrc: '/13167255_trimmed_4s.mp4',
-    views: '1.2K', likes: 320, label: 'Portrait · Golden Hour', tab: 'Images',
+    views: '4.2K', likes: 892, label: 'AI Portrait · Golden Hour', tab: 'Portrait',
     creator: { initial: 'J', color: P.rose },
   },
   {
     src: '/pexels-ganajp-15698413.jpg',
-    videoSrc: '/14674120_trimmed_4s.mp4',
-    views: '987', likes: 214, label: 'Forest Concept Art', tab: 'Concept Art',
-    creator: { initial: 'S', color: '#FF7000' },
+    videoSrc: '/ai_trending1.mp4',
+    views: '2.1K', likes: 564, label: 'Cinematic Landscape · 4K', tab: 'Cinematic',
+    creator: { initial: 'S', color: '#D97E3A' },
   },
   {
     src: '/pexels-olga-178200755-12367292.jpg',
-    videoSrc: '/8312047_trimmed_4s.mp4',
-    views: '1.2K', likes: 320, label: 'Product Photography', tab: 'Product',
-    creator: { initial: 'A', color: '#DB2777' },
+    videoSrc: '/ai_trending2.mp4',
+    views: '3.8K', likes: 1203, label: 'Fashion Editorial · AI Generated', tab: 'Fashion',
+    creator: { initial: 'A', color: '#D46280' },
   },
   {
     src: '/pexels-prathsnap-3168209.jpg',
-    videoSrc: '/18120715_trimmed_4s.mp4',
-    views: '756', likes: 189, label: 'Character Design', tab: 'Character',
-    creator: { initial: 'M', color: '#F060EE' },
+    videoSrc: '/ai_trending3.mp4',
+    views: '1.9K', likes: 445, label: 'Character Concept · Engine v2', tab: 'Character',
+    creator: { initial: 'M', color: '#B050C0' },
   },
 ];
 
 type GalleryItem = typeof GALLERY[0];
 
 const TEMPLATES = [
-  { label: 'Cinematic Trailer',    nodes: 6, gradient: 'from-rose-500 to-red-700',      Icon: Video     },
-  { label: 'Product Ad Generator', nodes: 8, gradient: 'from-orange-400 to-orange-600', Icon: ImageIcon },
-  { label: 'Consistent Character', nodes: 7, gradient: 'from-pink-500 to-rose-600',     Icon: Users     },
-  { label: 'AI Music Video',       nodes: 9, gradient: 'from-violet-500 to-purple-700', Icon: Mic       },
+  { label: 'Cinematic Trailer',    nodes: 6, bg: 'linear-gradient(135deg,#E8748A,#C94060)', accent: '#ffffff', Icon: Video     },
+  { label: 'Product Ad Generator', nodes: 8, bg: 'linear-gradient(135deg,#E89850,#C97030)', accent: '#ffffff', Icon: ImageIcon },
+  { label: 'Consistent Character', nodes: 7, bg: 'linear-gradient(135deg,#E870A8,#C84080)', accent: '#ffffff', Icon: Users     },
+  { label: 'AI Music Video',       nodes: 9, bg: 'linear-gradient(135deg,#9880E8,#7050C0)', accent: '#ffffff', Icon: Mic       },
 ];
 
 /* ── Animated Node Diagram ─────────────────────────────────────────────────── */
 
-function NodeDiagram({ n, cardId }: { n: number; cardId: string }) {
+function NodeDiagram({ n, cardId, color = 'rgba(255,255,255,0.22)' }: { n: number; cardId: string; color?: string }) {
   const all: [number, number][] = [
     [15, 50], [35, 28], [35, 72], [55, 50], [75, 28], [75, 72], [90, 50], [55, 15], [55, 85],
   ];
@@ -97,13 +97,13 @@ function NodeDiagram({ n, cardId }: { n: number; cardId: string }) {
 
       {connections.map((c, i) => (
         <line key={i} x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}
-          stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" />
+          stroke={color} strokeWidth="1.2" />
       ))}
 
       {connections.map((c, i) =>
         React.createElement(
           'circle',
-          { key: `dot${i}`, r: 2.5, fill: 'white', opacity: 0.9, filter: `url(#${filterId})` },
+          { key: `dot${i}`, r: 2.5, fill: color, opacity: 0.9, filter: `url(#${filterId})` },
           React.createElement('animateMotion', {
             dur: `${c.dur}s`,
             repeatCount: 'indefinite',
@@ -114,7 +114,7 @@ function NodeDiagram({ n, cardId }: { n: number; cardId: string }) {
       )}
 
       {pts.map(([x, y], i) => (
-        <rect key={i} x={x - 9} y={y - 6} width="18" height="12" rx="2.5" fill="rgba(255,255,255,0.30)" />
+        <rect key={i} x={x - 9} y={y - 6} width="18" height="12" rx="2.5" fill={color} fillOpacity="0.35" />
       ))}
     </svg>
   );
@@ -209,7 +209,7 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
       <section className="relative overflow-hidden bg-zinc-900" style={{ minHeight: 380 }}>
         <video autoPlay loop muted playsInline preload="auto"
           className="absolute inset-0 w-full h-full object-cover">
-          <source src="/trimmed_16149160_3840_2160_24fps.mp4" type="video/mp4" />
+          <source src="/hero_comp.mp4" type="video/mp4" />
         </video>
         <div className="relative z-10 flex items-center px-10" style={{ minHeight: 380 }}>
           <div className="bg-white/76 backdrop-blur-2xl rounded-3xl px-7 py-6 max-w-[400px] shadow-2xl border border-white/50">
@@ -289,8 +289,40 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
         </div>
       </section>
 
-      {/* ══ 03 · TRENDING CREATIONS ════════════════════════════════════════ */}
-      <section className="px-10 py-5">
+      {/* ══ 03 · CREATE A SPACE ════════════════════════════════════════════ */}
+      <section className="py-10 border-b border-zinc-100 bg-white">
+        <div className="flex flex-col items-center gap-5">
+          <svg width="220" height="160" viewBox="0 0 220 160" fill="none" className="opacity-90">
+            {/* Top card */}
+            <rect x="72" y="16" width="56" height="46" rx="8" fill="white" stroke="#CBD5E1" strokeWidth="1.5"/>
+            {/* Bottom-left card with text lines */}
+            <rect x="28" y="84" width="80" height="58" rx="8" fill="white" stroke="#CBD5E1" strokeWidth="1.5"/>
+            <line x1="43" y1="102" x2="96" y2="102" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="43" y1="113" x2="82" y2="113" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="43" y1="124" x2="90" y2="124" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round"/>
+            {/* Right card (larger) */}
+            <rect x="134" y="56" width="78" height="58" rx="8" fill="white" stroke="#CBD5E1" strokeWidth="1.5"/>
+            {/* Connector dots */}
+            <circle cx="128" cy="39" r="3.5" fill="white" stroke="#94A3B8" strokeWidth="1.5"/>
+            <circle cx="108" cy="113" r="3.5" fill="white" stroke="#94A3B8" strokeWidth="1.5"/>
+            {/* Bezier paths */}
+            <path d="M 128 39 C 131 39 134 60 134 85" fill="none" stroke="#A5B4FC" strokeWidth="1.5"/>
+            <path d="M 108 113 C 122 113 122 85 134 85" fill="none" stroke="#A5B4FC" strokeWidth="1.5"/>
+            <circle cx="134" cy="85" r="3.5" fill="white" stroke="#94A3B8" strokeWidth="1.5"/>
+          </svg>
+          <div className="text-center">
+            <h3 className="text-[18px] font-bold text-zinc-900 mb-1.5">Create a space</h3>
+            <p className="text-[13px] text-zinc-400 leading-relaxed">Build creative workflows on an infinite canvas</p>
+          </div>
+          <button onClick={() => onToolClick('spaces')}
+            className="flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-[12.5px] font-semibold rounded-xl cursor-pointer transition-colors">
+            New space <span className="text-[15px] leading-none">+</span>
+          </button>
+        </div>
+      </section>
+
+      {/* ══ 04 · TRENDING CREATIONS ════════════════════════════════════════ */}
+      <section className="px-10 py-8">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Flame className="w-3.5 h-3.5" style={{ color: P.orange }} />
@@ -323,7 +355,7 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
         </div>
       </section>
 
-      {/* ══ 04 · WORKFLOW TEMPLATES — animated node paths ══════════════════ */}
+      {/* ══ 05 · WORKFLOW TEMPLATES — animated node paths ══════════════════ */}
       <section className="px-10 py-5 bg-zinc-50 border-y border-zinc-100">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -336,25 +368,26 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
           </button>
         </div>
         <div className="grid grid-cols-4 gap-3">
-          {TEMPLATES.map(({ label, nodes, gradient, Icon }, i) => (
+          {TEMPLATES.map(({ label, nodes, bg, accent, Icon }, i) => (
             <div key={i}
               onClick={() => onToolClick('spaces')}
-              className={`group relative bg-gradient-to-br ${gradient} rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-200`}
-              style={{ height: 130 }}>
-              <div className="absolute inset-0 opacity-30 p-2">
-                <NodeDiagram n={nodes} cardId={`tmpl-${i}`} />
+              className="group relative rounded-2xl overflow-hidden cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-200 border"
+              style={{ height: 130, background: bg, borderColor: accent + '30' }}>
+              <div className="absolute inset-0 opacity-40 p-2">
+                <NodeDiagram n={nodes} cardId={`tmpl-${i}`} color={accent + '55'} />
               </div>
               <div className="relative z-10 p-4 h-full flex flex-col justify-between">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
-                    <Icon className="w-3 h-3 text-white" />
+                  <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: accent + '18' }}>
+                    <Icon className="w-3 h-3" style={{ color: accent }} />
                   </div>
-                  <span className="text-[9px] font-bold text-white/60 uppercase tracking-wider">{nodes} Nodes</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: accent + 'aa' }}>{nodes} Nodes</span>
                 </div>
                 <div>
-                  <p className="text-[12.5px] font-bold text-white leading-snug">{label}</p>
+                  <p className="text-[12.5px] font-bold leading-snug" style={{ color: accent }}>{label}</p>
                   <button onClick={e => { e.stopPropagation(); onToolClick('spaces'); }}
-                    className="mt-1 flex items-center gap-1 text-[9.5px] font-semibold text-white/60 hover:text-white transition-colors cursor-pointer">
+                    className="mt-1 flex items-center gap-1 text-[9.5px] font-semibold transition-colors cursor-pointer"
+                    style={{ color: accent + '99' }}>
                     Use template <ArrowRight className="w-2.5 h-2.5" />
                   </button>
                 </div>

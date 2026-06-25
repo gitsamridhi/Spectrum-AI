@@ -126,7 +126,7 @@ export default function Sidebar({ active, setActive, displayName, avatar, onLogo
           <button onClick={() => alert('Notifications: No new notifications.')}
             className="relative p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer">
             <Bell className="w-3.5 h-3.5" />
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-500 rounded-full" />
+            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-300 rounded-full" />
           </button>
           <button onClick={() => alert('Settings panel coming soon. You can customize models, themes, and API keys here.')}
             className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer">

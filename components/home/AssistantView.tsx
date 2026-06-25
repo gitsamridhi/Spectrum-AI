@@ -162,7 +162,7 @@ export default function AssistantView() {
             />
             <button onClick={() => send(input)} disabled={!input.trim() || typing}
               className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-                input.trim() && !typing ? 'bg-rose-600 hover:bg-rose-700' : 'bg-zinc-200 cursor-not-allowed'
+                input.trim() && !typing ? 'bg-rose-400 hover:bg-rose-500' : 'bg-zinc-200 cursor-not-allowed'
               }`}>
               <Send className={`w-4 h-4 ${input.trim() && !typing ? 'text-white' : 'text-zinc-400'}`} />
             </button>
