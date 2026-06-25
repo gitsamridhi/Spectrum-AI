@@ -16,7 +16,6 @@ const IMGS = [
   '/pexels-prathsnap-3168209.jpg',
 ];
 
-/* Small 4s clips for hover preview — light on bandwidth */
 const V = {
   v1: '/13167255_trimmed_4s.mp4',
   v2: '/14674120_trimmed_4s.mp4',
@@ -25,6 +24,12 @@ const V = {
   v5: '/16034575_trimmed_4s.mp4',
   v6: '/15498647_trimmed_4s.mp4',
   showcase: '/trimmed_15475072_3840_2160_30fps.mp4',
+  ai1: '/ai_trending1.mp4',
+  ai2: '/ai_trending2.mp4',
+  ai3: '/ai_trending3.mp4',
+  ai4: '/trimmed_12978359_3840_2160_30fps.mp4',
+  ai5: '/trimmed_14297399_1920_1080_60fps.mp4',
+  ai6: '/trimmed_16099907_3840_2160_120fps.mp4',
 };
 
 interface Asset {
@@ -48,24 +53,24 @@ interface MasonryAsset extends Asset {
 /* ── Masonry feed — true mixed image/video grid ───────────────────────────── */
 
 const MASONRY_ASSETS: MasonryAsset[] = [
-  { src: IMGS[0], prompt: 'cinematic portrait, golden hour venetian blinds, 35mm Fujifilm grain', model: 'Portrait Ultra', seed: '4829301', ratio: '3:2', type: 'image', tag: 'Portrait', likes: 2841, ar: '3/2', creatorInitial: 'J', creatorColor: P.rose },
-  { src: IMGS[1], prompt: 'vertical fashion editorial, neon city background, ultra-sharp Vogue', model: 'Portrait Ultra', seed: '8811234', ratio: '9:16', type: 'video', videoSrc: V.v5, tag: 'Fashion', likes: 5600, ar: '9/16', creatorInitial: 'K', creatorColor: P.vivid },
-  { src: IMGS[2], prompt: 'macro product photography, luxury timepiece, razor-sharp depth of field', model: 'Product Studio', seed: '2290811', ratio: '1:1', type: 'image', tag: 'Studio', likes: 3104, ar: '1/1', creatorInitial: 'A', creatorColor: P.hotPink },
-  { src: IMGS[3], prompt: 'aerial establishing shot, megacity at dusk, neon reflections on wet streets', model: 'Landscape Pro', seed: '7731044', ratio: '16:9', type: 'video', videoSrc: V.showcase, tag: 'Aerial', likes: 1923, ar: '16/9', creatorInitial: 'S', creatorColor: P.magenta },
-  { src: IMGS[0], prompt: 'avant-garde streetwear, Tokyo alley, Vogue magazine editorial shoot', model: 'Portrait Ultra', seed: '1239087', ratio: '2:3', type: 'video', videoSrc: V.v2, tag: 'Streetwear', likes: 4400, ar: '2/3', creatorInitial: 'M', creatorColor: P.orange },
-  { src: IMGS[1], prompt: 'cinematic sky and clouds, dramatic lighting, golden hour wide landscape', model: 'Cinematic', seed: '9938272', ratio: '16:9', type: 'image', tag: 'Landscape', likes: 1204, ar: '16/9', creatorInitial: 'R', creatorColor: P.coral },
-  { src: IMGS[2], prompt: 'neon cyberpunk portrait, fast turbo generation, vivid tones', model: 'Turbo v2', seed: '1029384', ratio: '1:1', type: 'image', tag: 'Cyberpunk', likes: 892, ar: '1/1', creatorInitial: 'N', creatorColor: P.peach },
-  { src: IMGS[3], prompt: 'luxury brand campaign, white studio, couture model, high-key lighting', model: 'Product Studio', seed: '3344551', ratio: '2:3', type: 'video', videoSrc: V.v6, tag: 'Luxury', likes: 3900, ar: '2/3', creatorInitial: 'V', creatorColor: P.rose },
-  { src: IMGS[0], prompt: 'golden hour street portrait, warm cinematic grade, film grain overlay', model: 'Turbo v2', seed: '6629018', ratio: '3:2', type: 'image', tag: 'Street', likes: 740, ar: '3/2', creatorInitial: 'L', creatorColor: P.vivid },
-  { src: IMGS[1], prompt: 'abstract geometric neon, instant generation, bold electric colors', model: 'Turbo v2', seed: '3847561', ratio: '9:16', type: 'video', videoSrc: V.v4, tag: 'Abstract', likes: 540, ar: '9/16', creatorInitial: 'T', creatorColor: P.magenta },
+  { src: IMGS[0], prompt: 'cinematic portrait, golden hour venetian blinds, 35mm grain, AI Portrait Ultra', model: 'Portrait Ultra', seed: '4829301', ratio: '3:2', type: 'image', tag: 'Portrait', likes: 2841, ar: '3/2', creatorInitial: 'J', creatorColor: P.rose },
+  { src: IMGS[1], prompt: 'vertical fashion editorial, neon city background, ultra-sharp, AI generated', model: 'Portrait Ultra', seed: '8811234', ratio: '9:16', type: 'video', videoSrc: V.ai2, tag: 'Fashion', likes: 5600, ar: '9/16', creatorInitial: 'K', creatorColor: P.vivid },
+  { src: IMGS[2], prompt: 'macro product photography, luxury timepiece, razor-sharp depth, AI Studio', model: 'Product Studio', seed: '2290811', ratio: '1:1', type: 'image', tag: 'Product', likes: 3104, ar: '1/1', creatorInitial: 'A', creatorColor: P.hotPink },
+  { src: IMGS[3], prompt: 'aerial establishing shot, megacity at dusk, neon reflections, AI Cinematic 4K', model: 'Landscape Pro', seed: '7731044', ratio: '16:9', type: 'video', videoSrc: V.ai3, tag: 'Aerial', likes: 1923, ar: '16/9', creatorInitial: 'S', creatorColor: P.magenta },
+  { src: IMGS[0], prompt: 'avant-garde streetwear editorial, Tokyo alley, AI Portrait Ultra', model: 'Portrait Ultra', seed: '1239087', ratio: '2:3', type: 'video', videoSrc: V.v2, tag: 'Streetwear', likes: 4400, ar: '2/3', creatorInitial: 'M', creatorColor: P.orange },
+  { src: IMGS[1], prompt: 'cinematic sky and clouds, dramatic golden hour, AI Landscape Pro', model: 'Cinematic', seed: '9938272', ratio: '16:9', type: 'image', tag: 'Landscape', likes: 1204, ar: '16/9', creatorInitial: 'R', creatorColor: P.coral },
+  { src: IMGS[2], prompt: 'neon cyberpunk portrait, electric tones, AI Turbo v2 instant generation', model: 'Turbo v2', seed: '1029384', ratio: '1:1', type: 'image', tag: 'Cyberpunk', likes: 892, ar: '1/1', creatorInitial: 'N', creatorColor: P.peach },
+  { src: IMGS[3], prompt: 'luxury brand campaign, white studio, couture model, AI high-key lighting', model: 'Product Studio', seed: '3344551', ratio: '2:3', type: 'video', videoSrc: V.ai5, tag: 'Luxury', likes: 3900, ar: '2/3', creatorInitial: 'V', creatorColor: P.rose },
+  { src: IMGS[0], prompt: 'golden hour street portrait, warm cinematic grade, AI film grain overlay', model: 'Turbo v2', seed: '6629018', ratio: '3:2', type: 'image', tag: 'Street', likes: 740, ar: '3/2', creatorInitial: 'L', creatorColor: P.vivid },
+  { src: IMGS[1], prompt: 'abstract geometric neon, bold electric colors, AI Turbo v2 instant', model: 'Turbo v2', seed: '3847561', ratio: '9:16', type: 'video', videoSrc: V.v4, tag: 'Abstract', likes: 540, ar: '9/16', creatorInitial: 'T', creatorColor: P.magenta },
 ];
 
 /* ── Showcase sections ────────────────────────────────────────────────────── */
 
 const CINEMATIC: Asset[] = [
-  { src: IMGS[3], prompt: 'aerial establishing shot, megacity at dusk, neon reflections, ARRI Alexa cinematic', model: 'Landscape Pro', seed: '7731044', ratio: '16:9', type: 'video', videoSrc: V.showcase, tag: '4K Cinematic', likes: 2841, creatorInitial: 'J', creatorColor: P.rose },
-  { src: IMGS[0], prompt: 'cinematic portrait, golden hour venetian blinds, 35mm Fujifilm grain, IMAX 4K', model: 'Portrait Ultra', seed: '4829301', ratio: '3:2', type: 'image', tag: 'Portrait', likes: 1923, creatorInitial: 'S', creatorColor: P.vivid },
-  { src: IMGS[2], prompt: 'macro product photography, luxury timepiece, razor-sharp depth, studio chrome 8K', model: 'Product Studio', seed: '2290811', ratio: '1:1', type: 'image', tag: 'Studio', likes: 3104, creatorInitial: 'A', creatorColor: P.hotPink },
+  { src: IMGS[3], prompt: 'aerial establishing shot, megacity at dusk, neon reflections, AI Cinematic 4K', model: 'Landscape Pro', seed: '7731044', ratio: '16:9', type: 'video', videoSrc: V.ai6, tag: '4K Cinematic', likes: 2841, creatorInitial: 'J', creatorColor: P.rose },
+  { src: IMGS[0], prompt: 'cinematic portrait, golden hour venetian blinds, 35mm grain, AI Portrait Ultra', model: 'Portrait Ultra', seed: '4829301', ratio: '3:2', type: 'video', videoSrc: V.ai1, tag: 'Portrait', likes: 1923, creatorInitial: 'S', creatorColor: P.vivid },
+  { src: IMGS[2], prompt: 'macro product photography, luxury timepiece, razor-sharp depth, AI Product Studio', model: 'Product Studio', seed: '2290811', ratio: '1:1', type: 'video', videoSrc: V.v3, tag: 'Studio', likes: 3104, creatorInitial: 'A', creatorColor: P.hotPink },
 ];
 
 const TURBO: Asset[] = [
@@ -221,6 +226,14 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
   const [ratioFilter, setRatioFilter] = useState('All');
   const [copied, setCopied]           = useState<string | null>(null);
 
+  const filteredMasonry = MASONRY_ASSETS.filter(a => {
+    const typeMatch = assetFilter === 'All'
+      || (assetFilter === 'Images' && a.type === 'image')
+      || (assetFilter === 'Video'  && a.type === 'video');
+    const ratioMatch = ratioFilter === 'All' || a.ratio === ratioFilter;
+    return typeMatch && ratioMatch;
+  });
+
   const tryPreset = (title: string) => {
     setCopied(title);
     setTimeout(() => setCopied(null), 1800);
@@ -262,8 +275,8 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
           <section>
             <SectionHeader label="Featured Creations" badge="LIVE FEED" color={P.rose} action="View all" onAction={() => onToolClick('explore')} />
             <div style={{ columnCount: 4, columnGap: '12px' }}>
-              {MASONRY_ASSETS.map((asset, i) => (
-                <div key={i} onClick={() => onToolClick('image')} style={{ breakInside: 'avoid', marginBottom: '12px' }}>
+              {(filteredMasonry.length > 0 ? filteredMasonry : MASONRY_ASSETS).map((asset, i) => (
+                <div key={i} onClick={() => onToolClick(asset.type === 'video' ? 'video' : 'image')} style={{ breakInside: 'avoid', marginBottom: '12px' }}>
                   <MasonryCard asset={asset} />
                 </div>
               ))}

@@ -10,6 +10,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const CATS = ['All', 'Image', 'Video', 'Audio', 'Spaces', 'Design', '3D', 'Flows'];
 
+const CAT_COLOR: Record<string, { bg: string; fg: string }> = {
+  Image:  { bg: '#FFF0F3', fg: '#C94060' },
+  Video:  { bg: '#FFF7ED', fg: '#D97E3A' },
+  Audio:  { bg: '#F5F3FF', fg: '#7C3AED' },
+  Spaces: { bg: '#EEF2FF', fg: '#4338CA' },
+  Design: { bg: '#FFFBEB', fg: '#B45309' },
+  '3D':   { bg: '#F0FDF4', fg: '#059669' },
+  Flows:  { bg: '#F0F9FF', fg: '#0284C7' },
+};
+
 const TOOLS = [
   // Image
   { cat: 'Image',  icon: ImageIcon,     label: 'Image Generator',    desc: 'Create images from text prompts',          id: 'image',     pinned: true  },
@@ -114,8 +124,10 @@ export default function AllToolsView({ onClose, onNavigate }: AllToolsViewProps)
                   return (
                     <button key={i} onClick={() => { onNavigate(tool.id); onClose(); }}
                       className="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl hover:bg-zinc-50 transition-colors cursor-pointer text-left">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-zinc-100 group-hover:bg-indigo-50 transition-colors">
-                        <Icon className="w-[17px] h-[17px] text-zinc-500 group-hover:text-indigo-600 transition-colors" />
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors"
+                        style={{ background: CAT_COLOR[tool.cat]?.bg ?? '#F4F4F5' }}>
+                        <Icon className="w-[17px] h-[17px]"
+                          style={{ color: CAT_COLOR[tool.cat]?.fg ?? '#52525B' }} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[13px] font-semibold text-zinc-800 leading-snug">{tool.label}</p>
