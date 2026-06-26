@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import {
-  LayoutDashboard, User, List,
+  LayoutDashboard, User, List, ChevronLeft,
   Share2, Download, Eye, EyeOff,
   Plus, Trash2, Copy, GripVertical, ChevronDown,
   CheckCircle2, AlertCircle, Sparkles, Star,
@@ -154,251 +154,213 @@ function ScoreMeter({ score, size = 180 }: { score: number; size?: number }) {
 
 // ── Dashboard Tab ─────────────────────────────────────────────────────────────
 function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
-  const { T, isDark } = useTheme();
+  const { T } = useTheme();
+
+  const ALL_PHOTOS = [
+    PORTFOLIO_PHOTOS.h1, PORTFOLIO_PHOTOS.h2, PORTFOLIO_PHOTOS.h3,
+    PORTFOLIO_PHOTOS.h4, PORTFOLIO_PHOTOS.h5, PORTFOLIO_PHOTOS.h6, PORTFOLIO_PHOTOS.h7,
+  ];
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: T.bg }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: T.bg }}>
 
-      {/* ── HERO BANNER ── gradient full-width card */}
-      <div className="relative overflow-hidden"
-        style={{ height: 200, background: isDark ? '#09090b' : '#0f0f14' }}>
-        {/* Gradient glow */}
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 90% 130% at 20% 50%, rgba(236,72,153,.55) 0%, rgba(168,85,247,.35) 38%, transparent 65%), radial-gradient(ellipse 60% 80% at 80% 50%, rgba(168,85,247,.30) 0%, transparent 60%)' }} />
-        {/* Photo strip (right side) */}
-        <div className="absolute right-0 top-0 bottom-0 flex gap-0.5 overflow-hidden" style={{ width: '42%' }}>
-          {[PORTFOLIO_PHOTOS.h1, PORTFOLIO_PHOTOS.h2, PORTFOLIO_PHOTOS.h3].map((src, i) => (
-            <div key={i} className="flex-1 h-full relative overflow-hidden"
-              style={{ opacity: i === 0 ? 1 : i === 1 ? 0.75 : 0.45 }}>
-              <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
-            </div>
-          ))}
-          {/* Fade overlay on photo strip */}
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, #09090b 0%, transparent 30%, transparent 100%)' }} />
+      <style>{`
+        @keyframes ph-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .ph-marquee { display: flex; gap: 6px; width: max-content; animation: ph-marquee 28s linear infinite; }
+        .ph-marquee:hover { animation-play-state: paused; }
+      `}</style>
+
+      {/* ── HEADER ── */}
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: `1px solid ${T.border}`, background: T.bg }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: '.13em', textTransform: 'uppercase', padding: '3px 9px', borderRadius: 20, background: PA.blueBg, color: PA.blue, border: `1px solid ${PA.blueBdr}` }}>
+              Portfolio Ready
+            </span>
+            <span style={{ fontSize: 9.5, color: T.textMuted }}>Score 78/100 · Updated 2h ago</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-.03em', color: T.text, margin: 0, lineHeight: 1.1 }}>Sarah Chen</h1>
+            <span style={{ fontSize: 13, fontWeight: 400, color: T.textMuted }}>Fashion Model · New York</span>
+          </div>
         </div>
-        {/* Left content */}
-        <div className="absolute inset-0 flex flex-col justify-center px-8 z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full text-white/70"
-              style={{ background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.18)' }}>
-              Portfolio Ready · Score 78
-            </span>
-            <span className="text-[9px] text-white/38">Updated 2h ago</span>
-          </div>
-          <h1 className="text-[34px] font-black tracking-[-0.04em] text-white leading-[1.06] mb-4"
-            style={{ fontFamily: 'Inter Tight, sans-serif', textShadow: '0 0 40px rgba(236,72,153,.4)' }}>
-            Sarah Chen
-            <span className="block text-[15px] font-medium tracking-normal text-white/48" style={{ textShadow: 'none' }}>
-              Fashion Model · New York
-            </span>
-          </h1>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-bold text-white cursor-pointer hover:opacity-90 transition-all"
-              style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 4px 20px rgba(236,72,153,.45)' }}>
-              <Share2 className="w-3.5 h-3.5" /> Share Link
-            </button>
-            <button className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-semibold text-white/70 cursor-pointer transition-all hover:text-white"
-              style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.14)' }}>
-              <Download className="w-3.5 h-3.5" /> Export PDF
-            </button>
-            <button onClick={() => onSwitchTab('score')}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-semibold text-white/70 cursor-pointer transition-all hover:text-white"
-              style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.14)' }}>
-              <BarChart2 className="w-3.5 h-3.5" /> Score Details
-            </button>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '8px 16px', borderRadius: 10, background: 'linear-gradient(135deg,#EC4899,#A855F7)', color: '#fff', fontSize: 11.5, fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 3px 12px rgba(236,72,153,.28)' }}>
+            <Share2 style={{ width: 13, height: 13 }} /> Share Link
+          </button>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '8px 16px', borderRadius: 10, background: T.bgSub, color: T.textSub, fontSize: 11.5, fontWeight: 600, border: `1px solid ${T.border}`, cursor: 'pointer' }}>
+            <Download style={{ width: 13, height: 13 }} /> Export PDF
+          </button>
         </div>
       </div>
 
       {/* ── BODY ── */}
-      <div className="max-w-[1200px] mx-auto px-8 py-6 grid grid-cols-3 gap-6">
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
-        {/* ── Left/Center (2 cols) ── */}
-        <div className="col-span-2 flex flex-col gap-6">
+        {/* ── MAIN ── */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '18px 22px', display: 'flex', flexDirection: 'column', gap: 18, scrollbarWidth: 'none' }}>
 
-          {/* EDITORIAL PHOTO SHOWCASE */}
+          {/* Portfolio Showcase */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[13px] font-bold" style={{ color: T.text }}>Portfolio Showcase</h3>
-              <button className="flex items-center gap-1 text-[11px] font-medium cursor-pointer" style={{ color: PA.blue }}>
-                View all <ArrowUpRight className="w-3 h-3" />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <h3 style={{ fontSize: 12, fontWeight: 700, color: T.text, margin: 0 }}>Portfolio Showcase</h3>
+              <button style={{ fontSize: 10, color: PA.blue, cursor: 'pointer', background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: 3 }}>
+                View all <ArrowUpRight style={{ width: 10, height: 10 }} />
               </button>
             </div>
-            {/* Magazine-style grid: 1 large left + 2 right stacked + 2 bottom */}
-            <div className="grid grid-cols-12 gap-2" style={{ height: 320 }}>
-              {/* Big hero shot */}
-              <div className="col-span-5 row-span-2 group relative rounded-2xl overflow-hidden cursor-pointer"
-                style={{ background: T.bgCard }}>
-                <img src={PORTFOLIO_PHOTOS.h7} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: 'linear-gradient(to top, rgba(0,0,0,.75), transparent 55%)' }} />
-                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                  <p className="text-[11px] font-semibold text-white">Test Shoot</p>
-                  <p className="text-[9px] text-white/60">@polaroidsbynuel</p>
-                </div>
+
+            {/* One large landscape hero card */}
+            <div style={{ borderRadius: 14, overflow: 'hidden', position: 'relative', height: 244, marginBottom: 8, background: T.bgCard, cursor: 'pointer' }}>
+              <video
+                src="/hero_video2.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+              <div style={{ position: 'absolute', top: 10, left: 10, padding: '3px 9px', borderRadius: 20, background: 'rgba(236,72,153,.88)', color: '#fff', fontSize: 8, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>
+                FEATURED
               </div>
-              {/* Top right */}
-              <div className="col-span-4 group relative rounded-2xl overflow-hidden cursor-pointer"
-                style={{ background: T.bgCard }}>
-                <img src={PORTFOLIO_PHOTOS.h1} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: 'rgba(0,0,0,.3)' }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '22px 14px 12px', background: 'linear-gradient(to top, rgba(0,0,0,.58) 0%, transparent 100%)' }}>
+                <p style={{ fontSize: 11, fontWeight: 600, color: '#fff', margin: 0 }}>Portfolio Showcase · Sarah Chen</p>
               </div>
-              {/* Top far right */}
-              <div className="col-span-3 group relative rounded-2xl overflow-hidden cursor-pointer"
-                style={{ background: T.bgCard }}>
-                <img src={PORTFOLIO_PHOTOS.h5} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: 'rgba(0,0,0,.3)' }} />
-              </div>
-              {/* Bottom right */}
-              <div className="col-span-4 group relative rounded-2xl overflow-hidden cursor-pointer"
-                style={{ background: T.bgCard }}>
-                <img src={PORTFOLIO_PHOTOS.h2} alt="" className="absolute inset-0 w-full h-full object-cover object-center" />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: 'rgba(0,0,0,.3)' }} />
-              </div>
-              {/* Bottom far right */}
-              <div className="col-span-3 group relative rounded-2xl overflow-hidden cursor-pointer"
-                style={{ background: T.bgCard }}>
-                <img src={PORTFOLIO_PHOTOS.h6} alt="" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: 'rgba(0,0,0,.3)' }} />
+            </div>
+
+            {/* Horizontal animated scroll strip */}
+            <div style={{ overflow: 'hidden', borderRadius: 8 }}>
+              <div className="ph-marquee">
+                {[...ALL_PHOTOS, ...ALL_PHOTOS].map((src, i) => (
+                  <div key={i} style={{ flexShrink: 0, width: 130, height: 94, borderRadius: 8, overflow: 'hidden', background: T.bgCard, cursor: 'pointer' }}>
+                    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* AI OUTPUTS row */}
+          {/* Recent AI Outputs */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[13px] font-bold" style={{ color: T.text }}>Recent AI Outputs</h3>
-              <button className="flex items-center gap-1 text-[11px] font-medium cursor-pointer" style={{ color: T.textMuted }}>
-                View all <ArrowUpRight className="w-3 h-3" />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <h3 style={{ fontSize: 12, fontWeight: 700, color: T.text, margin: 0 }}>Recent AI Outputs</h3>
+              <button style={{ fontSize: 10, color: T.textMuted, cursor: 'pointer', background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: 3 }}>
+                View all <ArrowUpRight style={{ width: 10, height: 10 }} />
               </button>
             </div>
-            <div className="grid grid-cols-4 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }}>
               {OUTPUTS.map((o, i) => (
-                <div key={i} className="group relative rounded-xl overflow-hidden cursor-pointer"
-                  style={{ aspectRatio: '3/4', background: T.bgCard }}>
-                  <img src={o.src} alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ background: 'linear-gradient(to top, rgba(0,0,0,.7), transparent 55%)' }} />
-                  <div className="absolute bottom-0 left-0 right-0 p-2.5 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                    <p className="text-[10px] font-semibold text-white leading-tight">{o.label}</p>
+                <div key={i} style={{ aspectRatio: '3/4', borderRadius: 12, overflow: 'hidden', position: 'relative', background: T.bgCard, cursor: 'pointer' }}>
+                  <img src={o.src} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '20px 9px 8px', background: 'linear-gradient(to top, rgba(0,0,0,.65) 0%, transparent 100%)' }}>
+                    <p style={{ fontSize: 9, fontWeight: 600, color: '#fff', lineHeight: 1.3, margin: 0 }}>{o.label}</p>
                   </div>
-                  <div className="absolute top-2 left-2 w-5 h-5 rounded-full text-[8px] font-black text-white flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg,#EC4899,#A855F7)' }}>
+                  <div style={{ position: 'absolute', top: 6, left: 6, width: 17, height: 17, borderRadius: '50%', background: 'linear-gradient(135deg,#EC4899,#A855F7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 7.5, fontWeight: 900, color: '#fff' }}>
                     {i + 1}
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
         </div>
 
-        {/* ── Right col ── */}
-        <div className="flex flex-col gap-4">
+        {/* ── RIGHT SIDEBAR (flush to right edge) ── */}
+        <div style={{ width: 264, flexShrink: 0, borderLeft: `1px solid ${T.border}`, overflowY: 'auto', display: 'flex', flexDirection: 'column', scrollbarWidth: 'none' }}>
 
-          {/* Score + stats */}
-          <div className="rounded-2xl p-5" style={{ background: T.bgSub, border: `1px solid ${T.border}` }}>
-            <div className="flex items-center gap-4 mb-4">
-              <ScoreMeter score={SCORE_TOTAL} size={80} />
-              <div>
-                <p className="text-[12px] font-bold" style={{ color: T.text }}>Profile Score</p>
-                <p className="text-[10.5px] leading-relaxed mt-0.5" style={{ color: T.textMuted }}>
-                  Fill Measurements to reach <strong style={{ color: PA.blue }}>85+</strong>
-                </p>
-              </div>
+          {/* Profile Score */}
+          <div style={{ padding: '18px 16px 14px', borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <p style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', color: T.textMuted, margin: 0 }}>Profile Score</p>
+              <button onClick={() => onSwitchTab('score')} style={{ fontSize: 9.5, color: PA.blue, cursor: 'pointer', background: 'none', border: 'none' }}>Details →</button>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 8 }}>
+              <span style={{ fontSize: 58, fontWeight: 900, lineHeight: 1, letterSpacing: '-.05em', background: 'linear-gradient(135deg,#EC4899,#A855F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' } as React.CSSProperties}>78</span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: T.textMuted }}>/100</span>
+            </div>
+            <div style={{ height: 4, borderRadius: 9999, background: T.bgCard, overflow: 'hidden', marginBottom: 10 }}>
+              <div style={{ height: '100%', width: '78%', borderRadius: 9999, background: 'linear-gradient(90deg,#EC4899,#A855F7)', boxShadow: '0 0 8px rgba(236,72,153,.3)' }} />
+            </div>
+            {BREAKDOWN.slice(0, 4).map(b => (
+              <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
+                <span style={{ fontSize: 9, color: T.textMuted, width: 74, flexShrink: 0 }}>{b.label}</span>
+                <div style={{ flex: 1, height: 2.5, borderRadius: 9999, background: T.bgCard, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${b.pct}%`, borderRadius: 9999, background: b.color }} />
+                </div>
+                <span style={{ fontSize: 8, fontWeight: 700, color: T.textSub, width: 20, textAlign: 'right' }}>{b.pct}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6 }}>
               {[
                 { label: 'Outputs',  val: 24, col: PA.blue  },
                 { label: 'Versions', val: 3,  col: PA.teal  },
                 { label: 'Reviews',  val: 2,  col: PA.amber },
               ].map(s => (
-                <div key={s.label} className="rounded-xl py-2.5 flex flex-col items-center gap-0.5"
-                  style={{ background: T.bg, border: `1px solid ${T.border}` }}>
-                  <span className="text-[20px] font-black tracking-[-0.03em]" style={{ color: s.col }}>{s.val}</span>
-                  <span className="text-[9px] font-medium" style={{ color: T.textMuted }}>{s.label}</span>
+                <div key={s.label} style={{ borderRadius: 9, padding: '9px 4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, background: T.bgSub, border: `1px solid ${T.border}` }}>
+                  <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-.03em', color: s.col, lineHeight: 1 }}>{s.val}</span>
+                  <span style={{ fontSize: 8.5, color: T.textMuted }}>{s.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Versions */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[12px] font-bold" style={{ color: T.text }}>Versions</h3>
-              <button className="text-[10px] font-semibold cursor-pointer" style={{ color: PA.blue }}>+ New</button>
+          <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <p style={{ fontSize: 10.5, fontWeight: 700, color: T.text, margin: 0 }}>Versions</p>
+              <button style={{ fontSize: 9.5, color: PA.blue, cursor: 'pointer', background: 'none', border: 'none' }}>+ New</button>
             </div>
-            <div className="space-y-1.5">
-              {VERSIONS.map((v, i) => (
-                <div key={i} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-colors"
-                  style={{ background: T.bgSub, border: `1px solid ${T.border}` }}
-                  onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
-                  onMouseLeave={e => (e.currentTarget.style.background = T.bgSub)}>
-                  <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0"
-                    style={v.published
-                      ? { background: PA.blueBg, border: `1px solid ${PA.blueBdr}` }
-                      : { background: T.bgCard, border: `1px solid ${T.border}` }}>
-                    {v.published
-                      ? <CheckCircle2 className="w-3 h-3" style={{ color: PA.blue }} />
-                      : <Star className="w-3 h-3" style={{ color: T.textMuted }} />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-semibold truncate" style={{ color: T.text }}>{v.name}</p>
-                    <p className="text-[9.5px]" style={{ color: T.textMuted }}>{v.items} items · {v.updated}</p>
-                  </div>
+            {VERSIONS.map((v, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 9px', borderRadius: 9, marginBottom: 3, background: T.bgSub, border: `1px solid ${T.border}`, cursor: 'pointer' }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
+                onMouseLeave={e => (e.currentTarget.style.background = T.bgSub)}>
+                <div style={{ width: 15, height: 15, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: v.published ? PA.blueBg : T.bgCard, border: `1px solid ${v.published ? PA.blueBdr : T.border}` }}>
+                  {v.published
+                    ? <CheckCircle2 style={{ width: 8.5, height: 8.5, color: PA.blue }} />
+                    : <Star style={{ width: 8.5, height: 8.5, color: T.textMuted }} />}
                 </div>
-              ))}
-            </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 9.5, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: T.text }}>{v.name}</p>
+                  <p style={{ fontSize: 8.5, color: T.textMuted, margin: 0 }}>{v.items} items · {v.updated}</p>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Reviews */}
-          <div>
-            <h3 className="text-[12px] font-bold mb-2" style={{ color: T.text }}>Pending Reviews</h3>
-            <div className="space-y-1.5">
-              {REVIEWS.map((r, i) => (
-                <div key={i} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl"
-                  style={{ background: T.bgSub, border: `1px solid ${T.border}` }}>
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-[9.5px] font-bold text-white shrink-0"
-                    style={{ background: `linear-gradient(135deg, ${r.color}, ${r.color}cc)` }}>{r.initials}</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-semibold" style={{ color: T.text }}>{r.from}</p>
-                    <p className="text-[9.5px]" style={{ color: T.textMuted }}>{r.sent}</p>
-                  </div>
-                  <span className="text-[8.5px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full"
-                    style={r.status === 'pending'
-                      ? { background: PA.amberBg, color: PA.amber, border: `1px solid ${PA.amberBdr}` }
-                      : { background: PA.tealBg,  color: PA.teal,  border: `1px solid ${PA.tealBdr}` }}>
-                    {r.status}
-                  </span>
+          {/* Pending Reviews */}
+          <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.border}` }}>
+            <p style={{ fontSize: 10.5, fontWeight: 700, color: T.text, marginBottom: 8, marginTop: 0 }}>Pending Reviews</p>
+            {REVIEWS.map((r, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 9px', borderRadius: 9, marginBottom: 3, background: T.bgSub, border: `1px solid ${T.border}` }}>
+                <div style={{ width: 25, height: 25, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8.5, fontWeight: 700, color: '#fff', flexShrink: 0, background: `linear-gradient(135deg,${r.color},${r.color}bb)` }}>{r.initials}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 9.5, fontWeight: 600, margin: 0, color: T.text }}>{r.from}</p>
+                  <p style={{ fontSize: 8.5, color: T.textMuted, margin: 0 }}>{r.sent}</p>
                 </div>
-              ))}
-            </div>
+                <span style={{ fontSize: 7.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', padding: '2px 6px', borderRadius: 20, background: r.status === 'pending' ? PA.amberBg : PA.tealBg, color: r.status === 'pending' ? PA.amber : PA.teal, border: `1px solid ${r.status === 'pending' ? PA.amberBdr : PA.tealBdr}` }}>{r.status}</span>
+              </div>
+            ))}
           </div>
 
-          {/* AI suggestions */}
-          <div>
-            <h3 className="text-[12px] font-bold mb-2" style={{ color: T.text }}>AI Suggestions</h3>
-            <div className="space-y-1.5">
-              {SUGGESTIONS.slice(0, 3).map((s, i) => (
-                <div key={i} className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-colors"
-                  style={{ background: T.bgSub, border: `1px solid ${T.border}` }}
-                  onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
-                  onMouseLeave={e => (e.currentTarget.style.background = T.bgSub)}>
-                  <div className="w-4 h-4 rounded-md shrink-0 mt-0.5 flex items-center justify-center"
-                    style={{ background: PA.blueBg }}>
-                    <s.icon className="w-2.5 h-2.5" style={{ color: PA.blue }} />
-                  </div>
-                  <div>
-                    <p className="text-[10.5px] leading-snug" style={{ color: T.textSub }}>{s.text}</p>
-                    <span className="text-[8.5px] font-bold mt-1 inline-block px-1.5 py-0.5 rounded"
-                      style={{ background: PA.blueBg, color: PA.blue }}>{s.tag}</span>
-                  </div>
+          {/* AI Suggestions */}
+          <div style={{ padding: '12px 16px' }}>
+            <p style={{ fontSize: 10.5, fontWeight: 700, color: T.text, marginBottom: 8, marginTop: 0 }}>AI Suggestions</p>
+            {SUGGESTIONS.slice(0, 3).map((s, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 7, padding: '7px 9px', borderRadius: 9, marginBottom: 4, background: T.bgSub, border: `1px solid ${T.border}`, cursor: 'pointer' }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
+                onMouseLeave={e => (e.currentTarget.style.background = T.bgSub)}>
+                <div style={{ width: 14, height: 14, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1.5, background: PA.blueBg }}>
+                  <s.icon style={{ width: 8, height: 8, color: PA.blue }} />
                 </div>
-              ))}
-            </div>
+                <div>
+                  <p style={{ fontSize: 9.5, lineHeight: 1.4, color: T.textSub, margin: '0 0 3px' }}>{s.text}</p>
+                  <span style={{ fontSize: 8, fontWeight: 700, padding: '1.5px 5px', borderRadius: 4, background: PA.blueBg, color: PA.blue }}>{s.tag}</span>
+                </div>
+              </div>
+            ))}
           </div>
 
         </div>
@@ -808,63 +770,68 @@ const NAV_GROUPS = [
 ];
 
 // ── Main exported view ────────────────────────────────────────────────────────
-export default function PortfolioBuilderView() {
+export default function PortfolioBuilderView({ onBack }: { onBack?: () => void }) {
   const { T } = useTheme();
   const [view, setView] = useState<ViewId>('dashboard');
 
   return (
     <div className="flex-1 flex overflow-hidden" style={{ background: T.bg }}>
 
-      {/* ── Left sub-nav ── */}
-      <div className="w-[168px] shrink-0 flex flex-col"
+      {/* ── Left sub-nav (compact icon-only) ── */}
+      <div className="w-12 shrink-0 flex flex-col"
         style={{ borderRight: `1px solid ${T.border}`, background: T.bgSub }}>
 
-        {/* Brand strip */}
-        <div className="shrink-0 flex items-center gap-2 px-4 h-14"
+        {/* Back + logo */}
+        <div className="shrink-0 flex flex-col items-center gap-1 py-2.5"
           style={{ borderBottom: `1px solid ${T.border}` }}>
-          <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: 'linear-gradient(135deg, rgba(236,72,153,0.20), rgba(168,85,247,0.18))', border: `1px solid rgba(236,72,153,0.32)` }}>
+          {onBack && (
+            <button onClick={onBack} title="Back"
+              className="w-8 h-8 flex items-center justify-center rounded-xl cursor-pointer transition-all"
+              style={{ color: T.textMuted }}
+              onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          )}
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, rgba(236,72,153,.18), rgba(168,85,247,.15))', border: `1px solid rgba(236,72,153,.28)` }}>
             <LayoutDashboard className="w-3.5 h-3.5" style={{ color: PA.blue }} />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[12px] font-bold tracking-[-0.02em] leading-tight" style={{ color: T.text }}>Portfolio</p>
-            <p className="text-[9.5px] font-semibold leading-tight" style={{ background: 'linear-gradient(90deg, #EC4899, #A855F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{SCORE_TOTAL} / 100</p>
           </div>
         </div>
 
-        {/* Nav groups */}
-        <div className="flex-1 overflow-y-auto py-3 px-2" style={{ scrollbarWidth: 'none' }}>
-          {NAV_GROUPS.map(group => (
-            <div key={group.label} className="mb-4">
-              <p className="text-[8.5px] font-bold uppercase tracking-widest px-2 mb-1"
-                style={{ color: T.textMuted }}>{group.label}</p>
+        {/* Nav icons */}
+        <div className="flex-1 overflow-y-auto py-2" style={{ scrollbarWidth: 'none' }}>
+          {NAV_GROUPS.map((group, gi) => (
+            <div key={group.label}>
+              {gi > 0 && <div className="mx-3 my-1" style={{ height: 1, background: T.borderMuted }} />}
               {group.items.map(item => {
                 const Icon = item.icon;
                 const active = view === item.id;
                 return (
-                  <button key={item.id} onClick={() => setView(item.id)}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left cursor-pointer transition-all mb-0.5"
-                    style={active
-                      ? { background: 'linear-gradient(135deg, rgba(236,72,153,0.14) 0%, rgba(168,85,247,0.11) 100%)', color: PA.blue, border: `1px solid rgba(236,72,153,0.28)`, borderLeft: `2px solid ${PA.blue}` }
-                      : { color: T.textSub }}
-                    onMouseEnter={e => { if (!active) e.currentTarget.style.background = T.bgHover; }}
-                    onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}>
-                    <Icon className="w-3.5 h-3.5 shrink-0"
-                      style={{ color: active ? PA.blue : T.textMuted }} />
-                    <span className="text-[11.5px] font-medium truncate">{item.label}</span>
-                  </button>
+                  <div key={item.id} className="flex justify-center py-0.5">
+                    <button onClick={() => setView(item.id)} title={item.label}
+                      className="w-8 h-8 flex items-center justify-center rounded-xl cursor-pointer transition-all"
+                      style={active
+                        ? { background: PA.blueBg, border: `1px solid ${PA.blueBdr}` }
+                        : { border: '1px solid transparent' }}
+                      onMouseEnter={e => { if (!active) e.currentTarget.style.background = T.bgHover; }}
+                      onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}>
+                      <Icon className="w-3.5 h-3.5" style={{ color: active ? PA.blue : T.textMuted }} />
+                    </button>
+                  </div>
                 );
               })}
             </div>
           ))}
         </div>
 
-        {/* Quick export */}
-        <div className="shrink-0 p-3" style={{ borderTop: `1px solid ${T.border}` }}>
-          <button onClick={() => setView('export')}
-            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-semibold text-white cursor-pointer hover:opacity-90 transition-opacity"
-            style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 18px rgba(236,72,153,0.28)' }}>
-            <Share2 className="w-3 h-3" />Share Portfolio
+        {/* Share */}
+        <div className="shrink-0 flex justify-center py-2.5"
+          style={{ borderTop: `1px solid ${T.border}` }}>
+          <button onClick={() => setView('export')} title="Share Portfolio"
+            className="w-8 h-8 flex items-center justify-center rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
+            style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 14px rgba(236,72,153,.25)' }}>
+            <Share2 className="w-3.5 h-3.5 text-white" />
           </button>
         </div>
       </div>

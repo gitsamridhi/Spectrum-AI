@@ -35,6 +35,21 @@ function HomeScreenInner() {
   const avatar      = displayName[0]?.toUpperCase() ?? 'U';
 
   useEffect(() => {
+    // Seed initial history state so back button can return here
+    window.history.replaceState({ view: 'home' }, '');
+  }, []);
+
+  useEffect(() => {
+    const onPop = (e: PopStateEvent) => {
+      const view = (e.state?.view as string) ?? 'home';
+      setActiveNav(view);
+      setToolsOpen(false);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
@@ -54,11 +69,12 @@ function HomeScreenInner() {
       setToolsOpen(prev => !prev);
     } else {
       setToolsOpen(false);
+      window.history.pushState({ view: id }, '');
       setActiveNav(id);
     }
   };
 
-  const goHome = () => setActiveNav('home');
+  const goHome = () => window.history.back();
 
   const renderMain = () => {
     switch (activeNav) {
@@ -75,12 +91,12 @@ function HomeScreenInner() {
       case 'marketing':  return <MarketingStudioView onBack={goHome} />;
       case 'social':     return <SocialStudioView onBack={goHome} />;
       case 'product':    return <ProductStudioView onBack={goHome} />;
-      case 'portfolio':  return <PortfolioBuilderView />;
+      case 'portfolio':  return <PortfolioBuilderView onBack={goHome} />;
       default:           return <MainContent displayName={displayName} onSearchClick={() => setPaletteOpen(true)} onToolClick={handleSetActive} />;
     }
   };
 
-  const isStudio = ['cinema', 'marketing', 'social', 'product'].includes(activeNav);
+  const isStudio = ['cinema', 'marketing', 'social', 'product', 'portfolio'].includes(activeNav);
 
   return (
     <div className="fixed inset-0 flex font-sans overflow-hidden" style={{ background: T.bg, zoom: '0.9' } as React.CSSProperties}>
@@ -100,7 +116,7 @@ function HomeScreenInner() {
         {toolsOpen && (
           <AllToolsView
             onClose={() => setToolsOpen(false)}
-            onNavigate={(id) => { setActiveNav(id); setToolsOpen(false); }}
+            onNavigate={(id) => { window.history.pushState({ view: id }, ''); setActiveNav(id); setToolsOpen(false); }}
           />
         )}
       </AnimatePresence>

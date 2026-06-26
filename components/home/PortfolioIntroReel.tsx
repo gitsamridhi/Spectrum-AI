@@ -156,7 +156,7 @@ export default function PortfolioIntroReel() {
               <div className="flex-1 flex items-center justify-center px-8 py-6"
                 style={{ background: T.bgSub }}>
                 <div className="relative overflow-hidden shadow-xl"
-                  style={{ width: '100%', maxWidth: 520, aspectRatio: '16/9', background: '#0a0a0d', borderRadius: 16 }}>
+                  style={{ height: '100%', maxHeight: 380, aspectRatio: '9/16', width: 'auto', background: '#0a0a0d', borderRadius: 22 }}>
                   {timeline.length > 0 && (
                     <img src={timeline[0].src} alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" />
                   )}

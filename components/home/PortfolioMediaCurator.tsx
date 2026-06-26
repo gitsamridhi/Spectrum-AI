@@ -145,9 +145,9 @@ export default function PortfolioMediaCurator() {
                 const tall = i % 3 === 0;
                 return (
                   <div key={a.id} className="break-inside-avoid mb-3 group relative rounded-xl overflow-hidden cursor-pointer"
-                    style={{ height: tall ? 280 : 200 }}
+                    style={{ aspectRatio: tall ? '2/3' : '3/4' }}
                     onClick={() => setPreview(a.id)}>
-                    <img src={a.src} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                    <img src={a.src} alt="" className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-200">
                       <p className="text-[11px] font-semibold text-white">{a.label}</p>
@@ -170,10 +170,10 @@ export default function PortfolioMediaCurator() {
           {view === 'grid' && (
             <div className="grid grid-cols-4 gap-3">
               {filtered.map(a => (
-                <div key={a.id} className="group relative rounded-xl overflow-hidden cursor-pointer aspect-square"
+                <div key={a.id} className="group relative rounded-xl overflow-hidden cursor-pointer"
                   onClick={() => setPreview(a.id)}
-                  style={{ background: T.bgCard }}>
-                  <img src={a.src} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+                  style={{ aspectRatio: '3/4', background: T.bgCard }}>
+                  <img src={a.src} alt="" className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.04]" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-all translate-y-0.5 group-hover:translate-y-0">
                     <p className="text-[10px] font-semibold text-white leading-tight">{a.label}</p>
