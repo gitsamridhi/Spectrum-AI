@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTheme } from "@/app/context/ThemeContext";
 
 interface OAuthRowProps {
   onSelect: (provider: "google" | "apple" | "github") => void;
@@ -28,26 +29,27 @@ const GitHubIcon = () => (
 );
 
 export default function OAuthRow({ onSelect }: OAuthRowProps) {
+  const { T } = useTheme();
   return (
     <div className="flex flex-col gap-2.5 w-full">
-      {/* Google — primary */}
       <button type="button" onClick={() => onSelect("google")}
-        className="flex items-center justify-center gap-3 w-full h-11 rounded-full text-[12px] font-semibold border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-800 transition-all cursor-pointer shadow-sm">
+        className="flex items-center justify-center gap-3 w-full h-11 rounded-full text-[12px] font-semibold border transition-all cursor-pointer shadow-sm"
+        style={{ borderColor: T.border, background: T.bg, color: T.text }}>
         <GoogleIcon />
         Continue with Google
       </button>
 
       <div className="grid grid-cols-2 gap-2.5">
-        {/* Apple */}
+        {/* Apple — always dark (brand requirement) */}
         <button type="button" onClick={() => onSelect("apple")}
           className="flex items-center justify-center gap-2 h-11 rounded-full text-[12px] font-semibold border border-zinc-900 bg-zinc-900 hover:bg-zinc-800 text-white transition-all cursor-pointer shadow-sm">
           <AppleIcon />
           Apple
         </button>
 
-        {/* GitHub */}
         <button type="button" onClick={() => onSelect("github")}
-          className="flex items-center justify-center gap-2 h-11 rounded-full text-[12px] font-semibold border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-800 transition-all cursor-pointer shadow-sm">
+          className="flex items-center justify-center gap-2 h-11 rounded-full text-[12px] font-semibold border transition-all cursor-pointer shadow-sm"
+          style={{ borderColor: T.border, background: T.bg, color: T.text }}>
           <GitHubIcon />
           GitHub
         </button>

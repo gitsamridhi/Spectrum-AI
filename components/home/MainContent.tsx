@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   ArrowRight, Play, Flame, Heart, Eye,
   ImageIcon, Video, Mic, Wand2, Layers, BookOpen, Users,
 } from 'lucide-react';
+import { useTheme } from '@/app/context/ThemeContext';
 
 const P = {
   darkRed: '#A33550',
@@ -61,6 +62,7 @@ const TEMPLATES = [
   { label: 'Consistent Character', nodes: 7, bg: 'linear-gradient(135deg,#E870A8,#C84080)', accent: '#ffffff', Icon: Users     },
   { label: 'AI Music Video',       nodes: 9, bg: 'linear-gradient(135deg,#9880E8,#7050C0)', accent: '#ffffff', Icon: Mic       },
 ];
+
 
 /* ── Animated Node Diagram ─────────────────────────────────────────────────── */
 
@@ -193,8 +195,11 @@ interface MainContentProps {
 /* ── Component ─────────────────────────────────────────────────────────────── */
 
 export default function MainContent({ displayName, onSearchClick, onToolClick }: MainContentProps) {
+  const { isDark, T } = useTheme();
   const [galleryTab, setGalleryTab] = useState('All');
   const [liked, setLiked]           = useState<Set<number>>(new Set());
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => { if (videoRef.current) videoRef.current.playbackRate = 0.5; }, []);
 
   const filtered  = galleryTab === 'All' ? GALLERY : GALLERY.filter(g => g.tab === galleryTab);
   const displayed = filtered.length > 0 ? filtered : GALLERY;
@@ -203,133 +208,146 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
     setLiked(prev => { const s = new Set(prev); s.has(i) ? s.delete(i) : s.add(i); return s; });
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white">
+    <div className="flex-1 overflow-y-auto" style={{ background: T.bg }}>
 
-      {/* ══ 01 · HERO ══════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-zinc-900" style={{ minHeight: 380 }}>
-        <video autoPlay loop muted playsInline preload="auto"
-          className="absolute inset-0 w-full h-full object-cover">
-          <source src="/hero_comp.mp4" type="video/mp4" />
-        </video>
-        <div className="relative z-10 flex items-center px-10" style={{ minHeight: 380 }}>
-          <div className="bg-white/76 backdrop-blur-2xl rounded-3xl px-7 py-6 max-w-[400px] shadow-2xl border border-white/50">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4"
-              style={{ background: P.hotPink + '80', border: `1px solid ${P.hotPink}` }}>
-              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#C2185B' }} />
-              <span className="text-[10.5px] font-semibold" style={{ color: '#C2185B' }}>
-                AI Creative Suite for Professionals
-              </span>
-            </div>
-            <h1 className="text-[42px] font-black text-zinc-950 leading-[1.0] tracking-[-0.04em] mb-3">
-              Create without<br /><span style={{ color: P.rose }}>limits.</span>
-            </h1>
-            <p className="text-[13px] text-zinc-600 leading-relaxed mb-5 max-w-[300px]">
-              Generate, edit, and scale your ideas with the most advanced AI tools.
-            </p>
-            <div className="flex items-center gap-2.5 mb-5">
-              <button onClick={() => onToolClick('image')}
-                className="flex items-center gap-2 px-5 py-2.5 text-white text-[12.5px] font-bold rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
-                style={{ background: P.rose }}>
-                Start Creating
-              </button>
-              <button onClick={() => onToolClick('explore')}
-                className="flex items-center gap-2 px-4 py-2.5 border border-zinc-300/70 bg-white/60 hover:bg-white text-zinc-700 text-[12.5px] font-medium rounded-xl transition-all cursor-pointer">
-                <Play className="w-3 h-3 fill-current" />Explore
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                {[P.rose, '#C2185B', P.orange, '#059669'].map((c, idx) => (
-                  <div key={idx} className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white"
-                    style={{ background: c }}>{String.fromCharCode(65 + idx)}</div>
-                ))}
+      {/* ── First viewport: hero + tool strip + create section ──────────── */}
+      <div className="flex flex-col" style={{ minHeight: '100vh' }}>
+
+        {/* ══ 01 · HERO ════════════════════════════════════════════════════ */}
+        <section className="relative overflow-hidden bg-zinc-900" style={{ minHeight: 380 }}>
+          <video autoPlay loop muted playsInline preload="auto" ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover">
+            <source src="/hero_comp.mp4" type="video/mp4" />
+          </video>
+          <div className="relative z-10 flex items-center px-10" style={{ minHeight: 380 }}>
+            <div className="bg-white/76 backdrop-blur-2xl rounded-3xl px-7 py-6 max-w-[400px] shadow-2xl border border-white/50">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4"
+                style={{ background: P.hotPink + '80', border: `1px solid ${P.hotPink}` }}>
+                <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#C2185B' }} />
+                <span className="text-[10.5px] font-semibold" style={{ color: '#C2185B' }}>
+                  AI Creative Suite for Professionals
+                </span>
               </div>
-              <p className="text-[11px] text-zinc-500">
-                <span className="font-semibold text-zinc-800">50,000+</span> creators worldwide
+              <h1 className="text-[42px] font-black leading-[1.0] tracking-[-0.04em] mb-3" style={{ color: '#0f0f11' }}>
+                Create without<br /><span style={{ color: P.rose }}>limits.</span>
+              </h1>
+              <p className="text-[13px] leading-relaxed mb-5 max-w-[300px]" style={{ color: '#3a3a42' }}>
+                Generate, edit, and scale your ideas with the most advanced AI tools.
               </p>
+              <div className="flex items-center gap-2.5 mb-5">
+                <button onClick={() => onToolClick('image')}
+                  className="flex items-center gap-2 px-5 py-2.5 text-white text-[12.5px] font-bold rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
+                  style={{ background: P.rose }}>
+                  Start Creating
+                </button>
+                <button onClick={() => onToolClick('explore')}
+                  className="flex items-center gap-2 px-4 py-2.5 border border-zinc-300/70 bg-white/60 hover:bg-white text-zinc-700 text-[12.5px] font-medium rounded-xl transition-all cursor-pointer">
+                  <Play className="w-3 h-3 fill-current" />Explore
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[P.rose, '#C2185B', P.orange, '#059669'].map((c, idx) => (
+                    <div key={idx} className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white"
+                      style={{ background: c }}>{String.fromCharCode(65 + idx)}</div>
+                  ))}
+                </div>
+                <p className="text-[11px]" style={{ color: '#64646e' }}>
+                  <span className="font-semibold" style={{ color: '#0f0f11' }}>50,000+</span> creators worldwide
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="absolute right-[20%] top-[16%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg"
-          style={{ background: P.yellow, color: '#78350f' }}>
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#92400e' }} />
-          <span className="text-[10px] font-bold">4K Cinematic</span>
-        </div>
-        <div className="absolute right-[6%] top-[40%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg border"
-          style={{ background: P.hotPink, borderColor: '#F8BBD0', color: '#C2185B' }}>
-          <span className="text-[10px] font-bold">AI Generated ✦</span>
-        </div>
-        <div className="absolute right-[24%] bottom-[18%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg"
-          style={{ background: P.orange }}>
-          <Video className="w-3 h-3 text-white" />
-          <span className="text-[10px] font-bold text-white">Text-to-Video</span>
-        </div>
-        <div className="absolute right-[40%] top-[22%] z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg"
-          style={{ background: P.coral }}>
-          <span className="text-[10px] font-bold text-white">✦ Relight</span>
-        </div>
-      </section>
+        </section>
 
-      {/* ══ 02 · TOOL STRIP ════════════════════════════════════════════════ */}
-      <section className="border-y border-zinc-100 bg-white">
-        <div className="px-10 grid grid-cols-6">
-          {TOOLS.map(({ id, Icon, label, desc, bg, fg }, i) => (
-            <button key={i} onClick={() => onToolClick(id)}
-              className="group flex flex-col items-center gap-2 px-3 py-3.5 hover:bg-zinc-50 border-r last:border-r-0 border-zinc-100 transition-all cursor-pointer">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"
-                style={{ background: bg }}>
-                <Icon className="w-4 h-4" style={{ color: fg }} />
-              </div>
-              <div className="text-center">
-                <p className="text-[10.5px] font-bold text-zinc-900 leading-tight">{label}</p>
-                <p className="text-[9px] text-zinc-400 mt-0.5">{desc}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* ══ 03 · CREATE A SPACE ════════════════════════════════════════════ */}
-      <section className="py-10 border-b border-zinc-100 bg-white">
-        <div className="flex flex-col items-center gap-5">
-          <svg width="220" height="160" viewBox="0 0 220 160" fill="none" className="opacity-90">
-            {/* Top card */}
-            <rect x="72" y="16" width="56" height="46" rx="8" fill="white" stroke="#CBD5E1" strokeWidth="1.5"/>
-            {/* Bottom-left card with text lines */}
-            <rect x="28" y="84" width="80" height="58" rx="8" fill="white" stroke="#CBD5E1" strokeWidth="1.5"/>
-            <line x1="43" y1="102" x2="96" y2="102" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="43" y1="113" x2="82" y2="113" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="43" y1="124" x2="90" y2="124" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round"/>
-            {/* Right card (larger) */}
-            <rect x="134" y="56" width="78" height="58" rx="8" fill="white" stroke="#CBD5E1" strokeWidth="1.5"/>
-            {/* Connector dots */}
-            <circle cx="128" cy="39" r="3.5" fill="white" stroke="#94A3B8" strokeWidth="1.5"/>
-            <circle cx="108" cy="113" r="3.5" fill="white" stroke="#94A3B8" strokeWidth="1.5"/>
-            {/* Bezier paths */}
-            <path d="M 128 39 C 131 39 134 60 134 85" fill="none" stroke="#A5B4FC" strokeWidth="1.5"/>
-            <path d="M 108 113 C 122 113 122 85 134 85" fill="none" stroke="#A5B4FC" strokeWidth="1.5"/>
-            <circle cx="134" cy="85" r="3.5" fill="white" stroke="#94A3B8" strokeWidth="1.5"/>
-          </svg>
-          <div className="text-center">
-            <h3 className="text-[18px] font-bold text-zinc-900 mb-1.5">Create a space</h3>
-            <p className="text-[13px] text-zinc-400 leading-relaxed">Build creative workflows on an infinite canvas</p>
+        {/* ══ 02 · TOOL STRIP ══════════════════════════════════════════════ */}
+        <section style={{ borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bg }}>
+          <div className="px-10 grid grid-cols-6">
+            {TOOLS.map(({ id, Icon, label, desc, bg, fg }, i) => (
+              <button key={i} onClick={() => onToolClick(id)}
+                className="group flex flex-col items-center gap-2 px-3 py-3.5 border-r last:border-r-0 transition-all cursor-pointer"
+                style={{ borderColor: T.border }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"
+                  style={{ background: bg }}>
+                  <Icon className="w-4 h-4" style={{ color: fg }} />
+                </div>
+                <div className="text-center">
+                  <p className="text-[10.5px] font-bold leading-tight" style={{ color: T.text }}>{label}</p>
+                  <p className="text-[9px] mt-0.5" style={{ color: T.textMuted }}>{desc}</p>
+                </div>
+              </button>
+            ))}
           </div>
-          <button onClick={() => onToolClick('spaces')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-[12.5px] font-semibold rounded-xl cursor-pointer transition-colors">
-            New space <span className="text-[15px] leading-none">+</span>
-          </button>
-        </div>
-      </section>
+        </section>
+
+        {/* ══ 03 · CREATE A SPACE ══════════════════════════════════════════ */}
+        <section className="flex-1 flex items-stretch px-6 py-5" style={{ background: T.bg }}>
+          <div className="w-full rounded-2xl flex items-center px-12 gap-8 relative overflow-hidden"
+            style={{
+              border: `1.5px dashed ${isDark ? 'rgba(196,181,253,0.35)' : '#C4B5FD'}`,
+              background: isDark
+                ? 'linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(168,85,247,0.06) 40%, rgba(99,102,241,0.08) 100%)'
+                : 'linear-gradient(135deg, #FFF1F5 0%, #FAF0FF 30%, #EFF6FF 65%, #F0FDF9 100%)',
+            }}>
+            {/* dot-grid canvas background */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: `radial-gradient(circle, ${isDark ? 'rgba(196,181,253,0.4)' : '#C4B5FD'} 1px, transparent 1px)`,
+                backgroundSize: '22px 22px', opacity: isDark ? 0.25 : 0.35,
+              }} />
+
+            {/* Node workflow illustration */}
+            <div className="relative z-10 flex flex-col gap-3 shrink-0">
+              {[['Text', 'Image'], ['Image', 'Video', 'Upscale']].map((row, ri) => (
+                <div key={ri} className="flex items-center gap-2">
+                  {row.map((lbl, i) => (
+                    <React.Fragment key={lbl + ri}>
+                      {i > 0 && <div className="w-7 h-px" style={{ background: T.border }} />}
+                      <div className="px-3 py-1.5 rounded-lg text-[11px] font-semibold"
+                        style={{
+                          background: isDark ? 'rgba(196,181,253,0.12)' : '#FFF7ED',
+                          border: `1px solid ${isDark ? 'rgba(196,181,253,0.3)' : '#FDBA74'}`,
+                          color: isDark ? '#C4B5FD' : '#C2410C',
+                        }}>
+                        {lbl}
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Create action */}
+            <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-3">
+              <button onClick={() => onToolClick('spaces')}
+                className="w-14 h-14 rounded-2xl flex items-center justify-center text-[26px] font-light transition-colors cursor-pointer"
+                style={{ background: T.bg, border: `1.5px solid ${T.border}`, color: T.textSub }}>
+                +
+              </button>
+              <div className="text-center">
+                <h3 className="text-[15px] font-bold mb-0.5" style={{ color: T.text }}>Create a new space</h3>
+                <p className="text-[12px]" style={{ color: T.textMuted }}>Blank canvas or template — node-based AI chaining</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>{/* end first viewport */}
 
       {/* ══ 04 · TRENDING CREATIONS ════════════════════════════════════════ */}
-      <section className="px-10 py-8">
+      <section className="px-10 py-8" style={{ background: T.bg }}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Flame className="w-3.5 h-3.5" style={{ color: P.orange }} />
-            <h2 className="text-[15px] font-bold text-zinc-950 tracking-[-0.02em]">Trending Creations</h2>
+            <h2 className="text-[15px] font-bold tracking-[-0.02em]" style={{ color: T.text }}>Trending Creations</h2>
           </div>
           <button onClick={() => onToolClick('explore')}
-            className="flex items-center gap-1 text-[11px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors cursor-pointer">
+            className="flex items-center gap-1 text-[11px] font-medium transition-colors cursor-pointer"
+            style={{ color: T.textMuted }}
+            onMouseEnter={e => (e.currentTarget.style.color = T.text)}
+            onMouseLeave={e => (e.currentTarget.style.color = T.textMuted)}>
             View all <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -338,10 +356,10 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
             const active = galleryTab === tab;
             return (
               <button key={tab} onClick={() => setGalleryTab(tab)}
-                className={`px-3 py-1 rounded-full text-[10.5px] font-medium transition-all cursor-pointer ${
-                  active ? '' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-                }`}
-                style={active ? { background: P.rose, color: '#fff' } : undefined}>
+                className={`px-3 py-1 rounded-full text-[10.5px] font-medium transition-all cursor-pointer`}
+                style={active
+                  ? { background: P.rose, color: '#fff' }
+                  : { background: T.bgCard, color: T.textSub }}>
                 {tab}
               </button>
             );
@@ -356,14 +374,17 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
       </section>
 
       {/* ══ 05 · WORKFLOW TEMPLATES — animated node paths ══════════════════ */}
-      <section className="px-10 py-5 bg-zinc-50 border-y border-zinc-100">
+      <section className="px-10 py-5" style={{ background: T.bgSub, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-sm" style={{ background: P.yellow, outline: `1.5px solid ${P.orange}` }} />
-            <h2 className="text-[15px] font-bold text-zinc-950 tracking-[-0.02em]">Featured Workflow Templates</h2>
+            <h2 className="text-[15px] font-bold tracking-[-0.02em]" style={{ color: T.text }}>Featured Workflow Templates</h2>
           </div>
           <button onClick={() => onToolClick('spaces')}
-            className="flex items-center gap-1 text-[11px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors cursor-pointer">
+            className="flex items-center gap-1 text-[11px] font-medium transition-colors cursor-pointer"
+            style={{ color: T.textMuted }}
+            onMouseEnter={e => (e.currentTarget.style.color = T.text)}
+            onMouseLeave={e => (e.currentTarget.style.color = T.textMuted)}>
             View all <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -398,7 +419,7 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
       </section>
 
       {/* ══ 05 · CTA BANNER ════════════════════════════════════════════════ */}
-      <section className="px-10 py-5">
+      <section className="px-10 py-5" style={{ background: T.bg }}>
         <div className="relative bg-zinc-950 rounded-2xl overflow-hidden">
           <div className="absolute inset-0 pointer-events-none" style={{
             background: [
@@ -411,11 +432,11 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
             style={{ backgroundImage: 'radial-gradient(circle,white 1px,transparent 1px)', backgroundSize: '28px 28px' }} />
           <div className="relative px-8 py-5 flex items-center justify-between gap-6">
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-white/35 mb-1">Spectrum AI Pro</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.65)' }}>Spectrum AI Pro</p>
               <h3 className="text-[22px] font-black text-white tracking-[-0.03em] leading-tight mb-1">
                 Unlock unlimited generations.
               </h3>
-              <p className="text-[11.5px] text-white/40">8K upscale · priority GPU · team workspaces · workflow canvas</p>
+              <p className="text-[11.5px]" style={{ color: 'rgba(255,255,255,0.72)' }}>8K upscale · priority GPU · team workspaces · workflow canvas</p>
             </div>
             <div className="flex flex-col items-end gap-1.5 shrink-0">
               <button onClick={() => alert("Pro upgrade coming soon! You'll get 8K upscale, priority GPU, team workspaces & more.")}
@@ -424,7 +445,8 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
                 Upgrade to Pro
               </button>
               <button onClick={() => alert('Plan details: Starter (free) · Pro ($19/mo) · Team ($49/mo). Full plans page coming soon.')}
-                className="px-4 py-2 border border-white/20 hover:border-white/40 text-white/50 hover:text-white text-[11px] font-medium rounded-xl transition-all cursor-pointer">
+                className="px-4 py-2 border border-white/20 hover:border-white/40 text-[11px] font-medium rounded-xl transition-all cursor-pointer"
+                style={{ color: 'rgba(255,255,255,0.72)' }}>
                 See plans →
               </button>
             </div>

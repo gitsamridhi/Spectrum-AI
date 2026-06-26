@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Plus, Users, Clock, Zap, ArrowRight } from 'lucide-react';
+import { useTheme } from '@/app/context/ThemeContext';
 
 const P = { vivid: '#FF7000', orange: '#FFB347', magenta: '#F060EE', coral: '#FF6B86', peach: '#FFBF80' };
 
@@ -39,11 +40,17 @@ function NodeChainPreview({ chain, color, dotted = false }: { chain: string[]; c
 }
 
 function CanvasPreview({ color, chain }: { color: string; chain?: string[] }) {
+  const { isDark } = useTheme();
+  const canvasBg = isDark ? '#0f0f11' : '#f4f4f8';
+  const dotColor = isDark ? 'white' : '#0f0f11';
+  const nodeBg = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.92)';
+  const nodeBorder = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.22)';
+  const lineColor = isDark ? 'white' : '#555';
   return (
-    <div className="w-full h-full relative overflow-hidden" style={{ background: '#0f0f11' }}>
+    <div className="w-full h-full relative overflow-hidden" style={{ background: canvasBg }}>
       {/* Dot grid */}
-      <div className="absolute inset-0 opacity-15"
-        style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+      <div className="absolute inset-0"
+        style={{ backgroundImage: `radial-gradient(circle, ${isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.14)'} 1px, transparent 1px)`, backgroundSize: '20px 20px' }} />
       {/* Glow */}
       <div className="absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl opacity-30 -translate-y-4 translate-x-4 pointer-events-none"
         style={{ background: color }} />
@@ -51,20 +58,20 @@ function CanvasPreview({ color, chain }: { color: string; chain?: string[] }) {
       <div className="absolute inset-0 flex items-center px-5 gap-2">
         {(chain || ['Node', 'Node', 'Node']).slice(0, 4).map((node, i) => (
           <React.Fragment key={i}>
-            <div className="shrink-0 px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-white/10 border border-white/20"
-              style={{ color: color }}>
+            <div className="shrink-0 px-2.5 py-1.5 rounded-lg text-[9px] font-bold"
+              style={{ background: nodeBg, border: `1px solid ${nodeBorder}`, color: color }}>
               {node}
             </div>
             {i < (chain || ['A', 'B', 'C']).length - 1 && (
-              <div className="flex-1 h-px border-t border-dashed border-white/20" />
+              <div className="flex-1 h-px border-t border-dashed" style={{ borderColor: isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)' }} />
             )}
           </React.Fragment>
         ))}
       </div>
       {/* SVG connector lines */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" opacity={0.25}>
-        <line x1="30" y1="40" x2="80" y2="60" stroke="white" strokeWidth="1" />
-        <line x1="80" y1="60" x2="130" y2="35" stroke="white" strokeWidth="1" />
+        <line x1="30" y1="40" x2="80" y2="60" stroke={lineColor} strokeWidth="1" />
+        <line x1="80" y1="60" x2="130" y2="35" stroke={lineColor} strokeWidth="1" />
       </svg>
     </div>
   );
@@ -73,22 +80,23 @@ function CanvasPreview({ color, chain }: { color: string; chain?: string[] }) {
 const AVATAR_COLORS = [P.vivid, P.orange, P.magenta, P.coral, P.peach];
 
 export default function SpacesView() {
+  const { isDark, T } = useTheme();
   const [hoveredSpace, setHoveredSpace] = useState<number | null>(null);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-white">
+    <div className="flex-1 flex flex-col overflow-hidden" style={{ background: T.bg }}>
 
       {/* Header */}
-      <div className="border-b border-zinc-100 px-8 py-5 flex items-center gap-4 shrink-0">
+      <div className="px-8 py-5 flex items-center gap-4 shrink-0" style={{ borderBottom: `1px solid ${T.border}` }}>
         <div>
-          <h1 className="text-[16px] font-bold text-zinc-900">Spaces</h1>
-          <p className="text-[11.5px] text-zinc-400">Build AI pipelines on an infinite visual canvas.</p>
+          <h1 className="text-[16px] font-bold" style={{ color: T.text }}>Spaces</h1>
+          <p className="text-[11.5px]" style={{ color: T.textMuted }}>Build AI pipelines on an infinite visual canvas.</p>
         </div>
         <div className="flex-1" />
         {/* Live users indicator */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-50 border border-zinc-200">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ background: T.bgSub, border: `1px solid ${T.border}` }}>
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-[11px] font-medium text-zinc-600">3 collaborators online</span>
+          <span className="text-[11px] font-medium" style={{ color: T.textSub }}>3 collaborators online</span>
           <div className="flex -space-x-1.5">
             {[0, 1, 2].map(i => (
               <div key={i} className="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center"
@@ -108,8 +116,8 @@ export default function SpacesView() {
 
         {/* Create new */}
         <div>
-          <button className="group relative w-full rounded-2xl overflow-hidden transition-all cursor-pointer border-2 border-dashed border-zinc-300 hover:border-zinc-400"
-            style={{ height: 160 }}>
+          <button className="group relative w-full rounded-2xl overflow-hidden transition-all cursor-pointer border-2 border-dashed hover:border-zinc-400"
+            style={{ height: 160, borderColor: T.border }}>
             <div className="absolute inset-0 opacity-5"
               style={{ backgroundImage: 'radial-gradient(circle, black 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
             <div className="relative h-full flex items-center justify-center gap-8">
@@ -123,11 +131,12 @@ export default function SpacesView() {
                 ))}
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 rounded-2xl bg-white border border-zinc-200 group-hover:border-zinc-400 flex items-center justify-center transition-colors shadow-sm mx-auto mb-3">
-                  <Plus className="w-5 h-5 text-zinc-500 group-hover:text-zinc-900 transition-colors" />
+                <div className="w-12 h-12 rounded-2xl border flex items-center justify-center transition-colors shadow-sm mx-auto mb-3"
+                  style={{ background: T.bg, borderColor: T.border }}>
+                  <Plus className="w-5 h-5 transition-colors" style={{ color: T.textSub }} />
                 </div>
-                <p className="text-[14px] font-bold text-zinc-900">Create a new space</p>
-                <p className="text-[11.5px] text-zinc-400 mt-0.5">Blank canvas or template — node-based AI chaining</p>
+                <p className="text-[14px] font-bold" style={{ color: T.text }}>Create a new space</p>
+                <p className="text-[11.5px] mt-0.5" style={{ color: T.textMuted }}>Blank canvas or template — node-based AI chaining</p>
               </div>
             </div>
           </button>
@@ -135,20 +144,21 @@ export default function SpacesView() {
 
         {/* Recent spaces */}
         <div>
-          <h2 className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 mb-4">Recent spaces</h2>
+          <h2 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: T.textMuted }}>Recent spaces</h2>
           <div className="grid grid-cols-4 gap-4">
             {SPACES.map((s, i) => (
               <div key={i} className="group cursor-pointer"
                 onMouseEnter={() => setHoveredSpace(i)}
                 onMouseLeave={() => setHoveredSpace(null)}>
-                <div className="relative rounded-2xl overflow-hidden border border-zinc-200 hover:border-zinc-300 transition-colors mb-3" style={{ height: 160 }}>
+                <div className="relative rounded-2xl overflow-hidden transition-colors mb-3"
+                  style={{ height: 160, border: `1px solid ${T.border}` }}>
                   <CanvasPreview color={s.chainColor} chain={['Text', 'Image', 'Video'].slice(0, 3)} />
                   {/* Live users badge */}
                   {s.shared && (
                     <div className="absolute top-2.5 right-2.5 flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-2 py-1">
                       {s.liveUsers > 0 && <div className="w-1.5 h-1.5 rounded-full bg-green-400" />}
-                      <Users className="w-2.5 h-2.5 text-white/70" />
-                      <span className="text-[8.5px] font-semibold text-white/70">
+                      <Users className="w-2.5 h-2.5" style={{ color: 'rgba(255,255,255,0.82)' }} />
+                      <span className="text-[8.5px] font-semibold" style={{ color: 'rgba(255,255,255,0.82)' }}>
                         {s.liveUsers > 0 ? `${s.liveUsers} live` : 'Shared'}
                       </span>
                     </div>
@@ -158,10 +168,10 @@ export default function SpacesView() {
                     <NodeChainPreview chain={['Prompt', 'Gen', 'Export'].slice(0, Math.min(s.nodes, 3))} color={s.chainColor} />
                   </div>
                 </div>
-                <p className="text-[13px] font-semibold text-zinc-900 truncate group-hover:text-zinc-600 transition-colors">{s.name}</p>
+                <p className="text-[13px] font-semibold truncate transition-colors" style={{ color: hoveredSpace === i ? T.textSub : T.text }}>{s.name}</p>
                 <div className="flex items-center gap-1 mt-0.5">
-                  <Clock className="w-3 h-3 text-zinc-400" />
-                  <p className="text-[11px] text-zinc-400">{s.updated} · {s.nodes} nodes</p>
+                  <Clock className="w-3 h-3" style={{ color: T.textMuted }} />
+                  <p className="text-[11px]" style={{ color: T.textMuted }}>{s.updated} · {s.nodes} nodes</p>
                 </div>
               </div>
             ))}
@@ -171,31 +181,32 @@ export default function SpacesView() {
         {/* Templates */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Start from a template</h2>
-            <button className="flex items-center gap-1 text-[11.5px] text-zinc-400 hover:text-zinc-900 transition-colors cursor-pointer">
+            <h2 className="text-[11px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Start from a template</h2>
+            <button className="flex items-center gap-1 text-[11.5px] transition-colors cursor-pointer" style={{ color: T.textMuted }}>
               All templates <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
           <div className="grid grid-cols-4 gap-4">
             {TEMPLATES.map((t, i) => (
               <button key={i}
-                className="group text-left rounded-2xl border border-zinc-200 hover:border-zinc-300 hover:shadow-sm transition-all cursor-pointer overflow-hidden">
-                <div className="aspect-video overflow-hidden" style={{ background: '#0f0f11' }}>
+                className="group text-left rounded-2xl hover:shadow-sm transition-all cursor-pointer overflow-hidden"
+                style={{ border: `1px solid ${T.border}` }}>
+                <div className="aspect-video overflow-hidden" style={{ background: isDark ? '#0f0f11' : '#f0f0f5' }}>
                   <div className="w-full h-full relative">
-                    <div className="absolute inset-0 opacity-15"
-                      style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
+                    <div className="absolute inset-0"
+                      style={{ backgroundImage: `radial-gradient(circle, ${isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.16)'} 1px, transparent 1px)`, backgroundSize: '18px 18px' }} />
                     <div className="absolute inset-0 flex items-center justify-center px-4">
                       <NodeChainPreview chain={t.chain} color={t.color} dotted />
                     </div>
                   </div>
                 </div>
-                <div className="p-4">
+                <div className="p-4" style={{ background: T.bg }}>
                   <div className="flex items-center gap-1.5 mb-1">
                     <Zap className="w-3 h-3" style={{ color: t.color }} />
                     <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: t.color }}>{t.desc}</span>
                   </div>
-                  <p className="text-[12.5px] font-bold text-zinc-900">{t.name}</p>
-                  <p className="text-[10.5px] text-zinc-400 mt-0.5">{t.chain.join(' → ')}</p>
+                  <p className="text-[12.5px] font-bold" style={{ color: T.text }}>{t.name}</p>
+                  <p className="text-[10.5px] mt-0.5" style={{ color: T.textMuted }}>{t.chain.join(' → ')}</p>
                 </div>
               </button>
             ))}

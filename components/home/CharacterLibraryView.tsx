@@ -6,6 +6,7 @@ import {
   ChevronDown, Clock, Zap, Check, MoreHorizontal, Users,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/app/context/ThemeContext';
 
 const P = {
   rose: '#C94060', orange: '#D97E3A', hotPink: '#CC4A78',
@@ -14,10 +15,10 @@ const P = {
 };
 
 const IMGS = [
-  '/pexels-didsss-2791056.jpg',
-  '/pexels-ganajp-15698413.jpg',
-  '/pexels-olga-178200755-12367292.jpg',
-  '/pexels-prathsnap-3168209.jpg',
+  'https://picsum.photos/seed/char-cyber-1/400/400',
+  'https://picsum.photos/seed/char-japan-1/400/400',
+  'https://picsum.photos/seed/char-arctic-1/400/400',
+  'https://picsum.photos/seed/char-paris-1/400/400',
 ];
 
 const TAGS = ['Portrait', 'Fashion', 'Action', 'Anime', 'Fantasy', 'Sci-Fi', 'Vintage', 'Other'];
@@ -140,11 +141,11 @@ function CharacterCard({
       <div className="absolute bottom-0 left-0 right-0 p-3">
         <p className="text-[13px] font-bold text-white leading-snug mb-0.5">{char.name}</p>
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] text-white/55">{char.refs.length} refs</span>
-          <span className="text-white/30">·</span>
-          <span className="text-[10px] text-white/55">{char.usageCount} uses</span>
-          <span className="text-white/30">·</span>
-          <span className="text-[10px] text-white/40">{char.lastUsed}</span>
+          <span className="text-[10px] text-white/80">{char.refs.length} refs</span>
+          <span className="text-white/50">·</span>
+          <span className="text-[10px] text-white/80">{char.usageCount} uses</span>
+          <span className="text-white/50">·</span>
+          <span className="text-[10px] text-white/65">{char.lastUsed}</span>
         </div>
       </div>
 
@@ -166,17 +167,18 @@ function CharacterCard({
 }
 
 function AddCharacterCard({ onClick }: { onClick: () => void }) {
+  const { T } = useTheme();
   return (
     <button
       onClick={onClick}
-      className="rounded-2xl border-2 border-dashed border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50 transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-zinc-400 hover:text-zinc-600"
-      style={{ aspectRatio: '2/3' }}>
-      <div className="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center">
+      className="rounded-2xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center gap-3"
+      style={{ aspectRatio: '2/3', borderColor: T.border, color: T.textMuted }}>
+      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
         <Plus className="w-4.5 h-4.5" style={{ width: 18, height: 18 }} />
       </div>
       <div className="text-center">
         <p className="text-[12px] font-semibold">New Character</p>
-        <p className="text-[10px] mt-0.5 text-zinc-400">Add reference images</p>
+        <p className="text-[10px] mt-0.5">Add reference images</p>
       </div>
     </button>
   );
@@ -190,6 +192,7 @@ interface CharacterLibraryViewProps {
 }
 
 export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: CharacterLibraryViewProps) {
+  const { T } = useTheme();
   const [characters, setCharacters] = useState<Character[]>(INIT);
   const [selected,   setSelected]   = useState<string | null>(null);
   const [query,      setQuery]       = useState('');
@@ -282,15 +285,16 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-white">
+    <div className="flex-1 flex flex-col overflow-hidden" style={{ background: T.bg }}>
 
       {/* ── Filter bar ── */}
-      <div className="h-11 border-b border-zinc-100 px-5 flex items-center gap-3 shrink-0">
+      <div className="h-11 px-5 flex items-center gap-3 shrink-0" style={{ borderBottom: `1px solid ${T.borderMuted}` }}>
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none" style={{ color: T.textMuted }} />
           <input value={query} onChange={e => setQuery(e.target.value)}
             placeholder="Search characters…"
-            className="pl-8 pr-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-[11.5px] text-zinc-800 placeholder-zinc-400 outline-none focus:border-zinc-400 transition-colors w-48" />
+            className="pl-8 pr-3 py-1.5 rounded-lg text-[11.5px] outline-none transition-colors w-48"
+            style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: T.text }} />
         </div>
         <div className="flex items-center gap-1">
           {['All', ...TAGS.slice(0, 5)].map(t => (
@@ -303,7 +307,7 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
         </div>
         <div className="flex-1" />
         <div className="flex items-center gap-1.5">
-          <span className="text-[10.5px] text-zinc-400">{characters.length} characters</span>
+          <span className="text-[10.5px]" style={{ color: T.textMuted }}>{characters.length} characters</span>
           {pinnedChar && (
             <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold"
               style={{ background: pinnedChar.color + '18', color: pinnedChar.color, border: `1px solid ${pinnedChar.color}40` }}>
@@ -320,13 +324,32 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
         {/* Character grid */}
         <div className="flex-1 overflow-y-auto px-6 py-6">
           {filtered.length === 0 && !creating && (
-            <div className="flex flex-col items-center justify-center h-64 gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-100 border border-zinc-200 flex items-center justify-center">
-                <Users className="w-6 h-6 text-zinc-400" />
+            characters.length === 0 ? (
+              <div className="flex flex-col items-center justify-center min-h-[380px] gap-5 text-center">
+                <div className="w-20 h-20 rounded-3xl flex items-center justify-center" style={{ background: T.bgCard }}>
+                  <Users className="w-9 h-9" style={{ color: T.textMuted }} />
+                </div>
+                <div>
+                  <p className="text-[16px] font-bold" style={{ color: T.text }}>Build your cast</p>
+                  <p className="text-[12.5px] mt-1.5 max-w-[280px] leading-relaxed" style={{ color: T.textMuted }}>
+                    Save characters with reference images to keep them consistent across every generation.
+                  </p>
+                </div>
+                <button onClick={() => setCreating(true)}
+                  className="flex items-center gap-1.5 px-5 py-2.5 text-white text-[12px] font-bold rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
+                  style={{ background: P.rose }}>
+                  <Plus className="w-3.5 h-3.5" />Add a Character
+                </button>
               </div>
-              <p className="text-[13px] font-semibold text-zinc-500">No characters found</p>
-              <p className="text-[11.5px] text-zinc-400">Try a different search or create a new character</p>
-            </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 gap-3">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: T.bgCard }}>
+                  <Search className="w-6 h-6" style={{ color: T.textMuted }} />
+                </div>
+                <p className="text-[13px] font-semibold" style={{ color: T.textSub }}>No matching characters</p>
+                <p className="text-[11.5px]" style={{ color: T.textMuted }}>Try a different search or filter</p>
+              </div>
+            )
           )}
 
           <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
@@ -347,16 +370,16 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
             <motion.div key="detail"
               initial={{ x: 32, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
               exit={{ x: 32, opacity: 0 }} transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="w-80 shrink-0 border-l border-zinc-100 bg-white flex flex-col overflow-hidden">
+              className="w-80 shrink-0 flex flex-col overflow-hidden" style={{ borderLeft: `1px solid ${T.borderMuted}`, background: T.bg }}>
 
               {/* Panel header */}
-              <div className="px-4 py-3 border-b border-zinc-100 shrink-0 flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+              <div className="px-4 py-3 shrink-0 flex items-center justify-between" style={{ borderBottom: `1px solid ${T.borderMuted}` }}>
+                <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
                   {creating ? 'New Character' : 'Character Detail'}
                 </span>
                 <button onClick={() => { setSelected(null); setCreating(false); }}
-                  className="w-6 h-6 rounded-md hover:bg-zinc-100 flex items-center justify-center cursor-pointer transition-colors">
-                  <X className="w-3.5 h-3.5 text-zinc-400" />
+                  className="w-6 h-6 rounded-md flex items-center justify-center cursor-pointer transition-colors" style={{ color: T.textMuted }}>
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
 
@@ -367,15 +390,16 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
                 {creating && (
                   <div className="p-4 flex flex-col gap-4">
                     <div>
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block mb-1.5">Name</label>
+                      <label className="text-[9px] font-bold uppercase tracking-widest block mb-1.5" style={{ color: T.textMuted }}>Name</label>
                       <input value={newName} onChange={e => setNewName(e.target.value)}
                         placeholder="Character name…"
                         autoFocus
-                        className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-[13px] font-semibold text-zinc-900 placeholder-zinc-400 outline-none focus:border-rose-300 transition-colors" />
+                        className="w-full px-3 py-2 rounded-xl text-[13px] font-semibold outline-none focus:border-rose-300 transition-colors"
+                      style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: T.text }} />
                     </div>
 
                     <div>
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block mb-1.5">Type</label>
+                      <label className="text-[9px] font-bold uppercase tracking-widest block mb-1.5" style={{ color: T.textMuted }}>Type</label>
                       <div className="flex flex-wrap gap-1.5">
                         {TAGS.map(t => (
                           <button key={t} onClick={() => setNewTag(t)}
@@ -390,10 +414,11 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
                     </div>
 
                     <div>
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block mb-1.5">Notes</label>
+                      <label className="text-[9px] font-bold uppercase tracking-widest block mb-1.5" style={{ color: T.textMuted }}>Notes</label>
                       <textarea value={newNotes} onChange={e => setNewNotes(e.target.value)}
                         placeholder="Describe this character — appearance, style, personality…"
-                        className="w-full h-24 px-3 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-[12px] text-zinc-800 placeholder-zinc-400 outline-none focus:border-rose-300 transition-colors resize-none" />
+                        className="w-full h-24 px-3 py-2.5 rounded-xl text-[12px] outline-none focus:border-rose-300 transition-colors resize-none"
+                      style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: T.text }} />
                     </div>
 
                     <button onClick={createCharacter} disabled={!newName.trim()}
@@ -409,28 +434,28 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
                   <div className="flex flex-col">
 
                     {/* Avatar + Name */}
-                    <div className="p-4 flex items-center gap-3 border-b border-zinc-100">
+                    <div className="p-4 flex items-center gap-3" style={{ borderBottom: `1px solid ${T.borderMuted}` }}>
                       <div className="w-14 h-14 rounded-full overflow-hidden border-2 shrink-0"
                         style={{ borderColor: selectedChar.color }}>
                         <img src={selectedChar.avatar} alt="" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <input value={editName} onChange={e => { setEditName(e.target.value); setDirty(true); }}
-                          className="w-full text-[15px] font-black text-zinc-900 bg-transparent outline-none border-b border-transparent hover:border-zinc-300 focus:border-rose-300 transition-colors pb-0.5 leading-snug"
+                          className="w-full text-[15px] font-black bg-transparent outline-none border-b border-transparent hover:border-zinc-300 focus:border-rose-300 transition-colors pb-0.5 leading-snug" style={{ color: T.text }}
                           placeholder="Character name" />
                         <div className="flex items-center gap-1.5 mt-1.5">
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-white"
                             style={{ background: TAG_COLORS[selectedChar.tag] ?? P.rose }}>
                             {selectedChar.tag}
                           </span>
-                          <span className="text-[10px] text-zinc-400">{selectedChar.lastUsed}</span>
+                          <span className="text-[10px]" style={{ color: T.textMuted }}>{selectedChar.lastUsed}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Tag picker */}
-                    <div className="px-4 py-3 border-b border-zinc-100">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block mb-2">Character Type</label>
+                    <div className="px-4 py-3" style={{ borderBottom: `1px solid ${T.borderMuted}` }}>
+                      <label className="text-[9px] font-bold uppercase tracking-widest block mb-2" style={{ color: T.textMuted }}>Character Type</label>
                       <div className="flex flex-wrap gap-1.5">
                         {TAGS.map(t => (
                           <button key={t} onClick={() => { setEditTag(t); setDirty(true); }}
@@ -445,10 +470,10 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
                     </div>
 
                     {/* Reference images */}
-                    <div className="px-4 py-3 border-b border-zinc-100">
+                    <div className="px-4 py-3" style={{ borderBottom: `1px solid ${T.borderMuted}` }}>
                       <div className="flex items-center justify-between mb-2">
                         <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">References</label>
-                        <span className="text-[9px] text-zinc-400">{selectedChar.refs.length}/8</span>
+                        <span className="text-[9px]" style={{ color: T.textMuted }}>{selectedChar.refs.length}/8</span>
                       </div>
                       <div className="grid grid-cols-4 gap-1.5">
                         {selectedChar.refs.map((ref, ri) => (
@@ -478,25 +503,26 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
                     </div>
 
                     {/* Notes */}
-                    <div className="px-4 py-3 border-b border-zinc-100">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block mb-2">Notes</label>
+                    <div className="px-4 py-3" style={{ borderBottom: `1px solid ${T.borderMuted}` }}>
+                      <label className="text-[9px] font-bold uppercase tracking-widest block mb-2" style={{ color: T.textMuted }}>Notes</label>
                       <textarea value={editNotes} onChange={e => { setEditNotes(e.target.value); setDirty(true); }}
                         placeholder="Describe this character…"
-                        className="w-full h-20 px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-[11.5px] text-zinc-800 placeholder-zinc-400 outline-none focus:border-rose-300 transition-colors resize-none" />
+                        className="w-full h-20 px-3 py-2 rounded-xl text-[11.5px] outline-none focus:border-rose-300 transition-colors resize-none"
+                      style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: T.text }} />
                     </div>
 
                     {/* Usage history */}
                     <div className="border-b border-zinc-100">
                       <button onClick={() => setShowHistory(s => !s)}
-                        className="w-full px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors">
+                        className="w-full px-4 py-3 flex items-center justify-between cursor-pointer transition-colors">
                         <div className="flex items-center gap-2">
-                          <Clock className="w-3.5 h-3.5 text-zinc-400" />
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Usage History</span>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-500">
+                          <Clock className="w-3.5 h-3.5" style={{ color: T.textMuted }} />
+                          <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Usage History</span>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: T.bgCard, color: T.textSub }}>
                             {selectedChar.usageCount}
                           </span>
                         </div>
-                        <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
+                        <ChevronDown className="w-3.5 h-3.5 transition-transform" style={{ color: T.textMuted, transform: showHistory ? 'rotate(180deg)' : undefined }} />
                       </button>
                       {showHistory && (
                         <div className="px-4 pb-3 flex flex-col gap-2">
@@ -506,11 +532,11 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
                                 <img src={u.thumb} alt="" className="w-full h-full object-cover" />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-[10.5px] font-medium text-zinc-700 truncate">{u.prompt}</p>
+                                <p className="text-[10.5px] font-medium truncate" style={{ color: T.textSub }}>{u.prompt}</p>
                                 <div className="flex items-center gap-1 mt-0.5">
-                                  <span className="text-[9px] text-zinc-400">{u.model}</span>
-                                  <span className="text-zinc-300">·</span>
-                                  <span className="text-[9px] text-zinc-400">{u.date}</span>
+                                  <span className="text-[9px]" style={{ color: T.textMuted }}>{u.model}</span>
+                                  <span style={{ color: T.textMuted }}>·</span>
+                                  <span className="text-[9px]" style={{ color: T.textMuted }}>{u.date}</span>
                                 </div>
                               </div>
                             </div>
@@ -524,7 +550,7 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
 
               {/* Panel footer */}
               {selectedChar && !creating && (
-                <div className="px-4 py-3 border-t border-zinc-100 shrink-0 flex flex-col gap-2">
+                <div className="px-4 py-3 shrink-0 flex flex-col gap-2" style={{ borderTop: `1px solid ${T.borderMuted}` }}>
                   {dirty && (
                     <button onClick={saveChar}
                       className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white hover:opacity-90 transition-all cursor-pointer"
@@ -543,7 +569,7 @@ export default function CharacterLibraryView({ pinnedChar, onPinCharacter }: Cha
                       : <><Pin className="w-3.5 h-3.5" />Pin to Generator</>}
                   </button>
                   <button onClick={() => deleteChar(selectedChar.id)}
-                    className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11.5px] font-medium text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer">
+                    className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11.5px] font-medium hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer" style={{ color: T.textMuted }}>
                     <Trash2 className="w-3 h-3" />Delete Character
                   </button>
                 </div>

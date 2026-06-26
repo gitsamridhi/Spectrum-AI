@@ -7,6 +7,7 @@ import {
   Sparkles, Camera, Crop, Shuffle, RefreshCcw, Clapperboard,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/app/context/ThemeContext';
 
 const CATS = ['All', 'Image', 'Video', 'Audio', 'Spaces', 'Design', '3D', 'Flows'];
 
@@ -55,6 +56,7 @@ interface AllToolsViewProps {
 }
 
 export default function AllToolsView({ onClose, onNavigate }: AllToolsViewProps) {
+  const { isDark, T } = useTheme();
   const [cat,   setCat]   = useState('All');
   const [query, setQuery] = useState('');
 
@@ -81,60 +83,63 @@ export default function AllToolsView({ onClose, onNavigate }: AllToolsViewProps)
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.96, opacity: 0, y: 10 }}
           transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
-          style={{ maxWidth: 920, maxHeight: '82vh' }}
+          className="relative w-full rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+          style={{ background: T.bg, maxWidth: 920, maxHeight: '82vh' }}
           onClick={e => e.stopPropagation()}
         >
           {/* Tab + search header */}
-          <div className="px-6 pt-5 pb-4 border-b border-zinc-100 shrink-0 flex items-center gap-4">
+          <div className="px-6 pt-5 pb-4 shrink-0 flex items-center gap-4" style={{ borderBottom: `1px solid ${T.borderMuted}` }}>
             <div className="flex items-center gap-0.5 flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
               {CATS.map(c => (
                 <button key={c} onClick={() => setCat(c)}
-                  className={`shrink-0 px-3.5 py-2 rounded-full text-[12.5px] font-semibold transition-all cursor-pointer ${
-                    cat === c
-                      ? 'bg-zinc-900 text-white'
-                      : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100'
-                  }`}>
+                  className="shrink-0 px-3.5 py-2 rounded-full text-[12.5px] font-semibold transition-all cursor-pointer"
+                  style={cat === c
+                    ? { background: T.text, color: T.bg }
+                    : { color: T.textSub }}>
                   {c}
                 </button>
               ))}
             </div>
 
             <div className="relative shrink-0">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none" style={{ color: T.textMuted }} />
               <input value={query} onChange={e => setQuery(e.target.value)}
                 placeholder="Search for tools and flows"
-                className="pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-[12px] text-zinc-800 placeholder-zinc-400 outline-none focus:border-zinc-400 transition-colors w-52" />
+                className="pl-9 pr-4 py-2 rounded-xl text-[12px] outline-none transition-colors w-52"
+                style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: T.text }} />
             </div>
 
             <button onClick={onClose}
-              className="w-7 h-7 rounded-lg hover:bg-zinc-100 flex items-center justify-center cursor-pointer transition-colors shrink-0">
-              <X className="w-4 h-4 text-zinc-400" />
+              className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-colors shrink-0"
+              style={{ color: T.textMuted }}>
+              <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Tools grid */}
           <div className="flex-1 overflow-y-auto px-5 py-4" style={{ scrollbarWidth: 'none' }}>
             {filtered.length === 0 ? (
-              <div className="text-center py-16 text-[13px] text-zinc-400">No tools match "{query}"</div>
+              <div className="text-center py-16 text-[13px]" style={{ color: T.textMuted }}>No tools match "{query}"</div>
             ) : (
               <div className="grid grid-cols-3 gap-0.5">
                 {filtered.map((tool, i) => {
                   const Icon = tool.icon;
                   return (
                     <button key={i} onClick={() => { onNavigate(tool.id); onClose(); }}
-                      className="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl hover:bg-zinc-50 transition-colors cursor-pointer text-left">
+                      className="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-colors cursor-pointer text-left"
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = T.bgHover}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}>
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors"
-                        style={{ background: CAT_COLOR[tool.cat]?.bg ?? '#F4F4F5' }}>
+                        style={{ background: isDark ? (CAT_COLOR[tool.cat]?.bg ?? '#F4F4F5') + '18' : (CAT_COLOR[tool.cat]?.bg ?? '#F4F4F5') }}>
                         <Icon className="w-[17px] h-[17px]"
                           style={{ color: CAT_COLOR[tool.cat]?.fg ?? '#52525B' }} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-zinc-800 leading-snug">{tool.label}</p>
-                        <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug truncate">{tool.desc}</p>
+                        <p className="text-[13px] font-semibold leading-snug" style={{ color: T.text }}>{tool.label}</p>
+                        <p className="text-[11px] mt-0.5 leading-snug truncate" style={{ color: T.textMuted }}>{tool.desc}</p>
                       </div>
                       {tool.pinned && (
-                        <Pin className="w-3.5 h-3.5 text-zinc-300 shrink-0" style={{ fill: '#d4d4d8' }} />
+                        <Pin className="w-3.5 h-3.5 shrink-0" style={{ color: T.textMuted }} />
                       )}
                     </button>
                   );

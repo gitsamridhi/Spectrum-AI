@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useTheme } from "@/app/context/ThemeContext";
 
 interface PasswordInputProps {
   value: string;
@@ -18,9 +19,9 @@ export default function PasswordInput({
   id = "password-field",
   showStrength = false,
 }: PasswordInputProps) {
+  const { T } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
 
-  // Directly derive variables from prop value to avoid cascading renders
   let strengthScore = 0;
   let strength: "None" | "Weak" | "Fair" | "Good" | "Strong" = "None";
 
@@ -34,21 +35,11 @@ export default function PasswordInput({
     strengthScore = score === 0 ? 1 : score;
 
     switch (score) {
-      case 0:
-      case 1:
-        strength = "Weak";
-        break;
-      case 2:
-        strength = "Fair";
-        break;
-      case 3:
-        strength = "Good";
-        break;
-      case 4:
-        strength = "Strong";
-        break;
-      default:
-        strength = "Weak";
+      case 0: case 1: strength = "Weak"; break;
+      case 2: strength = "Fair"; break;
+      case 3: strength = "Good"; break;
+      case 4: strength = "Strong"; break;
+      default: strength = "Weak";
     }
   }
 
@@ -58,7 +49,7 @@ export default function PasswordInput({
       case "Fair":   return "bg-amber-400";
       case "Good":   return "bg-blue-500";
       case "Strong": return "bg-emerald-500";
-      default:       return "bg-zinc-200";
+      default:       return "";
     }
   };
 
@@ -68,7 +59,7 @@ export default function PasswordInput({
       case "Fair":   return "text-amber-500";
       case "Good":   return "text-blue-600";
       case "Strong": return "text-emerald-600";
-      default:       return "text-zinc-400";
+      default:       return "";
     }
   };
 
@@ -82,13 +73,16 @@ export default function PasswordInput({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           required
-          className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl h-11 px-4 pr-11 text-[13px] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900/20 transition-all"
+          className="w-full rounded-xl h-11 px-4 pr-11 text-[13px] outline-none transition-all"
+          style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: T.text }}
+          onFocus={e => (e.target as HTMLInputElement).style.borderColor = T.text}
+          onBlur={e =>  (e.target as HTMLInputElement).style.borderColor = T.border}
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 transition-colors focus:outline-none"
-        >
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors focus:outline-none"
+          style={{ color: T.textMuted }}>
           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
       </div>
@@ -96,7 +90,7 @@ export default function PasswordInput({
       {showStrength && value && (
         <div className="space-y-1.5 pt-0.5">
           <div className="flex justify-between items-center">
-            <span className="text-[10px] font-semibold tracking-wider text-zinc-400 uppercase">
+            <span className="text-[10px] font-semibold tracking-wider uppercase" style={{ color: T.textMuted }}>
               Password strength
             </span>
             <span className={`text-[10px] font-bold tracking-wider uppercase ${strengthText()}`}>
@@ -106,7 +100,8 @@ export default function PasswordInput({
           <div className="grid grid-cols-4 gap-1.5 h-[3px]">
             {[1, 2, 3, 4].map((step) => (
               <div key={step}
-                className={`h-full rounded-full transition-all duration-300 ${step <= strengthScore ? strengthColor() : "bg-zinc-200"}`}
+                className={`h-full rounded-full transition-all duration-300 ${step <= strengthScore ? strengthColor() : ''}`}
+                style={step > strengthScore ? { background: T.bgCard } : {}}
               />
             ))}
           </div>

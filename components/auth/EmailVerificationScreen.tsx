@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Mail, RefreshCw, ArrowLeft } from "lucide-react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
+import { useTheme } from "@/app/context/ThemeContext";
 import BrandingPanel from "./BrandingPanel";
 
 export default function EmailVerificationScreen() {
@@ -12,6 +13,7 @@ export default function EmailVerificationScreen() {
     resendCountdown,
     startResendTimer,
   } = useOnboarding();
+  const { T } = useTheme();
 
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -25,12 +27,14 @@ export default function EmailVerificationScreen() {
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] bg-[#0A0A0A] flex h-screen w-screen overflow-hidden text-white font-sans select-none">
+    <div className="fixed inset-0 z-[1000] flex h-screen w-screen overflow-hidden font-sans select-none"
+      style={{ background: T.bg, color: T.text }}>
       {/* Branding left panel continues */}
       <BrandingPanel />
 
       {/* Right panel: Verification panel */}
-      <div className="flex-1 overflow-y-auto bg-[#0A0A0A] px-6 py-12 md:p-16 lg:p-24 flex flex-col justify-between items-center h-full relative">
+      <div className="flex-1 overflow-y-auto px-6 py-12 md:p-16 lg:p-24 flex flex-col justify-between items-center h-full relative"
+        style={{ background: T.bg }}>
         
         {/* Style block for Envelope flap animation */}
         <style dangerouslySetInnerHTML={{__html: `
@@ -55,7 +59,8 @@ export default function EmailVerificationScreen() {
         <div className="w-full text-left">
           <button
             onClick={() => setScreen("SIGN_UP")}
-            className="text-xs font-mono text-zinc-500 hover:text-white flex items-center gap-2 transition-colors cursor-pointer bg-transparent border-none mt-2"
+            className="text-xs font-mono flex items-center gap-2 transition-colors cursor-pointer bg-transparent border-none mt-2"
+            style={{ color: T.textMuted }}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Sign Up</span>
@@ -66,7 +71,8 @@ export default function EmailVerificationScreen() {
         <div className="w-full max-w-sm my-auto text-center space-y-8">
           
           {/* Animated Envelope Illustration */}
-          <div className="relative flex justify-center mx-auto w-32 h-32 items-center bg-[#141414] rounded-2xl border border-zinc-900 shadow-inner">
+          <div className="relative flex justify-center mx-auto w-32 h-32 items-center rounded-2xl shadow-inner"
+            style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
             <svg
               className="w-20 h-20 overflow-visible"
               viewBox="0 0 100 80"
@@ -101,10 +107,10 @@ export default function EmailVerificationScreen() {
 
           {/* Heading */}
           <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: T.text }}>
               Check your inbox
             </h1>
-            <p className="text-zinc-400 text-xs leading-relaxed max-w-xs mx-auto">
+            <p className="text-xs leading-relaxed max-w-xs mx-auto" style={{ color: T.textMuted }}>
               We sent a verification link to <span className="font-mono text-violet-400 font-bold bg-violet-950/35 px-1.5 py-0.5 rounded border border-violet-900/40 text-[11px]">{email || "you@example.com"}</span>. Click it to activate your account.
             </p>
           </div>
@@ -113,14 +119,16 @@ export default function EmailVerificationScreen() {
           <div className="space-y-4 pt-2">
             {/* Countdown / Resend trigger */}
             {resendCountdown > 0 ? (
-              <div className="text-[11px] font-mono font-bold uppercase tracking-widest text-zinc-500 bg-[#141414] py-3 rounded-full border border-zinc-900 flex items-center justify-center gap-2">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-zinc-600" />
+              <div className="text-[11px] font-mono font-bold uppercase tracking-widest py-3 rounded-full flex items-center justify-center gap-2"
+                style={{ color: T.textMuted, background: T.bgCard, border: `1px solid ${T.border}` }}>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" style={{ color: T.textMuted }} />
                 Resend window locked: {resendCountdown}s
               </div>
             ) : (
               <button
                 onClick={handleResend}
-                className="w-full text-[11px] font-mono font-black text-center uppercase tracking-widest text-violet-400 hover:text-white bg-[#141414] border border-zinc-800 hover:border-violet-500/50 py-3 rounded-full hover:bg-violet-950/10 cursor-pointer transition-all"
+                className="w-full text-[11px] font-mono font-black text-center uppercase tracking-widest text-violet-400 hover:text-violet-500 hover:border-violet-500/50 py-3 rounded-full hover:bg-violet-500/5 cursor-pointer transition-all"
+                style={{ background: T.bgCard, border: `1px solid ${T.border}` }}
               >
                 Didn&apos;t get it? Resend email
               </button>
@@ -150,7 +158,8 @@ export default function EmailVerificationScreen() {
         <div className="mt-8 font-medium">
           <button
             onClick={() => setScreen("SIGN_UP")}
-            className="text-xs text-zinc-500 hover:text-white hover:underline transition-colors tracking-wide bg-transparent border-none cursor-pointer"
+            className="text-xs hover:underline transition-colors tracking-wide bg-transparent border-none cursor-pointer"
+            style={{ color: T.textMuted }}
           >
             Use a different email
           </button>

@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css'; // Global styles
 import { OnboardingProvider } from './context/OnboardingContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -78,9 +79,11 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         />
       </head>
       <body className="bg-[var(--bg-base)] text-[var(--text-main)] transition-colors duration-500" suppressHydrationWarning>
-        <OnboardingProvider>
-          {children}
-        </OnboardingProvider>
+        <ThemeProvider>
+          <OnboardingProvider>
+            {children}
+          </OnboardingProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

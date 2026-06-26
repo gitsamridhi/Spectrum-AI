@@ -2,14 +2,15 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, ImageIcon, Video, Mic, LayoutTemplate } from 'lucide-react';
+import { useTheme } from '@/app/context/ThemeContext';
 
 interface Message { role: 'user' | 'assistant'; text: string; }
 
 const SUGGESTIONS = [
-  { icon: ImageIcon,    label: 'Generate a portrait in golden hour lighting' },
-  { icon: Video,        label: 'Create a cinematic cityscape video clip' },
-  { icon: Mic,          label: 'Write narration text for a product video' },
-  { icon: LayoutTemplate, label: 'Plan a product photography workflow' },
+  { icon: ImageIcon,    label: 'Generate a portrait in golden hour lighting', pastelbg: '#FDF2F8', pastelborder: '#F9A8D4', color: '#BE185D' },
+  { icon: Video,        label: 'Create a cinematic cityscape video clip',     pastelbg: '#EDE9FE', pastelborder: '#C4B5FD', color: '#7C3AED' },
+  { icon: Mic,          label: 'Write narration text for a product video',    pastelbg: '#F0FDF4', pastelborder: '#86EFAC', color: '#16A34A' },
+  { icon: LayoutTemplate, label: 'Plan a product photography workflow',       pastelbg: '#FFF7ED', pastelborder: '#FED7AA', color: '#C2410C' },
 ];
 
 const SYSTEM_REPLIES: Record<string, string> = {
@@ -36,6 +37,7 @@ const Logo = () => (
 );
 
 export default function AssistantView() {
+  const { isDark, T } = useTheme();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput]       = useState('');
   const [typing, setTyping]     = useState(false);
@@ -59,13 +61,13 @@ export default function AssistantView() {
   const isEmpty = messages.length === 0;
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-white">
+    <div className="flex-1 flex flex-col overflow-hidden" style={{ background: T.bg }}>
 
       {/* Top bar */}
-      <div className="h-12 border-b border-zinc-100 flex items-center px-8 gap-3 shrink-0">
-        <div className="w-5 h-5 text-zinc-900"><Logo /></div>
-        <span className="text-[13px] font-bold text-zinc-900">Spectrum Assistant</span>
-        <span className="text-[10px] text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-full font-medium">Beta</span>
+      <div className="h-12 flex items-center px-8 gap-3 shrink-0" style={{ borderBottom: `1px solid ${T.border}` }}>
+        <div className="w-5 h-5" style={{ color: T.text }}><Logo /></div>
+        <span className="text-[13px] font-bold" style={{ color: T.text }}>Spectrum Assistant</span>
+        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ color: T.textMuted, background: T.bgCard }}>Beta</span>
       </div>
 
       {/* Messages */}
@@ -76,8 +78,8 @@ export default function AssistantView() {
               <div className="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-5">
                 <div className="w-6 h-6 text-white"><Logo /></div>
               </div>
-              <h2 className="text-[22px] font-bold text-zinc-900 tracking-[-0.03em]">How can I help you create?</h2>
-              <p className="text-[13px] text-zinc-400 mt-2 max-w-md">
+              <h2 className="text-[22px] font-bold tracking-[-0.03em]" style={{ color: T.text }}>How can I help you create?</h2>
+              <p className="text-[13px] mt-2 max-w-md" style={{ color: T.textMuted }}>
                 Ask me to generate images, videos, or voice. I can also help you plan workflows and choose the right settings.
               </p>
             </div>
@@ -86,11 +88,17 @@ export default function AssistantView() {
                 const Icon = s.icon;
                 return (
                   <button key={i} onClick={() => send(s.label)}
-                    className="group flex items-center gap-3 px-4 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-left hover:bg-white hover:border-zinc-400 hover:shadow-sm transition-all cursor-pointer">
-                    <div className="w-9 h-9 bg-white border border-zinc-200 rounded-xl flex items-center justify-center shrink-0 group-hover:border-zinc-400 transition-colors">
-                      <Icon className="w-4 h-4 text-zinc-600" />
+                    className="group flex items-center gap-3 px-4 py-4 rounded-2xl text-left hover:shadow-sm transition-all cursor-pointer"
+                    style={{ background: T.bgSub, border: `1px solid ${T.border}` }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = T.bgCard; (e.currentTarget as HTMLElement).style.borderColor = T.border; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = T.bgSub; (e.currentTarget as HTMLElement).style.borderColor = T.border; }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors"
+                      style={isDark
+                        ? { background: s.color + '22', border: `1px solid ${s.color}50` }
+                        : { background: s.pastelbg, border: `1px solid ${s.pastelborder}` }}>
+                      <Icon className="w-4 h-4" style={{ color: s.color }} />
                     </div>
-                    <p className="text-[12.5px] font-medium text-zinc-700 leading-snug">{s.label}</p>
+                    <p className="text-[12.5px] font-medium leading-snug" style={{ color: T.textSub }}>{s.label}</p>
                   </button>
                 );
               })}
@@ -101,19 +109,18 @@ export default function AssistantView() {
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
                 <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
-                  m.role === 'assistant' ? 'bg-zinc-900' : 'bg-zinc-200'
-                }`}>
+                  m.role === 'assistant' ? 'bg-zinc-900' : ''
+                }`} style={m.role === 'user' ? { background: T.bgCard } : {}}>
                   {m.role === 'assistant'
                     ? <div className="w-3.5 h-3.5 text-white"><Logo /></div>
-                    : <span className="text-[10px] font-bold text-zinc-600">You</span>
+                    : <span className="text-[10px] font-bold" style={{ color: T.textSub }}>You</span>
                   }
                 </div>
                 <div className={`flex-1 ${m.role === 'user' ? 'flex justify-end' : ''}`}>
-                  <div className={`px-4 py-3.5 rounded-2xl max-w-lg ${
-                    m.role === 'user'
-                      ? 'bg-zinc-900 text-white'
-                      : 'bg-zinc-50 border border-zinc-200 text-zinc-800'
-                  }`}>
+                  <div className={`px-4 py-3.5 rounded-2xl max-w-lg`}
+                    style={m.role === 'user'
+                      ? { background: '#18181b', color: '#fff' }
+                      : { background: T.bgSub, border: `1px solid ${T.border}`, color: T.text }}>
                     {m.text.split('\n').map((line, j) => (
                       <p key={j} className={`text-[13px] leading-relaxed ${j > 0 ? 'mt-1.5' : ''}`}>
                         {line.startsWith('**') && line.endsWith('**')
@@ -132,11 +139,11 @@ export default function AssistantView() {
                 <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center shrink-0">
                   <div className="w-3.5 h-3.5 text-white"><Logo /></div>
                 </div>
-                <div className="px-4 py-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <div className="px-4 py-3.5 rounded-2xl" style={{ background: T.bgSub, border: `1px solid ${T.border}` }}>
                   <div className="flex gap-1 items-center">
                     {[0,1,2].map(i => (
-                      <div key={i} className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"
-                        style={{ animationDelay: `${i * 150}ms` }} />
+                      <div key={i} className="w-1.5 h-1.5 rounded-full animate-bounce"
+                        style={{ background: T.textMuted, animationDelay: `${i * 150}ms` }} />
                     ))}
                   </div>
                 </div>
@@ -148,26 +155,29 @@ export default function AssistantView() {
       </div>
 
       {/* Input bar */}
-      <div className="border-t border-zinc-100 px-8 py-4 shrink-0">
+      <div className="px-8 py-4 shrink-0" style={{ borderTop: `1px solid ${T.border}` }}>
         <div className="max-w-2xl mx-auto">
-          <div className="flex items-end gap-3 px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl focus-within:border-zinc-400 focus-within:bg-white transition-all">
+          <div className="flex items-end gap-3 px-4 py-3 rounded-2xl transition-all"
+            style={{ background: T.inputBg, border: `1px solid ${T.border}` }}>
             <textarea
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input); } }}
               placeholder="Ask anything, or describe what you want to create..."
               rows={1}
-              className="flex-1 text-[13.5px] text-zinc-900 placeholder-zinc-400 bg-transparent outline-none resize-none leading-relaxed"
-              style={{ maxHeight: 120, overflowY: 'auto' }}
+              className="flex-1 text-[13.5px] bg-transparent outline-none resize-none leading-relaxed"
+              style={{ maxHeight: 120, overflowY: 'auto', color: T.text }}
             />
             <button onClick={() => send(input)} disabled={!input.trim() || typing}
               className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-                input.trim() && !typing ? 'bg-rose-400 hover:bg-rose-500' : 'bg-zinc-200 cursor-not-allowed'
-              }`}>
-              <Send className={`w-4 h-4 ${input.trim() && !typing ? 'text-white' : 'text-zinc-400'}`} />
+                input.trim() && !typing ? 'bg-rose-400 hover:bg-rose-500' : ''
+              }`}
+              style={!input.trim() || typing ? { background: T.bgCard } : {}}>
+              <Send className={`w-4 h-4 ${input.trim() && !typing ? 'text-white' : ''}`}
+                style={!input.trim() || typing ? { color: T.textMuted } : {}} />
             </button>
           </div>
-          <p className="text-center text-[10px] text-zinc-400 mt-2">
+          <p className="text-center text-[10px] mt-2" style={{ color: T.textMuted }}>
             Spectrum Assistant can generate, plan, and route tasks to the right tools.
           </p>
         </div>

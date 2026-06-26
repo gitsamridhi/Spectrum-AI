@@ -546,7 +546,7 @@ function AdvantageCards() {
 }
 
 // ─── Landing Page ─────────────────────────────────────────────────────────────
-function LandingPage({ onSignIn }: { onSignIn: () => void }) {
+function LandingPage({ onSignIn, onGoHome }: { onSignIn: () => void; onGoHome?: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
   const [openStep, setOpenStep] = useState(0);
@@ -682,6 +682,11 @@ function LandingPage({ onSignIn }: { onSignIn: () => void }) {
               <a key={h} href={h} className={`text-[13px] font-medium transition-colors duration-300 ${scrolled ? "text-zinc-500 hover:text-zinc-900" : "text-white/70 hover:text-white"}`}>{l}</a>
             ))}
           </nav>
+          {onGoHome && (
+            <BtnDark onClick={onGoHome} className="!py-2.5 !px-5 !text-[11px]">
+              Home
+            </BtnDark>
+          )}
           <Btn onClick={onSignIn} className={`!py-2.5 !px-5 !text-[11px] ${!scrolled ? "!bg-white !border-white !text-zinc-900 hover:!border-[#09090b]" : ""}`}>
             Sign In <ArrowRight className="w-3 h-3" />
           </Btn>
@@ -1463,6 +1468,6 @@ export default function Page() {
     case "FORGOT_PASSWORD_2":
     case "FORGOT_PASSWORD_3":
     case "FORGOT_PASSWORD_4": return <ForgotPasswordFlow />;
-    default:                  return <LandingPage onSignIn={() => setScreen("SIGN_IN")} />;
+    default:                  return <LandingPage onSignIn={() => setScreen("SIGN_IN")} onGoHome={() => setScreen("HOME_PERSONALISED")} />;
   }
 }

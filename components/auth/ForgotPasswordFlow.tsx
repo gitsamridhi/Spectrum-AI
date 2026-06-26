@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ArrowLeft, KeyRound, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
+import { useTheme } from "@/app/context/ThemeContext";
 import BrandingPanel from "./BrandingPanel";
 import PasswordInput from "./PasswordInput";
 
@@ -18,6 +19,7 @@ export default function ForgotPasswordFlow() {
     setConfirmNewPassword,
   } = useOnboarding();
 
+  const { T } = useTheme();
   const [loading, setLoading] = useState(false);
   const [errorLocal, setErrorLocal] = useState<string | null>(null);
 
@@ -59,7 +61,8 @@ export default function ForgotPasswordFlow() {
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] bg-[#0A0A0A] flex h-screen w-screen overflow-hidden text-white font-sans select-none">
+    <div className="fixed inset-0 z-[1000] flex h-screen w-screen overflow-hidden font-sans select-none"
+      style={{ background: T.bg, color: T.text }}>
       {/* Reusable left panel */}
       <BrandingPanel />
 
@@ -83,13 +86,15 @@ export default function ForgotPasswordFlow() {
       `}} />
 
       {/* Right panel with step switches */}
-      <div className="flex-1 overflow-y-auto bg-[#0A0A0A] px-6 py-12 md:p-16 lg:p-24 flex flex-col justify-between items-center h-full relative">
+      <div className="flex-1 overflow-y-auto px-6 py-12 md:p-16 lg:p-24 flex flex-col justify-between items-center h-full relative"
+        style={{ background: T.bg }}>
         
         {/* Back Link Top Left */}
         <div className="w-full text-left">
           <button
             onClick={() => setScreen("SIGN_IN")}
-            className="text-xs font-mono text-zinc-500 hover:text-white flex items-center gap-2 transition-colors cursor-pointer bg-transparent border-none mt-2"
+            className="text-xs font-mono flex items-center gap-2 transition-colors cursor-pointer bg-transparent border-none mt-2"
+            style={{ color: T.textMuted }}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Sign In</span>
@@ -103,20 +108,22 @@ export default function ForgotPasswordFlow() {
           {currentScreen === "FORGOT_PASSWORD_1" && (
             <div className="space-y-6 text-left">
               <div className="space-y-2 text-center lg:text-left">
-                <div className="mx-auto lg:mx-0 w-12 h-12 rounded-2xl bg-[#141414] border border-zinc-850 flex items-center justify-center mb-1">
+                <div className="mx-auto lg:mx-0 w-12 h-12 rounded-2xl flex items-center justify-center mb-1"
+                  style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
                   <KeyRound className="w-5 h-5 text-violet-400" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: T.text }}>
                   Reset password
                 </h1>
-                <p className="text-zinc-500 text-xs">
+                <p className="text-xs" style={{ color: T.textMuted }}>
                   Enter your email address and we&apos;ll send a reset authorization link.
                 </p>
               </div>
 
               <form onSubmit={handleSendLink} className="space-y-4 pt-1">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono tracking-wider text-zinc-400 uppercase font-bold block">
+                  <label className="text-[10px] font-mono tracking-wider uppercase font-bold block"
+                    style={{ color: T.textMuted }}>
                     Work or personal email
                   </label>
                   <input
@@ -125,7 +132,10 @@ export default function ForgotPasswordFlow() {
                     onChange={(e) => setResetEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
-                    className="w-full bg-[#141414] border border-zinc-800 text-white rounded-xl h-11 px-4 text-sm placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 transition-all font-mono"
+                    className="w-full rounded-xl h-11 px-4 text-sm focus:outline-none transition-all font-mono"
+                    style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: T.text }}
+                    onFocus={e => (e.target as HTMLInputElement).style.borderColor = '#7C3AED'}
+                    onBlur={e =>  (e.target as HTMLInputElement).style.borderColor = T.border}
                   />
                 </div>
 
@@ -155,7 +165,8 @@ export default function ForgotPasswordFlow() {
           {currentScreen === "FORGOT_PASSWORD_2" && (
             <div className="space-y-8">
               {/* Animated illustration container */}
-              <div className="relative flex justify-center mx-auto w-32 h-32 items-center bg-[#141414] rounded-2xl border border-zinc-900 shadow-inner">
+              <div className="relative flex justify-center mx-auto w-32 h-32 items-center rounded-2xl shadow-inner"
+                style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
                 <svg
                   className="w-20 h-20 overflow-visible"
                   viewBox="0 0 100 80"
@@ -180,10 +191,10 @@ export default function ForgotPasswordFlow() {
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: T.text }}>
                   Check your inbox
                 </h1>
-                <p className="text-zinc-400 text-xs px-4 mx-auto max-w-xs leading-normal">
+                <p className="text-xs px-4 mx-auto max-w-xs leading-normal" style={{ color: T.textMuted }}>
                   We sent a secure password reset link to <span className="font-mono text-violet-400 font-bold">{resetEmail || "your email"}</span>.
                 </p>
               </div>
@@ -196,7 +207,7 @@ export default function ForgotPasswordFlow() {
                 >
                   Bypass & Set New Password ➔
                 </button>
-                <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
+                <p className="text-[10px] font-mono uppercase tracking-wider" style={{ color: T.textMuted }}>
                   Select bypass to prototype the rest of the flow
                 </p>
               </div>
@@ -207,10 +218,10 @@ export default function ForgotPasswordFlow() {
           {currentScreen === "FORGOT_PASSWORD_3" && (
             <div className="space-y-6 text-left">
               <div className="space-y-1.5 text-center lg:text-left">
-                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-none">
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight leading-none" style={{ color: T.text }}>
                   Set new password
                 </h1>
-                <p className="text-[#888] text-xs">
+                <p className="text-xs" style={{ color: T.textMuted }}>
                   Choose a robust password to re-synchronize your studio environment.
                 </p>
               </div>
@@ -218,7 +229,7 @@ export default function ForgotPasswordFlow() {
               <form onSubmit={handleSetNewPassword} className="space-y-4 pt-2">
                 {/* New Password */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono tracking-wider text-zinc-400 uppercase font-bold block">
+                  <label className="text-[10px] font-mono tracking-wider uppercase font-bold block" style={{ color: T.textMuted }}>
                     New Password
                   </label>
                   <PasswordInput
@@ -231,7 +242,7 @@ export default function ForgotPasswordFlow() {
 
                 {/* Confirm Password */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono tracking-wider text-zinc-400 uppercase font-bold block">
+                  <label className="text-[10px] font-mono tracking-wider uppercase font-bold block" style={{ color: T.textMuted }}>
                     Confirm New Password
                   </label>
                   <PasswordInput
@@ -275,10 +286,10 @@ export default function ForgotPasswordFlow() {
               </div>
 
               <div className="space-y-1">
-                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: T.text }}>
                   Success!
                 </h1>
-                <p className="text-zinc-400 text-xs max-w-xs mx-auto leading-normal">
+                <p className="text-xs max-w-xs mx-auto leading-normal" style={{ color: T.textMuted }}>
                   Your password has been securely updated. Your credentials are now synchronized on the ledger node.
                 </p>
               </div>
