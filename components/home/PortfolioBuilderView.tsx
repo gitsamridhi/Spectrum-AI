@@ -170,30 +170,6 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
         .ph-marquee:hover { animation-play-state: paused; }
       `}</style>
 
-      {/* ── HEADER ── */}
-      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: `1px solid ${T.border}`, background: T.bg }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <span style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: '.13em', textTransform: 'uppercase', padding: '3px 9px', borderRadius: 20, background: PA.blueBg, color: PA.blue, border: `1px solid ${PA.blueBdr}` }}>
-              Portfolio Ready
-            </span>
-            <span style={{ fontSize: 9.5, color: T.textMuted }}>Score 78/100 · Updated 2h ago</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-.03em', color: T.text, margin: 0, lineHeight: 1.1 }}>Sarah Chen</h1>
-            <span style={{ fontSize: 13, fontWeight: 400, color: T.textMuted }}>Fashion Model · New York</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '8px 16px', borderRadius: 10, background: 'linear-gradient(135deg,#EC4899,#A855F7)', color: '#fff', fontSize: 11.5, fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 3px 12px rgba(236,72,153,.28)' }}>
-            <Share2 style={{ width: 13, height: 13 }} /> Share Link
-          </button>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '8px 16px', borderRadius: 10, background: T.bgSub, color: T.textSub, fontSize: 11.5, fontWeight: 600, border: `1px solid ${T.border}`, cursor: 'pointer' }}>
-            <Download style={{ width: 13, height: 13 }} /> Export PDF
-          </button>
-        </div>
-      </div>
-
       {/* ── BODY ── */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
