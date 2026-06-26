@@ -96,7 +96,7 @@ function HomeScreenInner() {
     }
   };
 
-  const isStudio = ['cinema', 'marketing', 'social', 'product'].includes(activeNav);
+  const isStudio = ['cinema', 'marketing', 'social', 'product', 'portfolio'].includes(activeNav);
 
   return (
     <div className="fixed inset-0 flex font-sans overflow-hidden" style={{ background: T.bg, zoom: '0.9' } as React.CSSProperties}>
