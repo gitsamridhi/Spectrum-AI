@@ -164,44 +164,6 @@ export default function VoiceGeneratorView({ onBack }: VoiceGeneratorViewProps) 
               </div>
             </div>
 
-            {/* Style — coral pastel */}
-            <div>
-              <label className="text-[9px] font-semibold uppercase tracking-widest block mb-1.5" style={{ color: T.textMuted }}>Style</label>
-              <div className="grid grid-cols-2 gap-1">
-                {STYLES.map(s => (
-                  <button key={s} onClick={() => setStyle(s)}
-                    className="py-2 rounded-lg text-[11px] font-bold border transition-all cursor-pointer"
-                    style={style === s
-                      ? { background: P.coral, color: '#fff', borderColor: 'transparent' }
-                      : { background: T.bg, borderColor: T.border, color: T.textSub }}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Emotion — magenta pastel */}
-            <div>
-              <button onClick={() => setShowEmotionAccordion(s => !s)}
-                className="flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-widest transition-colors cursor-pointer mb-1.5"
-                style={{ color: T.textMuted }}>
-                <ChevronRight className={`w-3 h-3 transition-transform ${showEmotionAccordion ? 'rotate-90' : ''}`} />
-                Emotion Tone
-              </button>
-              {showEmotionAccordion && (
-                <div className="grid grid-cols-2 gap-1">
-                  {EMOTIONS.map(e => (
-                    <button key={e} onClick={() => setEmotion(e)}
-                      className="py-1.5 rounded-lg text-[10.5px] font-semibold border transition-all cursor-pointer"
-                      style={emotion === e
-                        ? { background: P.magenta, color: '#fff', borderColor: 'transparent' }
-                        : { background: T.bg, borderColor: T.border, color: T.textSub }}>
-                      {e}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Generate button — coral → magenta gradient */}

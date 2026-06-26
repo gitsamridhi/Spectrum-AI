@@ -14,10 +14,10 @@ const PA = {
 };
 
 const CLIP_LIBRARY = [
-  { id:1, src:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80', label:'Portrait · Golden Hour', dur:'0:04' },
-  { id:2, src:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80', label:'Fashion Editorial · FW',  dur:'0:06' },
-  { id:3, src:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=80', label:'Runway · Campaign',       dur:'0:05' },
-  { id:4, src:'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=80', label:'Studio Portrait · Noir',  dur:'0:03' },
+  { id:1, src:'/Model Headshot x.jpg',  label:'Model Headshot · Studio', dur:'0:04' },
+  { id:2, src:'/download (31).jpg',     label:'Fashion Editorial · FW',  dur:'0:06' },
+  { id:3, src:'/download (32).jpg',     label:'High Fashion Campaign',   dur:'0:05' },
+  { id:4, src:'/download (33).jpg',     label:'Editorial · Spring',      dur:'0:03' },
 ];
 
 const TEMPLATES = ['Cinematic Opener','Brand Story','Agency Reel','Custom'];

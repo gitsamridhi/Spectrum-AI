@@ -73,13 +73,24 @@ function HeroScreen({ onGetStarted }: { onGetStarted: (p: string) => void }) {
       key="hero"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       transition={{ duration: 0.4 }}
-      style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#09090b', position: 'relative' }}
+      style={{
+        flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative',
+        /* Full-screen glow — radiates from where the center card sits (≈58% down) */
+        background:
+          'radial-gradient(ellipse 85% 95% at 50% 58%,' +
+          ' rgba(205,42,255,.86) 0%,'  +
+          ' rgba(165,22,235,.60) 18%,' +
+          ' rgba(210,52,210,.30) 42%,' +
+          ' rgba(150,25,190,.10) 60%,' +
+          ' transparent 74%),' +
+          '#09090b',
+      }}
     >
       {/* ── Centering wrapper: equal space above & below ── */}
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: 120, /* bias upward so absolute prompt doesn't cover cards */
+        paddingBottom: 120,
         position: 'relative', overflow: 'hidden',
       }}>
 
@@ -109,27 +120,6 @@ function HeroScreen({ onGetStarted }: { onGetStarted: (p: string) => void }) {
             This confines the purple bloom to behind the center card ONLY.
             The glow is z:2 so cards (z:10–50) render on top.
           */}
-          {/*
-            Glow center sits at 26% (≈114px from top of 440px container).
-            The center card starts at 40px from top (440-400=40px gap).
-            This puts the brightest part of the glow IN the gap above the center card,
-            making the bloom fully visible before any card covers it.
-            Width=420px confines the column to center card width only.
-          */}
-          <div style={{
-            position: 'absolute', top: 0, bottom: 0,
-            left: '50%', transform: 'translateX(-50%)',
-            width: 420,
-            background:
-              'radial-gradient(ellipse 82% 90% at 50% 26%,' +
-              ' rgba(235,55,255,1.0) 0%,'  +
-              ' rgba(185,30,248,.88) 20%,' +
-              ' rgba(220,50,215,.60) 42%,' +
-              ' rgba(180,40,200,.28) 62%,' +
-              ' transparent 78%)',
-            pointerEvents: 'none', zIndex: 2,
-          }} />
-
           {HCARDS.map((card, i) => (
             <motion.div key={card.id}
               initial={{ y: 65, opacity: 0, rotate: card.rotate, scale: .91 }}

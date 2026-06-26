@@ -114,7 +114,9 @@ export default function ProductStudioView({ onBack }: { onBack: () => void }) {
   const selectedBg   = BACKGROUNDS.find(b => b.id === bg)!;
   const selectedShot = SHOT_TYPES.find(s => s.id === shotType)!;
 
-  const studioBg = isDark ? P.bg : T.bg;
+  const studioBg = isDark
+    ? P.bg
+    : `radial-gradient(ellipse 80% 75% at 15% 15%, rgba(236,72,153,.22) 0%, transparent 52%), radial-gradient(ellipse 75% 70% at 85% 85%, rgba(168,85,247,.18) 0%, transparent 52%), radial-gradient(ellipse 60% 55% at 50% 50%, rgba(244,114,182,.10) 0%, transparent 55%), ${T.bg}`;
   const panelBg  = isDark ? '#0a0415' : T.bgSub;
   const borderC  = isDark ? 'rgba(255,255,255,0.07)' : T.border;
 
@@ -124,57 +126,27 @@ export default function ProductStudioView({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden" style={{ background: studioBg }}>
 
-      {/* ── HEADER ── */}
-      <div className="h-14 shrink-0 flex items-center px-5 gap-4 relative overflow-hidden"
-        style={{ borderBottom: `1px solid ${isDark ? `${P.pink}15` : T.border}`, background: isDark ? '#080012' : T.bg }}>
-
-        {/* Neon top edge */}
-        {isDark && (
-          <div className="absolute top-0 left-0 right-0 h-[1.5px] pointer-events-none"
-            style={{ background: `linear-gradient(90deg, transparent 0%, ${P.deep}88 15%, ${P.pink}ff 45%, ${P.hot}ff 55%, ${P.deep}88 85%, transparent 100%)` }} />
-        )}
-
-        <button onClick={onBack}
-          className="p-1.5 rounded-lg cursor-pointer transition-colors shrink-0"
-          style={{ color: isDark ? 'rgba(255,255,255,0.4)' : T.textSub }}>
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: `linear-gradient(135deg, ${P.deep}, ${P.pink})`, boxShadow: isDark ? `0 0 16px ${P.pink}55` : 'none' }}>
-            <Package className="w-3.5 h-3.5 text-white" />
-          </div>
-          <div>
-            <p className="text-[13px] font-black tracking-tight" style={{ color: isDark ? '#fff' : T.text }}>Product Studio</p>
-          </div>
-          <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
-            style={{ background: isDark ? P.pink + '20' : P.pink + '12', color: P.hot, border: `1px solid ${P.pink}40` }}>
-            Advanced
-          </span>
-        </div>
-
-        <div className="flex-1" />
-
-        <div className="flex items-center gap-4">
-          {isDark && (
-            <span className="font-mono text-[10px]" style={{ color: `${P.pink}60` }}>
-              TAKE {String(shotCount).padStart(2, '0')} · {selectedShot.label.toUpperCase()}
-            </span>
-          )}
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full" style={{ background: P.pink, boxShadow: isDark && blink ? `0 0 10px ${P.pink}, 0 0 20px ${P.pink}80` : 'none', opacity: blink ? 1 : 0.3, transition: 'opacity 0.3s, box-shadow 0.3s' }} />
-            <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: isDark ? P.hot : T.textSub }}>STUDIO LIVE</span>
-          </div>
-        </div>
-      </div>
-
       {/* ── BODY ── */}
       <div className="flex-1 flex overflow-hidden">
 
         {/* ── LEFT PANEL — Surfaces + Lighting ── */}
         <div className="w-[150px] shrink-0 flex flex-col border-r"
           style={{ borderColor: isDark ? `${P.pink}12` : T.border, background: panelBg }}>
+
+          {/* Back button in panel header */}
+          <div className="px-3 pt-3 pb-2 flex items-center gap-2 shrink-0"
+            style={{ borderBottom: `1px solid ${isDark ? `${P.pink}10` : T.border}` }}>
+            <button onClick={onBack}
+              className="p-1 rounded-lg cursor-pointer transition-colors shrink-0"
+              style={{ color: isDark ? 'rgba(255,255,255,0.4)' : T.textSub }}>
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+            <div className="w-5 h-5 rounded-md flex items-center justify-center shrink-0"
+              style={{ background: `linear-gradient(135deg, ${P.deep}, ${P.pink})` }}>
+              <Package className="w-3 h-3 text-white" />
+            </div>
+            <span className="text-[10px] font-bold truncate" style={{ color: isDark ? 'rgba(255,255,255,.55)' : T.textSub }}>Product</span>
+          </div>
 
           {isDark && (
             <div className="h-px w-full shrink-0"

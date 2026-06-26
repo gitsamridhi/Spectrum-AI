@@ -133,20 +133,20 @@ export default function Sidebar({ active, setActive, displayName, avatar, onLogo
 
         {/* Advanced Studios */}
         <div className="px-3 pt-3 pb-4">
-          <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: '#0f0f12' }}>
+          <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: isDark ? '#0f0f12' : T.bgSub }}>
             <div className="px-3 pt-3 pb-2 flex items-center gap-1.5">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-white/70 flex-1">Advanced</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest flex-1" style={{ color: isDark ? 'rgba(255,255,255,.7)' : T.textMuted }}>Advanced</p>
               <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full tracking-wide"
-                style={{ background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.12)' }}>Pro</span>
+                style={{ background: isDark ? 'rgba(255,255,255,0.12)' : T.bgCard, color: isDark ? 'rgba(255,255,255,0.7)' : T.textSub, border: `1px solid ${T.border}` }}>Pro</span>
             </div>
             <div className="px-2 pb-2 space-y-0.5">
               {ADVANCED.map(item => (
                 <button key={item.id} onClick={() => setActive(item.id)}
                   className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-[12.5px] font-medium transition-all cursor-pointer text-left"
                   style={active === item.id
-                    ? { background: 'white', color: '#111113' }
-                    : { color: 'rgba(255,255,255,0.65)', background: 'transparent' }}
-                  onMouseEnter={e => { if (active !== item.id) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.1)'; }}
+                    ? { background: T.text, color: T.bg }
+                    : { color: isDark ? 'rgba(255,255,255,0.65)' : T.textSub, background: 'transparent' }}
+                  onMouseEnter={e => { if (active !== item.id) (e.currentTarget as HTMLElement).style.background = T.bgHover; }}
                   onMouseLeave={e => { if (active !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                   <item.icon className="w-3.5 h-3.5 shrink-0" />
                   {item.label}
