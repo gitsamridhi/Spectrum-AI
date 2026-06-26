@@ -85,15 +85,14 @@ const REVIEWS = [
   { from: 'Vogue Casting',   status: 'viewed',  sent: '2 days ago', initials: 'VC', color: PA.teal },
 ];
 
-// Local model photos from public folder — # chars must be %23 in URL paths
 const PORTFOLIO_PHOTOS = {
-  h1: '/Model Headshot x.jpg',
-  h2: '/download (31).jpg',
-  h3: '/download (32).jpg',
-  h4: '/download (33).jpg',
-  h5: '/VSS Studio Shoot - Come as you are _@vogue_college __styled by_ @anya__reed @sashavonstauffenberg @lucinda_chow @holden_e_peterson _model_ @adaugarangbior _makeup_ @makeupbyjohnmendez __picture not taken by me.jpg',
-  h6: '/Результат поиска Google для https___d29c1z66frfv6c_cloudfront.net_pub_media_catalog_product_zoom_a35d69724bed4dea273c3bee36ed661ff0eee6b5_xxl-1.jpg',
-  h7: '/𝖡𝗈𝗅𝗎𝗐𝖺𝗍𝗂𝖿𝖾 𝗍𝖾𝗌𝗍 𝗌𝗁𝗈𝗈𝗍 𝗐𝗂𝗍𝗁 @polaroidsbynuel ______%23wlmsmodels %23beunbound %23testshoot %23femalemodel %23femalefashionmodel %23fashionmodeling.jpg',
+  h1: '/portfolio_h1.jpg',
+  h2: '/portfolio_h2.jpg',
+  h3: '/portfolio_h3.jpg',
+  h4: '/portfolio_h4.jpg',
+  h5: '/portfolio_h5.jpg',
+  h6: '/portfolio_h6.jpg',
+  h7: '/portfolio_h7.jpg',
 };
 
 const OUTPUTS = [
