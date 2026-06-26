@@ -174,7 +174,7 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
         {/* ── MAIN ── */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '18px 22px', display: 'flex', flexDirection: 'column', gap: 18, scrollbarWidth: 'none' }}>
+        <div style={{ flex: 1, overflow: 'hidden', padding: '18px 22px', display: 'flex', flexDirection: 'column', gap: 18 }}>
 
           {/* Portfolio Showcase */}
           <div>

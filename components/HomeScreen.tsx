@@ -74,7 +74,7 @@ function HomeScreenInner() {
     }
   };
 
-  const goHome = () => window.history.back();
+  const goHome = () => { setActiveNav('home'); setToolsOpen(false); };
 
   const renderMain = () => {
     switch (activeNav) {
