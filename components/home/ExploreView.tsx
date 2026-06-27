@@ -81,6 +81,8 @@ const MASONRY_ASSETS: MasonryAsset[] = [
   { src: IMGS[3], prompt: 'cinematic close-up of mechanical watch gears, luxury product showcase',     model: 'AI Video',    seed: '16', ratio: '1:1',  type: 'video', videoSrc: `${HF}/ai-video-v2/example-4-mini.mp4`,       tag: 'Luxury',    likes: 4450, ar: '1/1',  creatorInitial: 'I', creatorColor: P.hotPink },
   { src: IMGS[0], prompt: 'aurora borealis over mountain peaks, timelapse style, vivid color grade',   model: 'Seedance 2.0', seed: '17', ratio: '16:9', type: 'video', videoSrc: `${HF}/seedance-2.0-v2/examples/2-mini.mp4`, tag: 'Aurora',    likes: 7600, ar: '16/9', creatorInitial: 'B', creatorColor: P.peach },
   { src: IMGS[1], prompt: 'editorial portrait, dramatic chiaroscuro, fashion magazine cover',           model: 'AI Video',    seed: '18', ratio: '2:3',  type: 'video', videoSrc: `${HF}/ai-video-v2/example-1-mini.mp4`,       tag: 'Editorial', likes: 5940, ar: '2/3',  creatorInitial: 'C', creatorColor: P.vivid },
+  { src: IMGS[2], prompt: 'levitating architecture, brutalist structures above cloud layer, golden light', model: 'Seedance 2.0', seed: '19', ratio: '16:9', type: 'video', videoSrc: `${HF}/seedance-2.0-v2/examples/2-mini.mp4`, tag: 'Arch',      likes: 3180, ar: '16/9', creatorInitial: 'P', creatorColor: P.orange },
+  { src: IMGS[3], prompt: 'midnight bonfire on beach, embers rising slowly, slow motion crashing waves',  model: 'AI Video',    seed: '20', ratio: '2:3',  type: 'video', videoSrc: `${HF}/ai-video-v2/example-3-mini.mp4`,       tag: 'Mood',      likes: 4920, ar: '2/3',  creatorInitial: 'Q', creatorColor: P.rose },
 ];
 
 const CINEMATIC: Asset[] = [
@@ -243,7 +245,7 @@ function SectionHeader({ label, badge, color, action, onAction, T }: {
 /* ── Main ────────────────────────────────────────────────────────────────── */
 
 export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: (id: string) => void }) {
-  const { T } = useTheme();
+  const { T, isDark } = useTheme();
   const [query,        setQuery]        = useState('');
   const [searchFilter, setSearchFilter] = useState('All');
   const [assetFilter,  setAssetFilter]  = useState('All');
@@ -415,7 +417,11 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
                 </div>
                 <div className="grid grid-cols-4 gap-3">
                   {VFX_PRESETS.map((preset, i) => (
-                    <div key={i} className="group bg-zinc-950 rounded-2xl p-5 cursor-pointer hover:bg-zinc-900 transition-colors relative overflow-hidden flex flex-col" style={{ minHeight: 190 }}>
+                    <div key={i}
+                      className="group rounded-2xl p-5 cursor-pointer transition-colors relative overflow-hidden flex flex-col"
+                      style={{ minHeight: 190, background: isDark ? '#09090b' : T.bgCard, border: `1px solid ${T.border}` }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#18181b' : T.bgHover; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#09090b' : T.bgCard; }}>
                       <div className="absolute top-0 right-0 w-28 h-28 rounded-full blur-3xl opacity-25 -translate-y-6 translate-x-6 pointer-events-none"
                         style={{ background: preset.color }} />
                       <div className="relative flex flex-col flex-1">
@@ -423,8 +429,8 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
                           style={{ color: preset.color, background: preset.color + '20', border: `1px solid ${preset.color}40` }}>
                           ✦ VFX
                         </span>
-                        <h3 className="text-[13.5px] font-black text-white mb-1.5 leading-snug">{preset.title}</h3>
-                        <p className="text-[11px] leading-normal flex-1" style={{ color: 'rgba(255,255,255,0.72)' }}>{preset.desc}</p>
+                        <h3 className="text-[13.5px] font-black mb-1.5 leading-snug" style={{ color: T.text }}>{preset.title}</h3>
+                        <p className="text-[11px] leading-normal flex-1" style={{ color: T.textSub }}>{preset.desc}</p>
                         <button onClick={() => tryPreset(preset.title + '-vfx')}
                           className="mt-4 w-full py-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                           style={copied === preset.title + '-vfx' ? { background: '#22c55e', color: '#fff' } : { background: preset.color, color: '#fff' }}>
@@ -444,7 +450,11 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
                 </div>
                 <div className="grid grid-cols-4 gap-3">
                   {SOCIAL_PRESETS.map((preset, i) => (
-                    <div key={i} className="bg-zinc-950 rounded-2xl p-5 cursor-pointer hover:bg-zinc-900 transition-colors relative overflow-hidden flex flex-col" style={{ minHeight: 190 }}>
+                    <div key={i}
+                      className="rounded-2xl p-5 cursor-pointer transition-colors relative overflow-hidden flex flex-col"
+                      style={{ minHeight: 190, background: isDark ? '#09090b' : T.bgCard, border: `1px solid ${T.border}` }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#18181b' : T.bgHover; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#09090b' : T.bgCard; }}>
                       <div className="absolute top-0 right-0 w-28 h-28 rounded-full blur-3xl opacity-25 -translate-y-6 translate-x-6 pointer-events-none"
                         style={{ background: preset.color }} />
                       <div className="relative flex flex-col flex-1">
@@ -452,8 +462,8 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
                           style={{ color: preset.color, background: preset.color + '20', border: `1px solid ${preset.color}40` }}>
                           ✦ Social
                         </span>
-                        <h3 className="text-[13.5px] font-black text-white mb-1.5 leading-snug">{preset.title}</h3>
-                        <p className="text-[11px] leading-normal flex-1" style={{ color: 'rgba(255,255,255,0.72)' }}>{preset.desc}</p>
+                        <h3 className="text-[13.5px] font-black mb-1.5 leading-snug" style={{ color: T.text }}>{preset.title}</h3>
+                        <p className="text-[11px] leading-normal flex-1" style={{ color: T.textSub }}>{preset.desc}</p>
                         <button onClick={() => tryPreset(preset.title + '-social')}
                           className="mt-4 w-full py-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                           style={copied === preset.title + '-social' ? { background: '#22c55e', color: '#fff' } : { background: preset.color, color: '#fff' }}>
@@ -471,40 +481,48 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
               <SectionHeader label="Studio Modules" badge="UPSELL" color={P.orange} action="Open Studios" onAction={() => onToolClick('spaces')} T={T} />
               <div className="grid grid-cols-2 gap-4">
 
-                <div onClick={() => onToolClick('image')} className="bg-zinc-950 rounded-2xl p-6 relative overflow-hidden cursor-pointer hover:bg-zinc-900 transition-colors" style={{ minHeight: 230 }}>
+                <div onClick={() => onToolClick('image')}
+                  className="rounded-2xl p-6 relative overflow-hidden cursor-pointer transition-colors"
+                  style={{ minHeight: 230, background: isDark ? '#09090b' : T.bgCard, border: `1px solid ${T.border}` }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#18181b' : T.bgHover; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#09090b' : T.bgCard; }}>
                   <div className="absolute inset-0 pointer-events-none"
                     style={{ background: `radial-gradient(circle at 85% 15%, ${P.vivid}35 0%, transparent 55%)` }} />
                   <div className="relative">
                     <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
                       style={{ color: P.vivid, background: P.vivid + '20', border: `1px solid ${P.vivid}40` }}>Marketing</span>
-                    <h3 className="text-[20px] font-black text-white mt-3 mb-2 leading-tight">Marketing &<br />Ad Automation</h3>
-                    <p className="text-[12px] mb-4 leading-relaxed max-w-xs" style={{ color: 'rgba(255,255,255,0.72)' }}>
+                    <h3 className="text-[20px] font-black mt-3 mb-2 leading-tight" style={{ color: T.text }}>Marketing &<br />Ad Automation</h3>
+                    <p className="text-[12px] mb-4 leading-relaxed max-w-xs" style={{ color: T.textSub }}>
                       One product prompt generates a full ad campaign — social variants, banners, and reels automatically.
                     </p>
                     <div className="flex gap-2">
                       {IMGS.slice(0, 3).map((src, i) => (
-                        <div key={i} className="flex-1 aspect-square rounded-xl overflow-hidden border border-white/10">
+                        <div key={i} className="flex-1 aspect-square rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                           <img src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
                         </div>
                       ))}
-                      <div className="flex-1 aspect-square rounded-xl border border-white/10 bg-white/5 flex items-center justify-center">
-                        <span className="text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>+12</span>
+                      <div className="flex-1 aspect-square rounded-xl flex items-center justify-center" style={{ border: `1px solid ${T.border}`, background: T.bgSub }}>
+                        <span className="text-[11px] font-bold" style={{ color: T.textMuted }}>+12</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div onClick={() => onToolClick('spaces')} className="bg-zinc-950 rounded-2xl p-6 relative overflow-hidden cursor-pointer hover:bg-zinc-900 transition-colors" style={{ minHeight: 230 }}>
+                <div onClick={() => onToolClick('spaces')}
+                  className="rounded-2xl p-6 relative overflow-hidden cursor-pointer transition-colors"
+                  style={{ minHeight: 230, background: isDark ? '#09090b' : T.bgCard, border: `1px solid ${T.border}` }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#18181b' : T.bgHover; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = isDark ? '#09090b' : T.bgCard; }}>
                   <div className="absolute inset-0 pointer-events-none"
                     style={{ background: `radial-gradient(circle at 15% 85%, ${P.magenta}30 0%, transparent 55%)` }} />
                   <div className="relative">
                     <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
                       style={{ color: P.magenta, background: P.magenta + '20', border: `1px solid ${P.magenta}40` }}>Canvas</span>
-                    <h3 className="text-[20px] font-black text-white mt-3 mb-2 leading-tight">Infinite<br />Workflow Canvas</h3>
-                    <p className="text-[12px] mb-4 leading-relaxed max-w-xs" style={{ color: 'rgba(255,255,255,0.72)' }}>
+                    <h3 className="text-[20px] font-black mt-3 mb-2 leading-tight" style={{ color: T.text }}>Infinite<br />Workflow Canvas</h3>
+                    <p className="text-[12px] mb-4 leading-relaxed max-w-xs" style={{ color: T.textSub }}>
                       Chain AI nodes visually. Drag Text → Image → Video → Upscale on one spatial board.
                     </p>
-                    <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 relative overflow-hidden">
+                    <div className="rounded-xl px-4 py-3 relative overflow-hidden" style={{ background: T.bgSub, border: `1px solid ${T.border}` }}>
                       <div className="absolute inset-0 opacity-10"
                         style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '14px 14px' }} />
                       <div className="relative flex items-center gap-2">
@@ -519,7 +537,7 @@ export default function ExploreView({ onToolClick = () => {} }: { onToolClick?: 
                               style={{ border: `1px solid ${node.color}60`, color: node.color, background: node.color + '18' }}>
                               {node.label}
                             </div>
-                            {i < 3 && <div className="flex-1 h-px border-t border-dashed border-white/20 min-w-[12px]" />}
+                            {i < 3 && <div className="flex-1 h-px min-w-[12px]" style={{ borderTop: `1px dashed ${T.border}` }} />}
                           </React.Fragment>
                         ))}
                       </div>
