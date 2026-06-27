@@ -14,10 +14,10 @@ const PA = {
 };
 
 const CLIP_LIBRARY = [
-  { id:1, src:'/Model Headshot x.jpg',  label:'Model Headshot · Studio', dur:'0:04' },
-  { id:2, src:'/download (31).jpg',     label:'Fashion Editorial · FW',  dur:'0:06' },
-  { id:3, src:'/download (32).jpg',     label:'High Fashion Campaign',   dur:'0:05' },
-  { id:4, src:'/download (33).jpg',     label:'Editorial · Spring',      dur:'0:03' },
+  { id:1, src:'/portfolio_h1.jpg', label:'Model Headshot · Studio', dur:'0:04' },
+  { id:2, src:'/portfolio_h2.jpg', label:'Fashion Editorial · FW',  dur:'0:06' },
+  { id:3, src:'/portfolio_h3.jpg', label:'High Fashion Campaign',   dur:'0:05' },
+  { id:4, src:'/portfolio_h4.jpg', label:'Editorial · Spring',      dur:'0:03' },
 ];
 
 const TEMPLATES = ['Cinematic Opener','Brand Story','Agency Reel','Custom'];

@@ -120,7 +120,7 @@ export default function PortfolioCompCard() {
 
             {/* Photo strip */}
             <div className="flex gap-0.5 overflow-hidden" style={{ height: device === 'mobile' ? 200 : 280 }}>
-              {['/Model Headshot x.jpg', '/download (31).jpg', '/download (32).jpg'].slice(0, device === 'mobile' ? 1 : 3).map((src, i) => (
+              {['/portfolio_h1.jpg', '/portfolio_h2.jpg', '/portfolio_h3.jpg'].slice(0, device === 'mobile' ? 1 : 3).map((src, i) => (
                 <img key={i} src={src} alt="" className="flex-1 h-full object-cover" />
               ))}
             </div>

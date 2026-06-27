@@ -86,12 +86,19 @@ function HeroScreen({ onGetStarted }: { onGetStarted: (p: string) => void }) {
           '#09090b',
       }}
     >
+      {/* Dot grid – static, no separate animation */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
+        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px)',
+        backgroundSize: '28px 28px',
+      }} />
+
       {/* ── Centering wrapper: equal space above & below ── */}
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
         justifyContent: 'center',
         paddingBottom: 120,
-        position: 'relative', overflow: 'hidden',
+        position: 'relative', zIndex: 1, overflow: 'hidden',
       }}>
 
         {/* Title */}

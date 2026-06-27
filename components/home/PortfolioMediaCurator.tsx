@@ -16,14 +16,14 @@ const PA = {
 const COLLECTIONS = ['All Assets','Portfolio Selects','Campaign Shots','Behind the Scenes','Headshots','Test Shoots'];
 
 const ASSETS = [
-  { id:1, src:'/Model Headshot x.jpg',                       label:'Model Headshot · Studio',  tags:['Headshot','Portrait'],  featured:true,  size:'4.2MB', date:'Today'     },
-  { id:2, src:'/download (31).jpg',                          label:'Fashion Editorial · FW24', tags:['Fashion','Editorial'],  featured:true,  size:'6.1MB', date:'Yesterday' },
-  { id:3, src:'/download (32).jpg',                          label:'High Fashion Campaign',    tags:['Campaign','Studio'],    featured:false, size:'5.3MB', date:'2 days ago'},
-  { id:4, src:'/download (33).jpg',                          label:'Editorial · Spring SS25',  tags:['Editorial','Outdoor'],  featured:false, size:'3.8MB', date:'3 days ago'},
-  { id:5, src:'/VSS Studio Shoot - Come as you are _@vogue_college __styled by_ @anya__reed @sashavonstauffenberg @lucinda_chow @holden_e_peterson _model_ @adaugarangbior _makeup_ @makeupbyjohnmendez __picture not taken by me.jpg', label:'VSS Studio Shoot · Vogue', tags:['Runway','Campaign'], featured:false, size:'4.0MB', date:'4 days ago'},
-  { id:6, src:'/Результат поиска Google для https___d29c1z66frfv6c_cloudfront.net_pub_media_catalog_product_zoom_a35d69724bed4dea273c3bee36ed661ff0eee6b5_xxl-1.jpg', label:'Beauty Commercial', tags:['Beauty','Commercial'], featured:false, size:'5.5MB', date:'5 days ago'},
-  { id:7, src:'/𝖡𝗈𝗅𝗎𝗐𝖺𝗍𝗂𝖿𝖾 𝗍𝖾𝗌𝗍 𝗌𝗁𝗈𝗈𝗍 𝗐𝗂𝗍𝗁 @polaroidsbynuel ______%23wlmsmodels %23beunbound %23testshoot %23femalemodel %23femalefashionmodel %23fashionmodeling.jpg', label:'Test Shoot · @polaroidsbynuel', tags:['Portrait','Studio'], featured:false, size:'3.2MB', date:'6 days ago'},
-  { id:8, src:'/Model Headshot x.jpg',                       label:'Headshot Alternate Cut',   tags:['Headshot','Creative'],  featured:false, size:'4.7MB', date:'1 week ago'},
+  { id:1, src:'/portfolio_h1.jpg', label:'Model Headshot · Studio',  tags:['Headshot','Portrait'],  featured:true,  size:'4.2MB', date:'Today'     },
+  { id:2, src:'/portfolio_h2.jpg', label:'Fashion Editorial · FW24', tags:['Fashion','Editorial'],  featured:true,  size:'6.1MB', date:'Yesterday' },
+  { id:3, src:'/portfolio_h3.jpg', label:'High Fashion Campaign',    tags:['Campaign','Studio'],    featured:false, size:'5.3MB', date:'2 days ago'},
+  { id:4, src:'/portfolio_h4.jpg', label:'Editorial · Spring SS25',  tags:['Editorial','Outdoor'],  featured:false, size:'3.8MB', date:'3 days ago'},
+  { id:5, src:'/portfolio_h5.jpg', label:'VSS Studio Shoot · Vogue', tags:['Runway','Campaign'],    featured:false, size:'4.0MB', date:'4 days ago'},
+  { id:6, src:'/portfolio_h6.jpg', label:'Beauty Commercial',        tags:['Beauty','Commercial'],  featured:false, size:'5.5MB', date:'5 days ago'},
+  { id:7, src:'/portfolio_h7.jpg', label:'Test Shoot · Studio',      tags:['Portrait','Studio'],    featured:false, size:'3.2MB', date:'6 days ago'},
+  { id:8, src:'/portfolio_h1.jpg', label:'Headshot Alternate Cut',   tags:['Headshot','Creative'],  featured:false, size:'4.7MB', date:'1 week ago'},
 ];
 
 type ViewMode = 'masonry' | 'grid' | 'list';

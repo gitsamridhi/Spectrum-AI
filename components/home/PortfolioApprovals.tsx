@@ -147,7 +147,7 @@ export default function PortfolioApprovals() {
 
         {/* Kanban board */}
         <div className="flex-1 overflow-x-auto overflow-y-hidden" style={{ scrollbarWidth:'thin' }}>
-          <div className="flex gap-3 h-full px-5 py-4" style={{ minWidth: cols.length * 246 + 40 }}>
+          <div className="flex gap-3 h-full px-5 py-4" style={{ minWidth: cols.length * 170 + 40 }}>
             {cols.map(colId => {
               const meta = COL_META[colId];
               const col  = cardsFor(colId);
@@ -155,9 +155,10 @@ export default function PortfolioApprovals() {
 
               return (
                 <div key={colId}
-                  className="flex flex-col rounded-2xl shrink-0 overflow-hidden transition-all duration-200"
+                  className="flex flex-col rounded-2xl overflow-hidden transition-all duration-200"
                   style={{
-                    width: 234,
+                    flex: '1 1 0',
+                    minWidth: 160,
                     background: T.bgSub,
                     border: `1px solid ${isHovered ? meta.bdr : T.border}`,
                   }}
