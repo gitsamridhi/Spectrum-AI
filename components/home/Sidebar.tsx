@@ -4,7 +4,7 @@ import React from 'react';
 import {
   Home, FolderOpen, BookOpen, Compass,
   Grid3X3, LayoutTemplate, ImageIcon, Video, Mic, Bot,
-  ChevronDown, Plus, Bell, LogOut, Settings, Users,
+  ChevronDown, Plus, Bell, LogOut, Settings,
   Clapperboard, Megaphone, Smartphone, Package, Sun, Moon,
   LayoutDashboard,
 } from 'lucide-react';
@@ -25,10 +25,6 @@ const TOOLS = [
   { icon: Mic,             label: 'Voice Generator',   id: 'voice'     },
   { icon: Bot,             label: 'Assistant',         id: 'assistant' },
   { icon: LayoutDashboard, label: 'Portfolio Builder', id: 'portfolio' },
-];
-
-const ASSETS = [
-  { icon: Users, label: 'Characters', id: 'characters' },
 ];
 
 const ADVANCED = [
@@ -119,15 +115,6 @@ export default function Sidebar({ active, setActive, displayName, avatar, onLogo
           <p className="text-[9px] font-semibold uppercase tracking-widest px-2.5 mb-1.5" style={{ color: T.textMuted }}>Tools</p>
           <div className="space-y-0.5">
             {TOOLS.map(item => navItem(item.icon, item.label, item.id))}
-          </div>
-        </div>
-
-        <div className="mx-3 my-2" style={{ height: 1, background: T.borderMuted }} />
-
-        <div className="px-2">
-          <p className="text-[9px] font-semibold uppercase tracking-widest px-2.5 mb-1.5" style={{ color: T.textMuted }}>Assets</p>
-          <div className="space-y-0.5">
-            {ASSETS.map(item => navItem(item.icon, item.label, item.id))}
           </div>
         </div>
 
