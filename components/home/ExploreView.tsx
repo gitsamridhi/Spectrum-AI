@@ -125,7 +125,7 @@ function LazyVideoMedia({ src, className }: { src: string; className?: string })
 function ResultCard({ r, T }: { r: typeof RESULTS[number]; T: ReturnType<typeof useTheme>['T'] }) {
   return (
     <div className="group cursor-pointer">
-      <div className="aspect-video rounded-2xl overflow-hidden bg-zinc-900 mb-2 relative">
+      <div className="aspect-video rounded-2xl overflow-hidden mb-2 relative" style={{ background: T.bgCard }}>
         <LazyVideoMedia src={r.videoSrc} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
         <div className="absolute bottom-0 left-0 right-0 p-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
@@ -144,9 +144,10 @@ function ResultCard({ r, T }: { r: typeof RESULTS[number]; T: ReturnType<typeof 
 }
 
 function MediaCard({ asset, className, style: styleProp }: { asset: Asset; className?: string; style?: React.CSSProperties }) {
+  const { T } = useTheme();
   return (
     <div className={`group relative overflow-hidden cursor-pointer ${className ?? ''}`}
-      style={{ background: '#18181b', ...styleProp }}>
+      style={{ background: T.bgCard, ...styleProp }}>
       {asset.type === 'video' && asset.videoSrc
         ? <LazyVideoMedia src={asset.videoSrc} className="w-full h-full object-cover" />
         : <img src={asset.src} alt="" loading="lazy" className="w-full h-full object-cover" />
