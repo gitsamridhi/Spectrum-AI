@@ -599,14 +599,15 @@ function WorkspaceView({ initialPrompt, onBack }: { initialPrompt: string; onBac
 
 /* ── Root ─────────────────────────────────────────────────── */
 export default function CinemaStudioView({ onBack }: { onBack: () => void }) {
-  const [phase,  setPhase]  = useState<'hero' | 'workspace'>('hero');
+  const alreadySeen = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('cinema-hero-seen') === '1';
+  const [phase,  setPhase]  = useState<'hero' | 'workspace'>(alreadySeen ? 'workspace' : 'hero');
   const [prompt, setPrompt] = useState('');
   return (
     <div style={{ flex: 1, display: 'flex', overflow: 'hidden', background: '#09090b' }}>
       <AnimatePresence mode="wait">
         {phase === 'hero'
-          ? <HeroScreen key="hero" onGetStarted={p => { setPrompt(p); setPhase('workspace'); }} />
-          : <WorkspaceView key="ws" initialPrompt={prompt} onBack={() => setPhase('hero')} />
+          ? <HeroScreen key="hero" onGetStarted={p => { sessionStorage.setItem('cinema-hero-seen', '1'); setPrompt(p); setPhase('workspace'); }} />
+          : <WorkspaceView key="ws" initialPrompt={prompt} onBack={onBack} />
         }
       </AnimatePresence>
     </div>

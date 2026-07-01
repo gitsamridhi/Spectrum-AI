@@ -130,7 +130,7 @@ export default function ProductStudioView({ onBack }: { onBack: () => void }) {
       <div className="flex-1 flex overflow-hidden">
 
         {/* ── LEFT PANEL — Surfaces + Lighting ── */}
-        <div className="w-[150px] shrink-0 flex flex-col border-r"
+        <div className="w-[220px] shrink-0 flex flex-col border-r"
           style={{ borderColor: isDark ? `${P.pink}12` : T.border, background: panelBg }}>
 
           {/* Back button in panel header */}
@@ -437,7 +437,7 @@ export default function ProductStudioView({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* ── RIGHT PANEL — Shot controls ── */}
-        <div className="w-[165px] shrink-0 flex flex-col gap-4 px-4 pt-4 pb-4 overflow-y-auto border-l"
+        <div className="w-[220px] shrink-0 flex flex-col gap-4 px-4 pt-4 pb-4 overflow-y-auto border-l"
           style={{ borderColor: isDark ? `${P.pink}12` : T.border, background: panelBg, scrollbarWidth: 'none' }}>
 
           {isDark && (

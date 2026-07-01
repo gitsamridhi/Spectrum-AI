@@ -684,9 +684,9 @@ function LandingPage({ onSignIn, onGoHome }: { onSignIn: () => void; onGoHome?: 
           </nav>
           <div className="flex items-center gap-2">
             {onGoHome && (
-              <BtnDark onClick={onGoHome} className="!py-2.5 !px-5 !text-[11px]">
-                Home
-              </BtnDark>
+              scrolled
+                ? <Btn onClick={onGoHome} className="!py-2.5 !px-5 !text-[11px]">Home</Btn>
+                : <BtnDark onClick={onGoHome} className="!py-2.5 !px-5 !text-[11px]">Home</BtnDark>
             )}
             <Btn onClick={onSignIn} className={`!py-2.5 !px-5 !text-[11px] ${!scrolled ? "!bg-white !border-white !text-zinc-900 hover:!border-[#09090b]" : ""}`}>
               Sign In <ArrowRight className="w-3 h-3" />
@@ -711,7 +711,7 @@ function LandingPage({ onSignIn, onGoHome }: { onSignIn: () => void; onGoHome?: 
 
         <div className="relative z-10 w-full max-w-[1380px] mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-16">
           {/* Left */}
-          <div className="lg:col-span-6 flex flex-col gap-6">
+          <div className="lg:col-span-8 flex flex-col gap-6">
             <div className="flex items-center gap-2.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-[11px] text-white/55 font-medium tracking-wide">AI Visual Enhancement Platform</span>
@@ -752,76 +752,6 @@ function LandingPage({ onSignIn, onGoHome }: { onSignIn: () => void; onGoHome?: 
             </div>
           </div>
 
-          {/* Right – Calculator / CTA card */}
-          <div className="lg:col-span-6 flex justify-center lg:justify-end">
-            <div className="float-drift w-full max-w-[360px] rounded-2xl bg-black/40 border border-white/10 backdrop-blur-2xl shadow-2xl p-6 flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[9px] text-white/50 font-semibold tracking-widest uppercase">Live · Enhancement Engine v2.1</span>
-                </div>
-                <span className="text-[9px] text-blue-400 font-semibold">Active</span>
-              </div>
-
-              <div>
-                <h3 className="text-[15px] font-semibold text-white tracking-[-0.02em] leading-snug">Try Spectrum AI Enhancement</h3>
-                <p className="text-[10px] text-white/35 mt-0.5 font-medium">Select your enhancement parameters</p>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <div>
-                  <label className="block text-[8.5px] font-bold uppercase tracking-widest text-white/35 mb-1.5">Enhancement Mode</label>
-                  <div className="relative">
-                    <select value={route} onChange={e => setRoute(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-[11px] text-white appearance-none focus:outline-none focus:border-blue-500 cursor-pointer">
-                      <option className="bg-zinc-900" value="enhance">Enhance — AI Upscale</option>
-                      <option className="bg-zinc-900" value="denoise">Denoise — Clean & Restore</option>
-                      <option className="bg-zinc-900" value="colorize">Colorize — Add Color</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-white/30 pointer-events-none" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {[{ label: "Scale", val: size, set: setSize, opts: [["2x", "2× Upscale"], ["4x", "4× Upscale"]] },
-                    { label: "Style", val: length, set: setLength, opts: [["standard", "Standard"], ["photo", "Photo"], ["cinematic", "Cinematic"]] }
-                  ].map(f => (
-                    <div key={f.label}>
-                      <label className="block text-[8.5px] font-bold uppercase tracking-widest text-white/35 mb-1.5">{f.label}</label>
-                      <div className="relative">
-                        <select value={f.val} onChange={e => f.set(e.target.value)}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-[11px] text-white appearance-none focus:outline-none focus:border-blue-500 cursor-pointer">
-                          {f.opts.map(([v, l]) => <option key={v} className="bg-zinc-900" value={v}>{l}</option>)}
-                        </select>
-                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-white/30 pointer-events-none" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1.5">
-                    <label className="text-[8.5px] font-bold uppercase tracking-widest text-white/35">Creativity</label>
-                    <span className="text-[11px] font-bold text-blue-400">{tickets}</span>
-                  </div>
-                  <input type="range" min="1" max="12" value={tickets} onChange={e => setTickets(+e.target.value)}
-                    className="w-full h-[2px] bg-white/10 rounded-full appearance-none cursor-pointer accent-blue-500" />
-                </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-3.5 flex items-end justify-between">
-                <div>
-                  <p className="text-[8.5px] uppercase tracking-widest text-white/35 font-bold mb-1">Credits needed</p>
-                  <p className="text-xl font-bold text-white tracking-[-0.03em]">3 credits</p>
-                </div>
-                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2.5 py-1 rounded-full">
-                  250 free
-                </span>
-              </div>
-
-              <Btn onClick={onSignIn} className="w-full !rounded-xl !py-3 !text-[10px]">
-                Start Enhancing
-              </Btn>
-            </div>
-          </div>
         </div>
       </section>
 

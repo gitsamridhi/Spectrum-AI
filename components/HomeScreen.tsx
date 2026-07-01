@@ -23,13 +23,16 @@ import SocialStudioView      from '@/components/home/SocialStudioView';
 import ProductStudioView     from '@/components/home/ProductStudioView';
 import PortfolioBuilderView  from '@/components/home/PortfolioBuilderView';
 
+const VIEWS_WITH_OWN_SIDEBAR = new Set(['image', 'video', 'voice', 'projects', 'cinema', 'marketing', 'social', 'product', 'portfolio']);
+
 function HomeScreenInner() {
   const { logoutUser, userEmail, answers } = useOnboarding();
   const { isDark, T } = useTheme();
-  const [activeNav,   setActiveNav]   = useState('home');
-  const [toolsOpen,   setToolsOpen]   = useState(false);
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [pinnedChar,  setPinnedChar]  = useState<PinnedChar | null>(null);
+  const [activeNav,        setActiveNav]        = useState('home');
+  const [toolsOpen,        setToolsOpen]        = useState(false);
+  const [paletteOpen,      setPaletteOpen]      = useState(false);
+  const [pinnedChar,       setPinnedChar]       = useState<PinnedChar | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const displayName = answers.displayName || userEmail?.split('@')[0] || 'User';
   const avatar      = displayName[0]?.toUpperCase() ?? 'U';
@@ -71,6 +74,7 @@ function HomeScreenInner() {
       setToolsOpen(false);
       window.history.pushState({ view: id }, '');
       setActiveNav(id);
+      setSidebarCollapsed(VIEWS_WITH_OWN_SIDEBAR.has(id));
     }
   };
 
@@ -96,19 +100,17 @@ function HomeScreenInner() {
     }
   };
 
-  const isStudio = ['cinema', 'marketing', 'social', 'product', 'portfolio'].includes(activeNav);
-
   return (
     <div className="fixed inset-0 flex font-sans overflow-hidden" style={{ background: T.bg, zoom: '0.9' } as React.CSSProperties}>
-      {!isStudio && (
-        <Sidebar
-          active={toolsOpen ? 'all' : activeNav}
-          setActive={handleSetActive}
-          displayName={displayName}
-          avatar={avatar}
-          onLogout={logoutUser}
-        />
-      )}
+      <Sidebar
+        active={toolsOpen ? 'all' : activeNav}
+        setActive={handleSetActive}
+        displayName={displayName}
+        avatar={avatar}
+        onLogout={logoutUser}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(c => !c)}
+      />
       <div className="flex-1 flex overflow-hidden">
         {renderMain()}
       </div>
