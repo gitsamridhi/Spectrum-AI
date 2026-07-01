@@ -116,10 +116,10 @@ export default function SpacesView() {
 
         {/* Create new */}
         <div>
-          <button className="group relative w-full rounded-2xl overflow-hidden transition-all cursor-pointer border-2 border-dashed hover:border-zinc-400"
-            style={{ height: 160, borderColor: T.border }}>
-            <div className="absolute inset-0 opacity-5"
-              style={{ backgroundImage: 'radial-gradient(circle, black 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+          <button className="group relative w-full rounded-2xl overflow-hidden transition-all cursor-pointer border-2 border-dashed"
+            style={{ height: 160, borderColor: P.vivid, background: isDark ? 'linear-gradient(135deg,rgba(255,112,0,0.08) 0%,rgba(240,96,238,0.06) 50%,rgba(255,107,134,0.08) 100%)' : 'linear-gradient(135deg,rgba(255,112,0,0.06) 0%,rgba(240,96,238,0.04) 50%,rgba(255,107,134,0.06) 100%)' }}>
+            <div className="absolute inset-0 opacity-10"
+              style={{ backgroundImage: `radial-gradient(circle, ${P.vivid} 1px, transparent 1px)`, backgroundSize: '24px 24px' }} />
             <div className="relative h-full flex items-center justify-center gap-8">
               {/* Quick-start chain preview */}
               <div className="hidden sm:flex flex-col gap-1.5 opacity-60">
@@ -164,8 +164,21 @@ export default function SpacesView() {
                     </div>
                   )}
                   {/* Node chain at bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/80 to-transparent">
-                    <NodeChainPreview chain={['Prompt', 'Gen', 'Export'].slice(0, Math.min(s.nodes, 3))} color={s.chainColor} />
+                  <div className="absolute bottom-0 left-0 right-0 px-3 py-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+                    style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 60%, transparent 100%)' }}>
+                    <div className="flex items-center gap-1.5">
+                      {['Prompt', 'Gen', 'Export'].slice(0, Math.min(s.nodes, 3)).map((node, ni) => (
+                        <React.Fragment key={ni}>
+                          <div className="shrink-0 px-2 py-1 rounded-md text-[9px] font-bold text-white"
+                            style={{ background: s.chainColor + '40', border: `1px solid ${s.chainColor}80` }}>
+                            {node}
+                          </div>
+                          {ni < Math.min(s.nodes, 3) - 1 && (
+                            <div className="flex-1 h-px min-w-[8px]" style={{ background: s.chainColor + '60' }} />
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 <p className="text-[13px] font-semibold truncate transition-colors" style={{ color: hoveredSpace === i ? T.textSub : T.text }}>{s.name}</p>

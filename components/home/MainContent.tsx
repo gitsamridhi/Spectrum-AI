@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Search, Heart, Eye, ImageIcon, Video, Mic, Wand2, BookOpen,
   LayoutTemplate, Grid3X3, Package, Plus,
@@ -71,6 +71,27 @@ const TAB_SETS: Record<string, number[]> = {
 
 const CONTENT_TABS = Object.keys(TAB_SETS);
 
+const GREETINGS = [
+  (n: string)  => `Hey ${n}! ✦ Ready to create?`,
+  (_n: string) => `What will you make today? ✦`,
+  (n: string)  => `Welcome back, ${n} ✦`,
+  (_n: string) => `The studio is ready for you`,
+  (_n: string) => `Let's build something amazing ✦`,
+  (n: string)  => `${n} — time to turn ideas into reality`,
+];
+
+const HF = 'https://static.higgsfield.ai';
+const MASONRY_VIDEOS = [
+  { src: `${HF}/seedance-2.0-v2/examples/1-mini.mp4`, label: 'Cinematic Landscape · AI',  ar: '16/9' },
+  { src: `${HF}/seedance-2.0-v2/examples/2-mini.mp4`, label: 'Portrait · Motion',          ar: '9/16' },
+  { src: `${HF}/ai-video-v2/example-1-mini.mp4`,      label: 'Product Visualization',      ar: '1/1'  },
+  { src: `${HF}/seedance-2.0-v2/examples/3-mini.mp4`, label: 'Fantasy Environment',        ar: '16/9' },
+  { src: `${HF}/ai-video-v2/example-2-mini.mp4`,      label: 'Fashion Editorial',          ar: '2/3'  },
+  { src: `${HF}/seedance-2.0-v2/examples/4-mini.mp4`, label: 'Surreal Landscape',          ar: '16/9' },
+  { src: `${HF}/ai-video-v2/example-3-mini.mp4`,      label: 'Abstract Art · Generative', ar: '1/1'  },
+  { src: `${HF}/seedance-2.0-v2/examples/5-mini.mp4`, label: '3D Character · Animation',  ar: '2/3'  },
+];
+
 /* ── Fill-from-bottom animated button ─────────────────────────────────────── */
 interface FillBtnProps {
   children: React.ReactNode;
@@ -128,12 +149,28 @@ interface MainContentProps {
 /* ── Component ──────────────────────────────────────────────────────────────── */
 export default function MainContent({ displayName, onSearchClick, onToolClick }: MainContentProps) {
   const { isDark, T } = useTheme();
-  const [activeTab,  setActiveTab]  = useState("What's new");
-  const [liked,      setLiked]      = useState<Set<number>>(new Set());
-  const [cardIndex,  setCardIndex]  = useState(0);
+  const [activeTab,    setActiveTab]    = useState("What's new");
+  const [liked,        setLiked]        = useState<Set<number>>(new Set());
+  const [cardIndex,    setCardIndex]    = useState(0);
+  const [greetIdx,     setGreetIdx]     = useState(0);
+  const [greetVisible, setGreetVisible] = useState(true);
+  const [showWelcome,  setShowWelcome]  = useState(false);
 
-  const hour     = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  useEffect(() => {
+    const shown = sessionStorage.getItem('spectrum_welcome');
+    if (!shown) {
+      const t = setTimeout(() => { setShowWelcome(true); sessionStorage.setItem('spectrum_welcome', '1'); }, 1000);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setGreetVisible(false);
+      setTimeout(() => { setGreetIdx(i => (i + 1) % GREETINGS.length); setGreetVisible(true); }, 380);
+    }, 3800);
+    return () => clearInterval(id);
+  }, []);
 
   const toggleLike = (i: number) =>
     setLiked(prev => { const s = new Set(prev); s.has(i) ? s.delete(i) : s.add(i); return s; });
@@ -162,11 +199,27 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
       {/* ══ GREETING + SEARCH + TOOLS ══════════════════════════════════════════ */}
       <section className="px-10 pt-12 pb-8" style={{ background: T.bg }}>
 
-        {/* Greeting */}
-        <h1 className="text-[26px] font-black text-center tracking-[-0.03em] mb-6"
-          style={{ color: T.text }}>
-          {greeting}, start creating!
-        </h1>
+        {/* Greeting – animated rotation */}
+        <div className="text-center mb-6">
+          <div style={{
+            opacity: greetVisible ? 1 : 0,
+            transform: greetVisible ? 'translateY(0px)' : 'translateY(10px)',
+            transition: 'opacity 0.38s ease, transform 0.38s ease',
+          }}>
+            <h1 className="text-[36px] font-black tracking-[-0.04em] leading-tight"
+              style={{
+                background: `linear-gradient(135deg, ${ORANGE} 0%, ${PINK} 60%, #A855F7 100%)`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>
+              {GREETINGS[greetIdx](displayName)}
+            </h1>
+          </div>
+          <p className="text-[12.5px] mt-1.5 font-medium" style={{ color: T.textMuted }}>
+            Your AI creative studio is ready.
+          </p>
+        </div>
 
         {/* Search bar */}
         <div className="max-w-[580px] mx-auto mb-8 cursor-pointer" onClick={onSearchClick}>
@@ -258,62 +311,62 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
                 onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: proj.dot }} />
-                <span className="text-[12.5px] font-medium flex-1" style={{ color: T.text }}>{proj.name}</span>
+                <span className="text-[14px] font-semibold flex-1" style={{ color: T.text }}>{proj.name}</span>
                 {proj.badge && (
                   <span className="text-[8.5px] font-bold px-1.5 py-0.5 rounded-full"
                     style={{ background: `rgba(236,72,153,0.12)`, color: PINK, border: `1px solid rgba(236,72,153,0.25)` }}>
                     {proj.badge}
                   </span>
                 )}
-                <span className="text-[13px]" style={{ color: T.textMuted }}>🔒</span>
+                <span className="text-[17px]" style={{ color: T.textMuted }}>🔒</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Create a space */}
-        <div
-          className="rounded-2xl flex flex-col items-center justify-center gap-3 py-7 px-6 cursor-pointer group transition-all hover:shadow-sm"
-          style={{
-            border: `1px solid ${T.border}`,
-            background: isDark
-              ? `linear-gradient(135deg, rgba(249,115,22,0.05) 0%, rgba(236,72,153,0.04) 100%)`
-              : `linear-gradient(135deg, #FFF7F0 0%, #FFF0F7 100%)`,
-          }}
-          onClick={() => onToolClick('spaces')}>
-          {/* Workflow nodes illustration */}
-          <div className="flex flex-col gap-2 mb-1">
-            <div className="flex items-center gap-2">
-              {['Text', 'Image', 'Upscale'].map((lbl, i) => (
-                <React.Fragment key={lbl}>
-                  {i > 0 && <div className="w-5 h-px" style={{ background: T.border }} />}
-                  <div className="px-2.5 py-1 rounded-lg text-[9.5px] font-semibold shadow-sm"
-                    style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.textSub }}>{lbl}</div>
-                </React.Fragment>
-              ))}
+        {/* Platform banner */}
+        <div className="rounded-2xl overflow-hidden relative cursor-pointer transition-all hover:scale-[1.01] hover:shadow-xl"
+          style={{ background: 'linear-gradient(120deg, #FF6B00 0%, #FF3472 55%, #B24DFF 100%)', minHeight: 148 }}
+          onClick={() => onToolClick('explore')}>
+
+          {/* Subtle noise texture overlay */}
+          <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
+            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
+
+          {/* Left content */}
+          <div className="relative z-10 flex items-center h-full pl-6 pr-4 py-5 gap-4">
+            <div className="flex flex-col gap-2.5 flex-1">
+              <p className="text-[10.5px] font-semibold text-white/80">Your complete AI creative studio</p>
+              <h3 className="text-[20px] font-black leading-snug tracking-[-0.03em] text-white">
+                Create anything<br />with AI — instantly
+              </h3>
+              <button
+                className="self-start mt-1 px-4 py-2 rounded-full text-[12px] font-bold transition-all hover:scale-105 cursor-pointer"
+                style={{ background: 'rgba(255,255,255,0.22)', color: '#fff', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.35)' }}
+                onClick={e => { e.stopPropagation(); onToolClick('explore'); }}>
+                Explore tools →
+              </button>
             </div>
-            <div className="flex items-center gap-2 justify-center">
-              {['Style', 'Video'].map((lbl, i) => (
-                <React.Fragment key={lbl}>
-                  {i > 0 && <div className="w-5 h-px" style={{ background: T.border }} />}
-                  <div className="px-2.5 py-1 rounded-lg text-[9.5px] font-semibold shadow-sm"
-                    style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.textSub }}>{lbl}</div>
-                </React.Fragment>
-              ))}
+
+            {/* Floating icon cluster */}
+            <div className="relative shrink-0 w-[110px] h-[110px]">
+              {/* Back-left icon */}
+              <div className="absolute bottom-2 left-0 w-11 h-11 rounded-2xl flex items-center justify-center shadow-xl rotate-[-10deg]"
+                style={{ background: 'linear-gradient(135deg,#2563EB,#7C3AED)', border: '2px solid rgba(255,255,255,0.25)' }}>
+                <Mic className="w-5 h-5 text-white" />
+              </div>
+              {/* Bottom-right icon */}
+              <div className="absolute bottom-0 right-2 w-10 h-10 rounded-2xl flex items-center justify-center shadow-xl rotate-[8deg]"
+                style={{ background: 'linear-gradient(135deg,#059669,#0EA5E9)', border: '2px solid rgba(255,255,255,0.25)' }}>
+                <Video className="w-5 h-5 text-white" />
+              </div>
+              {/* Center-top (largest, front) */}
+              <div className="absolute top-0 right-0 w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl rotate-[6deg]"
+                style={{ background: 'linear-gradient(135deg,#fff,#FFE4F0)', border: '2px solid rgba(255,255,255,0.5)' }}>
+                <ImageIcon className="w-7 h-7" style={{ color: PINK }} />
+              </div>
             </div>
           </div>
-          <div className="text-center">
-            <h3 className="text-[14px] font-bold mb-0.5" style={{ color: T.text }}>Create a space</h3>
-            <p className="text-[11.5px]" style={{ color: T.textMuted }}>Build creative workflows on an infinite canvas</p>
-          </div>
-          <FillBtn
-            bg={T.bg} fill={PINK}
-            textColor={T.text} fillText="#fff"
-            className="px-4 py-2 rounded-xl text-[11.5px] font-semibold"
-            style={{ border: `1px solid ${T.border}` }}
-            onClick={e => { e.stopPropagation(); onToolClick('spaces'); }}>
-            <Plus className="w-3.5 h-3.5" />New space
-          </FillBtn>
         </div>
       </section>
 
@@ -465,7 +518,77 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
             </button>
           </div>
         </div>
+
+        {/* Masonry video grid */}
+        <div className="mt-5" style={{ columnCount: 4, columnGap: '8px' }}>
+          {MASONRY_VIDEOS.map((item, i) => (
+            <div key={i} style={{ breakInside: 'avoid', marginBottom: '8px' }}
+              className="group relative rounded-xl overflow-hidden cursor-pointer"
+              onClick={() => onToolClick('video')}>
+              <video
+                autoPlay loop muted playsInline preload="none"
+                className="w-full object-cover block"
+                style={{ aspectRatio: item.ar }}>
+                <source src={item.src} type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <p className="absolute bottom-1.5 left-2 right-2 text-[8px] font-semibold text-white/90 truncate opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.label}</p>
+            </div>
+          ))}
+        </div>
       </section>
+
+      {/* ══ WELCOME POPUP ════════════════════════════════════════════════════════ */}
+      {showWelcome && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)' }}
+          onClick={() => setShowWelcome(false)}>
+          <div className="max-w-sm w-full mx-4 rounded-3xl overflow-hidden shadow-2xl"
+            style={{ background: T.bg, border: `1px solid ${T.border}` }}
+            onClick={e => e.stopPropagation()}>
+            <div className="h-28 relative flex items-center justify-center"
+              style={{ background: `linear-gradient(135deg, ${ORANGE}, ${PINK})` }}>
+              <div className="absolute inset-0 opacity-15"
+                style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+              <div className="relative text-center text-white">
+                <div className="text-[28px] font-black tracking-[-0.04em]">Spectrum AI</div>
+                <div className="text-[11px] opacity-80 mt-0.5">Your complete AI creative studio</div>
+              </div>
+            </div>
+            <div className="p-6">
+              <h3 className="text-[16px] font-bold mb-3" style={{ color: T.text }}>
+                Welcome, {displayName}!
+              </h3>
+              <div className="space-y-2.5 mb-5">
+                {[
+                  ['✦', 'Enhance & upscale images up to 8×'],
+                  ['▶', 'Generate cinematic AI videos'],
+                  ['◎', 'Build AI workflows on a canvas'],
+                  ['♪', 'Synthesize voice with AI'],
+                ].map(([icon, text]) => (
+                  <div key={text} className="flex items-center gap-3">
+                    <span className="text-[13px] font-bold w-4 text-center" style={{ color: ORANGE }}>{icon}</span>
+                    <span className="text-[12.5px]" style={{ color: T.textSub }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <FillBtn
+                  bg={`linear-gradient(135deg,${ORANGE},${PINK})`} fill={PINK}
+                  className="flex-1 py-2.5 rounded-xl text-[12px] font-bold justify-center"
+                  onClick={() => { setShowWelcome(false); onToolClick('explore'); }}>
+                  Start exploring
+                </FillBtn>
+                <button className="px-4 py-2.5 rounded-xl text-[12px] font-medium cursor-pointer transition-colors"
+                  style={{ background: T.bgCard, border: `1px solid ${T.border}`, color: T.textSub }}
+                  onClick={() => setShowWelcome(false)}>
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
