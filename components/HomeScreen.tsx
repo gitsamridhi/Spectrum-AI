@@ -23,7 +23,7 @@ import SocialStudioView      from '@/components/home/SocialStudioView';
 import ProductStudioView     from '@/components/home/ProductStudioView';
 import PortfolioBuilderView  from '@/components/home/PortfolioBuilderView';
 
-const VIEWS_WITH_OWN_SIDEBAR = new Set(['image', 'video', 'voice']);
+const VIEWS_WITH_OWN_SIDEBAR = new Set(['image', 'video', 'voice', 'projects', 'cinema', 'marketing', 'social', 'product', 'portfolio']);
 
 function HomeScreenInner() {
   const { logoutUser, userEmail, answers } = useOnboarding();
@@ -100,21 +100,17 @@ function HomeScreenInner() {
     }
   };
 
-  const isStudio = ['cinema', 'marketing', 'social', 'product', 'portfolio'].includes(activeNav);
-
   return (
     <div className="fixed inset-0 flex font-sans overflow-hidden" style={{ background: T.bg, zoom: '0.9' } as React.CSSProperties}>
-      {!isStudio && (
-        <Sidebar
-          active={toolsOpen ? 'all' : activeNav}
-          setActive={handleSetActive}
-          displayName={displayName}
-          avatar={avatar}
-          onLogout={logoutUser}
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed(c => !c)}
-        />
-      )}
+      <Sidebar
+        active={toolsOpen ? 'all' : activeNav}
+        setActive={handleSetActive}
+        displayName={displayName}
+        avatar={avatar}
+        onLogout={logoutUser}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(c => !c)}
+      />
       <div className="flex-1 flex overflow-hidden">
         {renderMain()}
       </div>

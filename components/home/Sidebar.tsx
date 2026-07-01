@@ -164,7 +164,7 @@ export default function Sidebar({
           </NavTooltip>
         ) : (
           <button onClick={() => setActive('image')}
-            className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-semibold transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[12px] font-semibold transition-colors cursor-pointer"
             style={{ background: T.text, color: T.bg, border: `1px solid ${T.border}` }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.88'}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}>
