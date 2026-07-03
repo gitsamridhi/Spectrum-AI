@@ -6,9 +6,25 @@ import {
   Grid3X3, LayoutTemplate, ImageIcon, Video, Mic, Bot,
   ChevronDown, ChevronLeft, ChevronRight, Plus, Bell, LogOut, Settings,
   Clapperboard, Megaphone, Smartphone, Package, Sun, Moon,
-  LayoutDashboard,
+  LayoutDashboard, Drama,
 } from 'lucide-react';
-import { useTheme } from '@/app/context/ThemeContext';
+import { useTheme, ThemeTokens } from '@/app/context/ThemeContext';
+
+/* Forced-black theme for views whose inner screen is always dark (e.g. Cinema Studio) */
+const CINEMA_DARK: ThemeTokens = {
+  bg:          '#09090b',
+  bgSub:       '#0f0f11',
+  bgCard:      '#18181b',
+  bgHover:     'rgba(255,255,255,0.08)',
+  border:      'rgba(255,255,255,0.06)',
+  borderMuted: 'rgba(255,255,255,0.06)',
+  text:        '#f5f5f8',
+  textSub:     'rgba(255,255,255,0.7)',
+  textMuted:   'rgba(255,255,255,0.4)',
+  inputBg:     'rgba(255,255,255,0.08)',
+  navActive:   '#f5f5f8',
+  navInactive: 'rgba(255,255,255,0.6)',
+};
 
 const NAV = [
   { icon: Home,       label: 'Home',     id: 'home'     },
@@ -32,6 +48,7 @@ const ADVANCED = [
   { icon: Megaphone,    label: 'Marketing Studio', id: 'marketing' },
   { icon: Smartphone,   label: 'Social Studio',    id: 'social'    },
   { icon: Package,      label: 'Product Studio',   id: 'product'   },
+  { icon: Drama,        label: 'Audition Coach',   id: 'audition'  },
 ];
 
 const Logo = () => (
@@ -80,13 +97,16 @@ interface SidebarProps {
   onLogout: () => void;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
+  forceDark?: boolean;
 }
 
 export default function Sidebar({
   active, setActive, displayName, avatar, onLogout,
-  collapsed = false, onToggleCollapse,
+  collapsed = false, onToggleCollapse, forceDark = false,
 }: SidebarProps) {
-  const { isDark, toggleTheme, T } = useTheme();
+  const { isDark, toggleTheme, T: themeT } = useTheme();
+  const T = forceDark ? CINEMA_DARK : themeT;
+  const effectiveDark = forceDark || isDark;
 
   const navItem = (icon: React.ElementType, label: string, id: string) => {
     const Icon = icon;
@@ -201,12 +221,12 @@ export default function Sidebar({
               {ADVANCED.map(item => navItem(item.icon, item.label, item.id))}
             </div>
           ) : (
-            <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: isDark ? '#0f0f12' : T.bgSub }}>
+            <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: effectiveDark ? '#0f0f12' : T.bgSub }}>
               <div className="px-3 pt-3 pb-2 flex items-center gap-1.5">
                 <p className="text-[9px] font-bold uppercase tracking-widest flex-1"
-                  style={{ color: isDark ? 'rgba(255,255,255,.7)' : T.textMuted }}>Advanced</p>
+                  style={{ color: effectiveDark ? 'rgba(255,255,255,.7)' : T.textMuted }}>Advanced</p>
                 <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full tracking-wide"
-                  style={{ background: isDark ? 'rgba(255,255,255,0.12)' : T.bgCard, color: isDark ? 'rgba(255,255,255,0.7)' : T.textSub, border: `1px solid ${T.border}` }}>
+                  style={{ background: effectiveDark ? 'rgba(255,255,255,0.12)' : T.bgCard, color: effectiveDark ? 'rgba(255,255,255,0.7)' : T.textSub, border: `1px solid ${T.border}` }}>
                   Pro
                 </span>
               </div>
@@ -216,7 +236,7 @@ export default function Sidebar({
                     className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-[12.5px] font-medium transition-all cursor-pointer text-left"
                     style={active === item.id
                       ? { background: T.text, color: T.bg }
-                      : { color: isDark ? 'rgba(255,255,255,0.65)' : T.textSub, background: 'transparent' }}
+                      : { color: effectiveDark ? 'rgba(255,255,255,0.65)' : T.textSub, background: 'transparent' }}
                     onMouseEnter={e => { if (active !== item.id) (e.currentTarget as HTMLElement).style.background = T.bgHover; }}
                     onMouseLeave={e => { if (active !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                     <item.icon className="w-3.5 h-3.5 shrink-0" />

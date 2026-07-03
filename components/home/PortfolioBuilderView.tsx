@@ -179,13 +179,13 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
               <h3 style={{ fontSize: 12, fontWeight: 700, color: T.text, margin: 0 }}>Portfolio Showcase</h3>
-              <button style={{ fontSize: 10, color: PA.blue, cursor: 'pointer', background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: 3 }}>
+              <button onClick={() => onSwitchTab('media')} style={{ fontSize: 10, color: PA.blue, cursor: 'pointer', background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: 3 }}>
                 View all <ArrowUpRight style={{ width: 10, height: 10 }} />
               </button>
             </div>
 
             {/* One large landscape hero card */}
-            <div style={{ borderRadius: 14, overflow: 'hidden', position: 'relative', height: 244, marginBottom: 8, background: T.bgCard, cursor: 'pointer' }}>
+            <div onClick={() => onSwitchTab('media')} style={{ borderRadius: 14, overflow: 'hidden', position: 'relative', height: 244, marginBottom: 8, background: T.bgCard, cursor: 'pointer' }}>
               <video
                 src="/hero_video2.mp4"
                 autoPlay
@@ -206,7 +206,7 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
             <div style={{ overflow: 'hidden', borderRadius: 8 }}>
               <div className="ph-marquee">
                 {[...ALL_PHOTOS, ...ALL_PHOTOS].map((src, i) => (
-                  <div key={i} style={{ flexShrink: 0, width: 130, height: 94, borderRadius: 8, overflow: 'hidden', background: T.bgCard, cursor: 'pointer' }}>
+                  <div key={i} onClick={() => onSwitchTab('media')} style={{ flexShrink: 0, width: 130, height: 94, borderRadius: 8, overflow: 'hidden', background: T.bgCard, cursor: 'pointer' }}>
                     <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
                   </div>
                 ))}
@@ -218,13 +218,13 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
               <h3 style={{ fontSize: 12, fontWeight: 700, color: T.text, margin: 0 }}>Recent AI Outputs</h3>
-              <button style={{ fontSize: 10, color: T.textMuted, cursor: 'pointer', background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: 3 }}>
+              <button onClick={() => onSwitchTab('media')} style={{ fontSize: 10, color: T.textMuted, cursor: 'pointer', background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: 3 }}>
                 View all <ArrowUpRight style={{ width: 10, height: 10 }} />
               </button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }}>
               {OUTPUTS.map((o, i) => (
-                <div key={i} style={{ aspectRatio: '3/4', borderRadius: 12, overflow: 'hidden', position: 'relative', background: T.bgCard, cursor: 'pointer' }}>
+                <div key={i} onClick={() => onSwitchTab('media')} style={{ aspectRatio: '3/4', borderRadius: 12, overflow: 'hidden', position: 'relative', background: T.bgCard, cursor: 'pointer' }}>
                   <img src={o.src} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '20px 9px 8px', background: 'linear-gradient(to top, rgba(0,0,0,.65) 0%, transparent 100%)' }}>
                     <p style={{ fontSize: 9, fontWeight: 600, color: '#fff', lineHeight: 1.3, margin: 0 }}>{o.label}</p>
@@ -286,10 +286,10 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
           <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.border}` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <p style={{ fontSize: 10.5, fontWeight: 700, color: T.text, margin: 0 }}>Versions</p>
-              <button style={{ fontSize: 9.5, color: PA.blue, cursor: 'pointer', background: 'none', border: 'none' }}>+ New</button>
+              <button onClick={() => onSwitchTab('versions')} style={{ fontSize: 9.5, color: PA.blue, cursor: 'pointer', background: 'none', border: 'none' }}>+ New</button>
             </div>
             {VERSIONS.map((v, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 9px', borderRadius: 9, marginBottom: 3, background: T.bgSub, border: `1px solid ${T.border}`, cursor: 'pointer' }}
+              <div key={i} onClick={() => onSwitchTab('versions')} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 9px', borderRadius: 9, marginBottom: 3, background: T.bgSub, border: `1px solid ${T.border}`, cursor: 'pointer' }}
                 onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
                 onMouseLeave={e => (e.currentTarget.style.background = T.bgSub)}>
                 <div style={{ width: 15, height: 15, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: v.published ? PA.blueBg : T.bgCard, border: `1px solid ${v.published ? PA.blueBdr : T.border}` }}>
@@ -324,7 +324,7 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
           <div style={{ padding: '12px 16px' }}>
             <p style={{ fontSize: 10.5, fontWeight: 700, color: T.text, marginBottom: 8, marginTop: 0 }}>AI Suggestions</p>
             {SUGGESTIONS.slice(0, 3).map((s, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 7, padding: '7px 9px', borderRadius: 9, marginBottom: 4, background: T.bgSub, border: `1px solid ${T.border}`, cursor: 'pointer' }}
+              <div key={i} onClick={() => onSwitchTab('recommendations')} style={{ display: 'flex', alignItems: 'flex-start', gap: 7, padding: '7px 9px', borderRadius: 9, marginBottom: 4, background: T.bgSub, border: `1px solid ${T.border}`, cursor: 'pointer' }}
                 onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
                 onMouseLeave={e => (e.currentTarget.style.background = T.bgSub)}>
                 <div style={{ width: 14, height: 14, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1.5, background: PA.blueBg }}>
@@ -345,7 +345,7 @@ function DashboardTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
 }
 
 // ── Profile Score Tab ─────────────────────────────────────────────────────────
-function ProfileScoreTab() {
+function ProfileScoreTab({ onSwitchTab }: { onSwitchTab: (t: ViewId) => void }) {
   const { T } = useTheme();
 
   return (
@@ -454,7 +454,8 @@ function ProfileScoreTab() {
               </div>
               <div className="space-y-2.5">
                 {SUGGESTIONS.map((s, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3.5 rounded-xl cursor-pointer transition-colors"
+                  <div key={i} onClick={() => onSwitchTab('recommendations')}
+                    className="flex items-start gap-3 p-3.5 rounded-xl cursor-pointer transition-colors"
                     style={{ background: T.bg, border: `1px solid ${T.border}` }}
                     onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
                     onMouseLeave={e => (e.currentTarget.style.background = T.bg)}>
@@ -486,7 +487,18 @@ function SectionsManagerTab() {
   const [search,    setSearch]    = useState('');
   const [expanded,  setExpanded]  = useState<string | null>('identity');
   const [dragging,  setDragging]  = useState<string | null>(null);
+  const [savedId,   setSavedId]   = useState<string | null>(null);
   const dragOverId = useRef<string | null>(null);
+  const fieldRefs  = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const saveSectionChanges = (id: string) => {
+    const container = fieldRefs.current[id];
+    const inputs = container ? Array.from(container.querySelectorAll('input')) : [];
+    const filled = inputs.filter(i => i.value.trim() !== '').length;
+    setSections(ss => ss.map(s => s.id === id ? { ...s, filled, pct: Math.round((filled / s.fields) * 100) } : s));
+    setSavedId(id);
+    setTimeout(() => setSavedId(null), 1500);
+  };
 
   const filtered = sections.filter(s =>
     !search || s.label.toLowerCase().includes(search.toLowerCase())
@@ -508,6 +520,13 @@ function SectionsManagerTab() {
       const copy: Section = { ...orig, id: `${orig.id}_${Date.now()}`, label: `${orig.label} (Copy)` };
       return [...ss.slice(0, idx + 1), copy, ...ss.slice(idx + 1)];
     });
+  };
+
+  const addSection = () => {
+    const id = `custom_${Date.now()}`;
+    const newSection: Section = { id, label: 'New Section', icon: FileText, visible: true, pct: 0, fields: 5, filled: 0 };
+    setSections(ss => [...ss, newSection]);
+    setExpanded(id);
   };
 
   const onDragStart = (id: string) => setDragging(id);
@@ -548,7 +567,7 @@ function SectionsManagerTab() {
               className="flex-1 text-[12px] bg-transparent outline-none"
               style={{ color: T.text }} />
           </div>
-          <button className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-semibold text-white cursor-pointer hover:opacity-90 transition-all"
+          <button onClick={addSection} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-semibold text-white cursor-pointer hover:opacity-90 transition-all"
             style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
             <Plus className="w-3.5 h-3.5" />Add Section
           </button>
@@ -644,7 +663,7 @@ function SectionsManagerTab() {
                 {/* Expanded fields */}
                 {isOpen && (
                   <div className="px-4 pb-5" style={{ borderTop: `1px solid ${T.border}` }}>
-                    <div className="pt-4 grid grid-cols-2 gap-3">
+                    <div ref={el => { fieldRefs.current[section.id] = el; }} className="pt-4 grid grid-cols-2 gap-3">
                       {Array.from({ length: section.filled }).map((_, i) => (
                         <div key={i} className="flex flex-col gap-1">
                           <label className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: T.textMuted }}>
@@ -673,9 +692,11 @@ function SectionsManagerTab() {
                       ))}
                     </div>
                     <div className="flex justify-end mt-4">
-                      <button className="px-4 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90 transition-all"
-                        style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
-                        Save Changes
+                      <button onClick={() => saveSectionChanges(section.id)}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90 transition-all"
+                        style={{ background: savedId === section.id ? PA.teal : 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
+                        {savedId === section.id ? <CheckCircle2 className="w-3.5 h-3.5" /> : null}
+                        {savedId === section.id ? 'Saved' : 'Save Changes'}
                       </button>
                     </div>
                   </div>
@@ -817,7 +838,7 @@ export default function PortfolioBuilderView({ onBack }: { onBack?: () => void }
       {/* ── Content area ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {view === 'dashboard'        && <DashboardTab onSwitchTab={setView} />}
-        {view === 'score'            && <ProfileScoreTab />}
+        {view === 'score'            && <ProfileScoreTab onSwitchTab={setView} />}
         {view === 'sections'         && <SectionsManagerTab />}
         {view === 'bio'              && <PortfolioBioStudio />}
         {view === 'resume'           && <PortfolioResumeStudio />}
@@ -828,7 +849,7 @@ export default function PortfolioBuilderView({ onBack }: { onBack?: () => void }
         {view === 'export'           && <PortfolioExport />}
         {view === 'approvals'        && <PortfolioApprovals />}
         {view === 'versions'         && <PortfolioVersionHistory />}
-        {view === 'recommendations'  && <PortfolioRecommendations />}
+        {view === 'recommendations'  && <PortfolioRecommendations onSwitchTab={(id) => setView(id as ViewId)} />}
         {view === 'analytics'        && <PortfolioAnalytics />}
         {view === 'design-system'    && <PortfolioDesignSystem />}
       </div>

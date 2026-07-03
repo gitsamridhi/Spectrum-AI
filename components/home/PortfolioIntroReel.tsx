@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import {
   Play, Pause, SkipBack, SkipForward, Volume2,
-  Plus, Scissors, Music, Clock, Download, Layers,
+  Plus, Scissors, Music, Clock, Download, Layers, Check,
 } from 'lucide-react';
 import { useTheme } from '@/app/context/ThemeContext';
 
@@ -21,6 +21,7 @@ const CLIP_LIBRARY = [
 ];
 
 const TEMPLATES = ['Cinematic Opener','Brand Story','Agency Reel','Custom'];
+const MUSIC_TRACKS = ['Ambient Cinematic — 120 BPM','Uplifting Corporate — 128 BPM','Moody Piano — 90 BPM','Editorial Pulse — 110 BPM'];
 
 interface Clip { id: number; src: string; label: string; dur: string; color: string; }
 
@@ -43,8 +44,15 @@ export default function PortfolioIntroReel() {
   const [template,  setTemplate]  = useState(0);
   const [caption,   setCaption]   = useState('Sarah Chen · Fashion Model · New York');
   const [music,     setMusic]     = useState('Ambient Cinematic — 120 BPM');
+  const [musicPickerOpen, setMusicPickerOpen] = useState(false);
+  const [clipLibrary, setClipLibrary] = useState(CLIP_LIBRARY);
+  const [currentClipIndex, setCurrentClipIndex] = useState(0);
+  const [volume, setVolume] = useState(70);
+  const [exported, setExported] = useState(false);
   const dragging = useRef<number | null>(null);
   const dragOver = useRef<number | null>(null);
+  const volumeBarRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addClip = (clip: typeof CLIP_LIBRARY[0]) => {
     const color = COLORS[timeline.length % COLORS.length];
@@ -52,7 +60,56 @@ export default function PortfolioIntroReel() {
   };
 
   const removeClip = (idx: number) =>
-    setTimeline(tl => tl.filter((_, i) => i !== idx));
+    setTimeline(tl => {
+      const next = tl.filter((_, i) => i !== idx);
+      setCurrentClipIndex(ci => Math.min(ci, Math.max(0, next.length - 1)));
+      return next;
+    });
+
+  const goToClip = (dir: -1 | 1) =>
+    setCurrentClipIndex(i => Math.max(0, Math.min(timeline.length - 1, i + dir)));
+
+  const splitClip = () => {
+    setTimeline(tl => {
+      const clip = tl[currentClipIndex];
+      if (!clip) return tl;
+      const [m, s] = clip.dur.split(':').map(Number);
+      const totalSec = Math.max(2, m * 60 + s);
+      const half = Math.floor(totalSec / 2);
+      const fmt = (sec: number) => `0:${String(sec).padStart(2, '0')}`;
+      const partA: Clip = { ...clip, dur: fmt(half) };
+      const partB: Clip = { ...clip, id: Date.now(), dur: fmt(totalSec - half) };
+      const next = [...tl];
+      next.splice(currentClipIndex, 1, partA, partB);
+      return next;
+    });
+  };
+
+  const handleImportClip = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    const newClips = files.map((f, i) => ({
+      id: Date.now() + i, src: URL.createObjectURL(f), label: f.name.replace(/\.[^.]+$/, ''), dur: '0:04',
+    }));
+    setClipLibrary(lib => [...newClips, ...lib]);
+    e.target.value = '';
+  };
+
+  const handleVolumeClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = volumeBarRef.current; if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const pct = Math.round(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)) * 100);
+    setVolume(pct);
+  };
+
+  const handleExport = () => {
+    const summary = `Reel export\nTemplate: ${TEMPLATES[template]}\nCaption: ${caption}\nMusic: ${music}\nDuration: ${totalLabel}\nClips:\n${timeline.map((c, i) => `${i + 1}. ${c.label} (${c.dur})`).join('\n')}`;
+    const blob = new Blob([summary], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'intro-reel-export.txt'; a.click();
+    URL.revokeObjectURL(url);
+    setExported(true); setTimeout(() => setExported(false), 1800);
+  };
 
   const onDrop = () => {
     if (dragging.current === null || dragOver.current === null) return;
@@ -109,9 +166,10 @@ export default function PortfolioIntroReel() {
           <span className="text-[11px] font-semibold" style={{ color: T.textMuted }}>
             <Clock className="w-3 h-3 inline mr-1" />{totalLabel}
           </span>
-          <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
-            <Download className="w-3.5 h-3.5" />Export Reel
+          <button onClick={handleExport}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
+            style={{ background: exported ? PA.teal : 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
+            {exported ? <Check className="w-3.5 h-3.5" /> : <Download className="w-3.5 h-3.5" />}{exported ? 'Exported' : 'Export Reel'}
           </button>
         </div>
       </div>
@@ -123,10 +181,11 @@ export default function PortfolioIntroReel() {
           style={{ borderRight: `1px solid ${T.border}`, background: T.bgSub }}>
           <div className="px-4 pt-4 pb-2 flex items-center justify-between shrink-0">
             <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Clip Library</p>
-            <button style={{ color: T.textMuted }}><Plus className="w-3 h-3" /></button>
+            <input ref={fileInputRef} type="file" accept="image/*,video/*" multiple className="hidden" onChange={handleImportClip} />
+            <button onClick={() => fileInputRef.current?.click()} title="Import clip" className="cursor-pointer" style={{ color: T.textMuted }}><Plus className="w-3 h-3" /></button>
           </div>
           <div className="flex-1 overflow-y-auto px-2 pb-4 space-y-2" style={{ scrollbarWidth: 'none' }}>
-            {CLIP_LIBRARY.map(clip => (
+            {clipLibrary.map(clip => (
               <div key={clip.id} className="group relative rounded-xl overflow-hidden cursor-pointer"
                 style={{ aspectRatio: '16/9', background: T.bgCard }}
                 onClick={() => addClip(clip)}>
@@ -158,7 +217,7 @@ export default function PortfolioIntroReel() {
                 <div className="relative overflow-hidden shadow-xl"
                   style={{ height: '100%', maxHeight: 380, aspectRatio: '9/16', width: 'auto', background: '#0a0a0d', borderRadius: 22 }}>
                   {timeline.length > 0 && (
-                    <img src={timeline[0].src} alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" />
+                    <img src={timeline[Math.min(currentClipIndex, timeline.length - 1)].src} alt="" className="absolute inset-0 w-full h-full object-cover opacity-90" />
                   )}
                   {/* Caption overlay */}
                   <div className="absolute bottom-0 left-0 right-0 px-6 py-4 flex flex-col gap-1"
@@ -175,17 +234,23 @@ export default function PortfolioIntroReel() {
               {/* Transport controls */}
               <div className="shrink-0 flex items-center justify-center gap-3 py-2.5"
                 style={{ borderTop: `1px solid ${T.border}`, background: T.bg }}>
-                <button style={{ color: T.textMuted }}><SkipBack className="w-4 h-4" /></button>
+                <button onClick={() => goToClip(-1)} disabled={currentClipIndex <= 0}
+                  className="cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" style={{ color: T.textMuted }}>
+                  <SkipBack className="w-4 h-4" />
+                </button>
                 <button onClick={() => setPlaying(p => !p)}
-                  className="w-9 h-9 flex items-center justify-center rounded-full"
+                  className="w-9 h-9 flex items-center justify-center rounded-full cursor-pointer"
                   style={{ background: T.text, color: T.bg }}>
                   {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
                 </button>
-                <button style={{ color: T.textMuted }}><SkipForward className="w-4 h-4" /></button>
+                <button onClick={() => goToClip(1)} disabled={currentClipIndex >= timeline.length - 1}
+                  className="cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" style={{ color: T.textMuted }}>
+                  <SkipForward className="w-4 h-4" />
+                </button>
                 <div className="flex items-center gap-2 ml-4">
                   <Volume2 className="w-3.5 h-3.5" style={{ color: T.textMuted }} />
-                  <div className="w-20 h-1 rounded-full overflow-hidden cursor-pointer" style={{ background: T.bgCard }}>
-                    <div className="h-full rounded-full" style={{ width: '70%', background: T.textMuted }} />
+                  <div ref={volumeBarRef} onClick={handleVolumeClick} className="w-20 h-1 rounded-full overflow-hidden cursor-pointer" style={{ background: T.bgCard }}>
+                    <div className="h-full rounded-full" style={{ width: `${volume}%`, background: T.textMuted }} />
                   </div>
                 </div>
               </div>
@@ -196,7 +261,10 @@ export default function PortfolioIntroReel() {
                 <div className="flex items-center gap-2 px-4 pt-3 pb-2">
                   <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Timeline</p>
                   <div className="flex items-center gap-1 ml-auto">
-                    <Scissors className="w-3 h-3 cursor-pointer" style={{ color: T.textMuted }} />
+                    <button onClick={splitClip} disabled={timeline.length === 0} title="Split clip at playhead"
+                      className="cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" style={{ color: T.textMuted }}>
+                      <Scissors className="w-3 h-3" />
+                    </button>
                   </div>
                 </div>
 
@@ -240,14 +308,28 @@ export default function PortfolioIntroReel() {
                 </div>
 
                 {/* Music track */}
-                <div className="px-4 pb-3">
+                <div className="px-4 pb-3 relative">
                   <div className="text-[8.5px] font-semibold uppercase tracking-widest mb-1.5 flex items-center gap-1" style={{ color: T.textMuted }}>
                     <Music className="w-2.5 h-2.5" />Music
                   </div>
-                  <div className="h-6 rounded flex items-center px-3 cursor-pointer"
+                  <div onClick={() => setMusicPickerOpen(o => !o)} className="h-6 rounded flex items-center px-3 cursor-pointer"
                     style={{ background: PA.teal + '20', border: `1px solid ${PA.teal}40` }}>
                     <p className="text-[9px] font-semibold" style={{ color: PA.teal }}>{music}</p>
                   </div>
+                  {musicPickerOpen && (
+                    <div className="absolute left-4 right-4 bottom-full mb-1 rounded-xl overflow-hidden z-20 shadow-lg"
+                      style={{ background: T.bg, border: `1px solid ${T.border}` }}>
+                      {MUSIC_TRACKS.map(t => (
+                        <button key={t} onClick={() => { setMusic(t); setMusicPickerOpen(false); }}
+                          className="w-full text-left px-3 py-2 text-[10.5px] cursor-pointer transition-colors"
+                          style={t === music ? { background: PA.tealBg, color: PA.teal } : { color: T.textSub }}
+                          onMouseEnter={e => { if (t !== music) e.currentTarget.style.background = T.bgHover; }}
+                          onMouseLeave={e => { if (t !== music) e.currentTarget.style.background = 'transparent'; }}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Caption track */}
@@ -283,7 +365,7 @@ export default function PortfolioIntroReel() {
                     )}
                   </div>
                 ))}
-                <button onClick={() => {}}
+                <button onClick={() => addClip(clipLibrary[timeline.length % clipLibrary.length])}
                   className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed cursor-pointer transition-colors"
                   style={{ width: 160, aspectRatio: '16/9', borderColor: T.border, color: T.textMuted }}
                   onMouseEnter={e => (e.currentTarget.style.borderColor = PA.blue)}

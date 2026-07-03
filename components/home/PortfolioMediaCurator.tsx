@@ -1,9 +1,9 @@
 ﻿'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Search, Grid3X3, List, Layers, Plus,
-  Trash2, Download, Star, X, Eye, Tag,
+  Trash2, Download, Star, X, Eye, Tag, CheckCircle2, ImageOff,
 } from 'lucide-react';
 import { useTheme } from '@/app/context/ThemeContext';
 
@@ -13,17 +13,17 @@ const PA = {
   amber:'#F59E0B',amberBg:'rgba(245,158,11,0.10)',amberBdr:'rgba(245,158,11,0.28)',
 };
 
-const COLLECTIONS = ['All Assets','Portfolio Selects','Campaign Shots','Behind the Scenes','Headshots','Test Shoots'];
+const DEFAULT_COLLECTIONS = ['All Assets','Portfolio Selects','Campaign Shots','Behind the Scenes','Headshots','Test Shoots'];
 
 const ASSETS = [
-  { id:1, src:'/portfolio_h1.jpg', label:'Model Headshot · Studio',  tags:['Headshot','Portrait'],  featured:true,  size:'4.2MB', date:'Today'     },
-  { id:2, src:'/portfolio_h2.jpg', label:'Fashion Editorial · FW24', tags:['Fashion','Editorial'],  featured:true,  size:'6.1MB', date:'Yesterday' },
-  { id:3, src:'/portfolio_h3.jpg', label:'High Fashion Campaign',    tags:['Campaign','Studio'],    featured:false, size:'5.3MB', date:'2 days ago'},
-  { id:4, src:'/portfolio_h4.jpg', label:'Editorial · Spring SS25',  tags:['Editorial','Outdoor'],  featured:false, size:'3.8MB', date:'3 days ago'},
-  { id:5, src:'/portfolio_h5.jpg', label:'VSS Studio Shoot · Vogue', tags:['Runway','Campaign'],    featured:false, size:'4.0MB', date:'4 days ago'},
-  { id:6, src:'/portfolio_h6.jpg', label:'Beauty Commercial',        tags:['Beauty','Commercial'],  featured:false, size:'5.5MB', date:'5 days ago'},
-  { id:7, src:'/portfolio_h7.jpg', label:'Test Shoot · Studio',      tags:['Portrait','Studio'],    featured:false, size:'3.2MB', date:'6 days ago'},
-  { id:8, src:'/portfolio_h1.jpg', label:'Headshot Alternate Cut',   tags:['Headshot','Creative'],  featured:false, size:'4.7MB', date:'1 week ago'},
+  { id:1, src:'/portfolio_h1.jpg', label:'Model Headshot · Studio',  tags:['Headshot','Portrait'],  featured:true,  size:'4.2MB', date:'Today',      collection:'Headshots'         },
+  { id:2, src:'/portfolio_h2.jpg', label:'Fashion Editorial · FW24', tags:['Fashion','Editorial'],  featured:true,  size:'6.1MB', date:'Yesterday',  collection:'Portfolio Selects'  },
+  { id:3, src:'/portfolio_h3.jpg', label:'High Fashion Campaign',    tags:['Campaign','Studio'],    featured:false, size:'5.3MB', date:'2 days ago', collection:'Campaign Shots'     },
+  { id:4, src:'/portfolio_h4.jpg', label:'Editorial · Spring SS25',  tags:['Editorial','Outdoor'],  featured:false, size:'3.8MB', date:'3 days ago', collection:'Portfolio Selects'  },
+  { id:5, src:'/portfolio_h5.jpg', label:'VSS Studio Shoot · Vogue', tags:['Runway','Campaign'],    featured:false, size:'4.0MB', date:'4 days ago', collection:'Campaign Shots'     },
+  { id:6, src:'/portfolio_h6.jpg', label:'Beauty Commercial',        tags:['Beauty','Commercial'],  featured:false, size:'5.5MB', date:'5 days ago', collection:'Behind the Scenes'  },
+  { id:7, src:'/portfolio_h7.jpg', label:'Test Shoot · Studio',      tags:['Portrait','Studio'],    featured:false, size:'3.2MB', date:'6 days ago', collection:'Test Shoots'        },
+  { id:8, src:'/portfolio_h1.jpg', label:'Headshot Alternate Cut',   tags:['Headshot','Creative'],  featured:false, size:'4.7MB', date:'1 week ago', collection:'Headshots'          },
 ];
 
 type ViewMode = 'masonry' | 'grid' | 'list';
@@ -33,17 +33,68 @@ export default function PortfolioMediaCurator() {
   const [view,      setView]      = useState<ViewMode>('masonry');
   const [query,     setQuery]     = useState('');
   const [collection,setCollection]= useState('All Assets');
+  const [collections, setCollections] = useState(DEFAULT_COLLECTIONS);
   const [selected,  setSelected]  = useState<Set<number>>(new Set());
   const [preview,   setPreview]   = useState<number | null>(null);
+  const [assets,    setAssets]    = useState(ASSETS);
+  const [addedToPortfolio, setAddedToPortfolio] = useState<Set<number>>(new Set());
+  const [downloaded, setDownloaded] = useState(false);
+  const [exported,   setExported]   = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filtered = ASSETS.filter(a =>
+  const filtered = assets.filter(a =>
+    (collection === 'All Assets' || a.collection === collection) &&
     (!query || a.label.toLowerCase().includes(query.toLowerCase()))
   );
 
   const toggleSelect = (id: number) =>
     setSelected(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
-  const previewAsset = ASSETS.find(a => a.id === preview);
+  const previewAsset = assets.find(a => a.id === preview);
+
+  const addCollection = () => {
+    const name = `New Collection ${collections.length - DEFAULT_COLLECTIONS.length + 1}`;
+    setCollections(c => [...c, name]);
+    setCollection(name);
+  };
+
+  const downloadAsset = (src: string, label: string) => {
+    const a = document.createElement('a');
+    a.href = src; a.download = `${label.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.jpg`;
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  const exportSelected = () => {
+    filtered.filter(a => selected.has(a.id)).forEach(a => downloadAsset(a.src, a.label));
+    setExported(true); setTimeout(() => setExported(false), 1800);
+  };
+
+  const deleteSelected = () => {
+    setAssets(as => as.filter(a => !selected.has(a.id)));
+    if (preview !== null && selected.has(preview)) setPreview(null);
+    setSelected(new Set());
+  };
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    const newAssets = files.map((f, i) => ({
+      id: Date.now() + i, src: URL.createObjectURL(f), label: f.name.replace(/\.[^.]+$/, ''),
+      tags: ['Uploaded'], featured: false, size: `${(f.size / (1024 * 1024)).toFixed(1)}MB`, date: 'Just now',
+      collection: collection === 'All Assets' ? 'Portfolio Selects' : collection,
+    }));
+    setAssets(as => [...newAssets, ...as]);
+    e.target.value = '';
+  };
+
+  const toggleAddToPortfolio = (id: number) => {
+    setAddedToPortfolio(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  };
+
+  const downloadPreview = () => {
+    if (!previewAsset) return;
+    downloadAsset(previewAsset.src, previewAsset.label);
+    setDownloaded(true); setTimeout(() => setDownloaded(false), 1800);
+  };
 
   return (
     <div className="flex-1 flex overflow-hidden">
@@ -53,10 +104,10 @@ export default function PortfolioMediaCurator() {
         style={{ borderRight: `1px solid ${T.border}`, background: T.bgSub }}>
         <div className="px-4 pt-4 pb-2 flex items-center justify-between">
           <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Collections</p>
-          <button style={{ color: T.textMuted }}><Plus className="w-3 h-3" /></button>
+          <button onClick={addCollection} title="New collection" className="cursor-pointer" style={{ color: T.textMuted }}><Plus className="w-3 h-3" /></button>
         </div>
         <div className="flex-1 overflow-y-auto px-2 pb-4" style={{ scrollbarWidth: 'none' }}>
-          {COLLECTIONS.map(c => (
+          {collections.map(c => (
             <button key={c} onClick={() => setCollection(c)}
               className="w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-left cursor-pointer transition-all"
               style={collection === c
@@ -113,11 +164,13 @@ export default function PortfolioMediaCurator() {
           {selected.size > 0 && (
             <div className="flex items-center gap-2 ml-2">
               <span className="text-[11px] font-semibold" style={{ color: T.textSub }}>{selected.size} selected</span>
-              <button className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10.5px] font-medium cursor-pointer"
-                style={{ background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
-                <Download className="w-3 h-3" />Export
+              <button onClick={exportSelected}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10.5px] font-medium cursor-pointer"
+                style={exported ? { background: PA.tealBg, color: PA.teal, border: `1px solid ${PA.tealBdr}` } : { background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
+                {exported ? <CheckCircle2 className="w-3 h-3" /> : <Download className="w-3 h-3" />}{exported ? 'Exported' : 'Export'}
               </button>
-              <button className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10.5px] font-medium cursor-pointer"
+              <button onClick={deleteSelected}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10.5px] font-medium cursor-pointer"
                 style={{ background: 'rgba(239,68,68,0.10)', color: '#EF4444', border: '1px solid #FECDD3' }}>
                 <Trash2 className="w-3 h-3" />Delete
               </button>
@@ -130,7 +183,9 @@ export default function PortfolioMediaCurator() {
           )}
 
           <div className="ml-auto">
-            <button className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
+            <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleUpload} />
+            <button onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
               style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
               <Plus className="w-3.5 h-3.5" />Upload
             </button>
@@ -139,7 +194,15 @@ export default function PortfolioMediaCurator() {
 
         {/* Gallery */}
         <div className="flex-1 overflow-y-auto p-5" style={{ scrollbarWidth: 'none' }}>
-          {view === 'masonry' && (
+          {filtered.length === 0 && (
+            <div className="flex flex-col items-center justify-center text-center py-16 rounded-2xl" style={{ background: T.bgSub, border: `1px dashed ${T.border}` }}>
+              <ImageOff className="w-6 h-6 mb-2" style={{ color: T.textMuted }} />
+              <p className="text-[12.5px] font-semibold mb-1" style={{ color: T.text }}>No assets found</p>
+              <p className="text-[11px]" style={{ color: T.textMuted }}>Try a different search term or collection.</p>
+            </div>
+          )}
+
+          {filtered.length > 0 && view === 'masonry' && (
             <div className="columns-3 gap-3">
               {filtered.map((a, i) => {
                 const tall = i % 3 === 0;
@@ -167,7 +230,7 @@ export default function PortfolioMediaCurator() {
             </div>
           )}
 
-          {view === 'grid' && (
+          {filtered.length > 0 && view === 'grid' && (
             <div className="grid grid-cols-4 gap-3">
               {filtered.map(a => (
                 <div key={a.id} className="group relative rounded-xl overflow-hidden cursor-pointer"
@@ -184,7 +247,7 @@ export default function PortfolioMediaCurator() {
             </div>
           )}
 
-          {view === 'list' && (
+          {filtered.length > 0 && view === 'list' && (
             <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
               {filtered.map((a, i) => (
                 <div key={a.id}
@@ -248,13 +311,18 @@ export default function PortfolioMediaCurator() {
               </div>
             ))}
             <div className="flex flex-col gap-2 mt-4">
-              <button className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
-                <Download className="w-3.5 h-3.5" />Download
+              <button onClick={downloadPreview}
+                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
+                style={{ background: downloaded ? PA.teal : 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
+                {downloaded ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Download className="w-3.5 h-3.5" />}{downloaded ? 'Downloaded' : 'Download'}
               </button>
-              <button className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-[11.5px] font-semibold cursor-pointer"
-                style={{ background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
-                <Eye className="w-3.5 h-3.5" />Add to Portfolio
+              <button onClick={() => toggleAddToPortfolio(previewAsset.id)}
+                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-[11.5px] font-semibold cursor-pointer"
+                style={addedToPortfolio.has(previewAsset.id)
+                  ? { background: PA.tealBg, color: PA.teal, border: `1px solid ${PA.tealBdr}` }
+                  : { background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
+                {addedToPortfolio.has(previewAsset.id) ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                {addedToPortfolio.has(previewAsset.id) ? 'Added to Portfolio' : 'Add to Portfolio'}
               </button>
             </div>
           </div>

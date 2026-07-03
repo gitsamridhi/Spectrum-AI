@@ -196,7 +196,6 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
   const [isDeleting,   setIsDeleting]   = useState(false);
   const [isPaused,     setIsPaused]     = useState(false);
   const [bannerIdx,    setBannerIdx]    = useState(0);
-  const [bannerFade,   setBannerFade]   = useState(true);
   const [showWelcome,  setShowWelcome]  = useState(false);
 
   useEffect(() => {
@@ -230,12 +229,9 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
     setIsPaused(true);
   }, [displayWords, isDeleting, isPaused, greetIdx, displayName]);
 
-  // Banner auto-rotation every 2.5s
+  // Banner auto-slide every 3.5s
   useEffect(() => {
-    const id = setInterval(() => {
-      setBannerFade(false);
-      setTimeout(() => { setBannerIdx(i => (i + 1) % BANNERS.length); setBannerFade(true); }, 280);
-    }, 2500);
+    const id = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 3500);
     return () => clearInterval(id);
   }, []);
 
@@ -268,18 +264,17 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
       {/* ══ GREETING + SEARCH + TOOLS ══════════════════════════════════════════ */}
       <section className="relative overflow-hidden px-10 pt-14 pb-10" style={{ background: T.bg }}>
 
-        {/* Top gradient — vivid bloom from page top behind heading */}
+        {/* Top gradient — vivid bloom from page top behind heading (light mode only) */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: isDark
-            ? 'radial-gradient(ellipse 130% 80% at 50% -8%, rgba(168,85,247,0.42) 0%, rgba(236,72,153,0.22) 30%, rgba(59,130,246,0.12) 58%, transparent 76%),' +
-              'radial-gradient(ellipse 80% 40% at 50% -2%, rgba(255,255,255,0.05) 0%, transparent 60%)'
+            ? 'none'
             : 'radial-gradient(ellipse 130% 80% at 50% -8%, rgba(168,85,247,0.22) 0%, rgba(236,72,153,0.12) 30%, rgba(59,130,246,0.07) 58%, transparent 76%)',
         }} />
 
         {/* Greeting – typewriter */}
         <div className="relative text-center mb-8 max-w-3xl mx-auto">
           <h1 className="text-[52px] font-black tracking-[-0.05em] leading-[1.1] min-h-[64px]"
-            style={{
+            style={isDark ? { color: '#fff' } : {
               background: 'linear-gradient(135deg, #FF4500 0%, #FF1493 55%, #8B5CF6 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -394,56 +389,61 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
           </div>
         </div>
 
-        {/* Platform banner – 3 rotating variants */}
-        <div
-          className="rounded-2xl overflow-hidden relative cursor-pointer hover:shadow-xl"
-          style={{
-            background: BANNERS[bannerIdx].gradient,
-            minHeight: 148,
-            opacity: bannerFade ? 1 : 0,
-            transition: 'opacity 0.28s ease',
-          }}
-          onClick={() => onToolClick(BANNERS[bannerIdx].nav)}>
+        {/* Platform banner – 3 auto-sliding variants */}
+        <div className="rounded-2xl overflow-hidden relative hover:shadow-xl" style={{ minHeight: 148 }}>
+          <div className="flex h-full" style={{
+            width: `${BANNERS.length * 100}%`,
+            transform: `translateX(-${bannerIdx * (100 / BANNERS.length)}%)`,
+            transition: 'transform 0.6s cubic-bezier(0.4,0,0.2,1)',
+          }}>
+            {BANNERS.map((banner, bi) => (
+              <div key={bi}
+                className="relative cursor-pointer shrink-0 h-full"
+                style={{ width: `${100 / BANNERS.length}%`, background: banner.gradient }}
+                onClick={() => onToolClick(banner.nav)}>
 
-          <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
-            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
+                <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
+                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
 
-          <div className="relative z-10 flex items-center h-full pl-6 pr-4 py-5 gap-4">
-            <div className="flex flex-col gap-2 flex-1">
-              <p className="text-[10.5px] font-semibold text-white/80">{BANNERS[bannerIdx].subtitle}</p>
-              <h3 className="text-[20px] font-black leading-snug tracking-[-0.03em] text-white">
-                {BANNERS[bannerIdx].title[0]}<br />{BANNERS[bannerIdx].title[1]}
-              </h3>
-              <button
-                className="self-start mt-1.5 px-4 py-1.5 rounded-full text-[12px] font-bold cursor-pointer transition-all hover:scale-105"
-                style={{ background: 'rgba(255,255,255,0.22)', color: '#fff', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.35)' }}
-                onClick={e => { e.stopPropagation(); onToolClick(BANNERS[bannerIdx].nav); }}>
-                {BANNERS[bannerIdx].cta} →
-              </button>
-            </div>
-
-            <div className="relative shrink-0 w-[110px] h-[110px]">
-              {(['absolute bottom-2 left-0 w-11 h-11', 'absolute bottom-0 right-2 w-10 h-10', 'absolute top-0 right-0 w-14 h-14'] as const).map((pos, ii) => {
-                const item = BANNERS[bannerIdx].icons[ii];
-                const Icon = item.Icon as React.ElementType;
-                return (
-                  <div key={ii}
-                    className={`${pos} rounded-2xl flex items-center justify-center shadow-xl`}
-                    style={{ background: item.bg, transform: `rotate(${item.rotate}deg)`, border: '2px solid rgba(255,255,255,0.25)' }}>
-                    <Icon className={ii === 2 ? 'w-7 h-7' : 'w-5 h-5'} style={{ color: item.color }} />
+                <div className="relative z-10 flex items-center h-full pl-6 pr-4 py-5 gap-4">
+                  <div className="flex flex-col gap-2 flex-1">
+                    <p className="text-[10.5px] font-semibold text-white/80">{banner.subtitle}</p>
+                    <h3 className="text-[20px] font-black leading-snug tracking-[-0.03em] text-white">
+                      {banner.title[0]}<br />{banner.title[1]}
+                    </h3>
+                    <button
+                      className="self-start mt-1.5 px-4 py-1.5 rounded-full text-[12px] font-bold cursor-pointer transition-all hover:scale-105"
+                      style={{ background: 'rgba(255,255,255,0.22)', color: '#fff', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.35)' }}
+                      onClick={e => { e.stopPropagation(); onToolClick(banner.nav); }}>
+                      {banner.cta} →
+                    </button>
                   </div>
-                );
-              })}
-            </div>
+
+                  <div className="relative shrink-0 w-[110px] h-[110px]">
+                    {(['absolute bottom-2 left-0 w-11 h-11', 'absolute bottom-0 right-2 w-10 h-10', 'absolute top-0 right-0 w-14 h-14'] as const).map((pos, ii) => {
+                      const item = banner.icons[ii];
+                      const Icon = item.Icon as React.ElementType;
+                      return (
+                        <div key={ii}
+                          className={`${pos} rounded-2xl flex items-center justify-center shadow-xl`}
+                          style={{ background: item.bg, transform: `rotate(${item.rotate}deg)`, border: '2px solid rgba(255,255,255,0.25)' }}>
+                          <Icon className={ii === 2 ? 'w-7 h-7' : 'w-5 h-5'} style={{ color: item.color }} />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Dot indicators */}
-          <div className="absolute bottom-2.5 left-6 flex items-center gap-1.5">
+          <div className="absolute bottom-2.5 left-6 flex items-center gap-1.5 z-10">
             {BANNERS.map((_, di) => (
               <button key={di}
                 className="rounded-full cursor-pointer transition-all"
                 style={{ width: di === bannerIdx ? 16 : 5, height: 5, background: di === bannerIdx ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)' }}
-                onClick={e => { e.stopPropagation(); setBannerFade(false); setTimeout(() => { setBannerIdx(di); setBannerFade(true); }, 280); }} />
+                onClick={e => { e.stopPropagation(); setBannerIdx(di); }} />
             ))}
           </div>
         </div>
@@ -518,40 +518,37 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
             const actualIdx = item.galleryIdx;
             return (
               <div key={`${activeTab}-${actualIdx}`}
-                className="rounded-2xl overflow-hidden cursor-pointer group transition-all hover:shadow-lg"
-                style={{ background: T.bgCard, border: `1px solid ${T.border}` }}
+                className="relative rounded-2xl overflow-hidden cursor-pointer group transition-all hover:shadow-lg"
+                style={{ border: `1px solid ${T.border}`, paddingTop: '62%' }}
                 onClick={() => onToolClick('image')}>
 
-                {/* Media area (shorter: 50% ratio) */}
-                <div className="relative overflow-hidden" style={{ paddingTop: '50%' }}>
-                  {/* Fallback image */}
-                  <img
-                    src={item.src}
-                    alt={item.label}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  {/* Video plays on top of image */}
-                  <video
-                    autoPlay loop muted playsInline preload="none"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]">
-                    <source src={item.videoSrc} type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                {/* Fallback image */}
+                <img
+                  src={item.src}
+                  alt={item.label}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {/* Video plays on top of image */}
+                <video
+                  autoPlay loop muted playsInline preload="none"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]">
+                  <source src={item.videoSrc} type="video/mp4" />
+                </video>
 
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                    style={{ background: 'rgba(0,0,0,0.50)', backdropFilter: 'blur(8px)' }}>
-                    <Sparkles className="w-2.5 h-2.5 text-white/80" />
-                    <span className="text-[9px] font-semibold text-white/90">{activeTab}</span>
-                  </div>
+                {/* Badge */}
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                  style={{ background: 'rgba(0,0,0,0.50)', backdropFilter: 'blur(8px)' }}>
+                  <Sparkles className="w-2.5 h-2.5 text-white/80" />
+                  <span className="text-[9px] font-semibold text-white/90">{activeTab}</span>
                 </div>
 
-                {/* Text content */}
-                <div className="p-3.5">
-                  <h3 className="text-[12.5px] font-bold mb-1 leading-snug" style={{ color: T.text }}>
+                {/* Hover overlay – text content appears on the video, no white box */}
+                <div className="absolute inset-0 flex flex-col justify-end p-3.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.55) 45%, transparent 85%)' }}>
+                  <h3 className="text-[12.5px] font-bold mb-1 leading-snug text-white">
                     {item.label}
                   </h3>
-                  <p className="text-[10.5px] mb-3 leading-relaxed" style={{ color: T.textMuted }}>
+                  <p className="text-[10.5px] mb-3 leading-relaxed text-white/80">
                     {item.desc}
                   </p>
                   <div className="flex items-center justify-between">
@@ -564,16 +561,15 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
                     </FillBtn>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" style={{ color: T.textMuted }} />
-                        <span className="text-[10px]" style={{ color: T.textMuted }}>{item.views}</span>
+                        <Eye className="w-3 h-3 text-white/75" />
+                        <span className="text-[10px] text-white/75">{item.views}</span>
                       </div>
                       <button
                         className="flex items-center gap-1 cursor-pointer"
                         onClick={e => { e.stopPropagation(); toggleLike(actualIdx); }}>
                         <Heart
-                          className={`w-3 h-3 ${liked.has(actualIdx) ? 'fill-rose-400 text-rose-400' : ''}`}
-                          style={!liked.has(actualIdx) ? { color: T.textMuted } : {}} />
-                        <span className="text-[10px]" style={{ color: T.textMuted }}>
+                          className={`w-3 h-3 ${liked.has(actualIdx) ? 'fill-rose-400 text-rose-400' : 'text-white/75'}`} />
+                        <span className="text-[10px] text-white/75">
                           {liked.has(actualIdx) ? item.likes + 1 : item.likes}
                         </span>
                       </button>
@@ -597,8 +593,20 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
                   style={{ aspectRatio: item.ar, objectFit: 'cover' }}>
                   <source src={item.src} type="video/mp4" />
                 </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <p className="absolute bottom-2 left-2.5 right-2.5 text-[8.5px] font-semibold text-white/90 truncate opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.label}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-0 right-0 p-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-[8.5px] font-semibold text-white truncate" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>{item.label}</p>
+                  <div className="flex items-center gap-2.5 mt-1">
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-2.5 h-2.5 text-white/85" />
+                      <span className="text-[7.5px] text-white/85">{item.views}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Heart className="w-2.5 h-2.5 text-white/85" />
+                      <span className="text-[7.5px] text-white/85">{item.likes}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -606,28 +614,27 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
           <div className={`mt-4 ${viewMode === 'large' ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-3 gap-4'}`}>
             {shownMasonry.map((item, i) => (
               <div key={`mv-${i}`}
-                className="rounded-2xl overflow-hidden cursor-pointer group transition-all hover:shadow-lg"
-                style={{ background: T.bgCard, border: `1px solid ${T.border}` }}
+                className="relative rounded-2xl overflow-hidden cursor-pointer group transition-all hover:shadow-lg"
+                style={{ border: `1px solid ${T.border}`, paddingTop: viewMode === 'large' ? '56%' : '50%' }}
                 onClick={() => onToolClick('video')}>
 
-                <div className="relative overflow-hidden" style={{ paddingTop: viewMode === 'large' ? '56%' : '50%' }}>
-                  <video autoPlay loop muted playsInline preload="none"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]">
-                    <source src={item.src} type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                    style={{ background: 'rgba(0,0,0,0.50)', backdropFilter: 'blur(8px)' }}>
-                    <Sparkles className="w-2.5 h-2.5 text-white/80" />
-                    <span className="text-[9px] font-semibold text-white/90">{activeTab}</span>
-                  </div>
+                <video autoPlay loop muted playsInline preload="none"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]">
+                  <source src={item.src} type="video/mp4" />
+                </video>
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                  style={{ background: 'rgba(0,0,0,0.50)', backdropFilter: 'blur(8px)' }}>
+                  <Sparkles className="w-2.5 h-2.5 text-white/80" />
+                  <span className="text-[9px] font-semibold text-white/90">{activeTab}</span>
                 </div>
 
-                <div className="p-3.5">
-                  <h3 className="text-[12.5px] font-bold mb-1 leading-snug" style={{ color: T.text }}>
+                {/* Hover overlay – text content appears on the video, no white box */}
+                <div className="absolute inset-0 flex flex-col justify-end p-3.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.55) 45%, transparent 85%)' }}>
+                  <h3 className="text-[12.5px] font-bold mb-1 leading-snug text-white">
                     {item.label}
                   </h3>
-                  <p className="text-[10.5px] mb-3 leading-relaxed" style={{ color: T.textMuted }}>
+                  <p className="text-[10.5px] mb-3 leading-relaxed text-white/80">
                     {item.desc}
                   </p>
                   <div className="flex items-center justify-between">
@@ -638,12 +645,12 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
                     </FillBtn>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" style={{ color: T.textMuted }} />
-                        <span className="text-[10px]" style={{ color: T.textMuted }}>{item.views}</span>
+                        <Eye className="w-3 h-3 text-white/75" />
+                        <span className="text-[10px] text-white/75">{item.views}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Heart className="w-3 h-3" style={{ color: T.textMuted }} />
-                        <span className="text-[10px]" style={{ color: T.textMuted }}>{item.likes}</span>
+                        <Heart className="w-3 h-3 text-white/75" />
+                        <span className="text-[10px] text-white/75">{item.likes}</span>
                       </div>
                     </div>
                   </div>

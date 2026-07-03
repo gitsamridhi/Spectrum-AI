@@ -709,49 +709,40 @@ function LandingPage({ onSignIn, onGoHome }: { onSignIn: () => void; onGoHome?: 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
         </div>
 
-        <div className="relative z-10 w-full max-w-[1380px] mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-16">
-          {/* Left */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
-            <div className="flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[11px] text-white/55 font-medium tracking-wide">AI Visual Enhancement Platform</span>
-            </div>
-
-            <div className="overflow-hidden">
-              <h1 className="text-5xl md:text-[3.75rem] xl:text-[4.25rem] font-bold tracking-[-0.04em] leading-[1.0]">
-                {["Transforming", "Visuals", "With", "Intelligence"].map(w => (
-                  <span key={w} className="hero-word inline-block mr-3 opacity-0">{w}</span>
-                ))}
-              </h1>
-            </div>
-
-            <p className="text-white/55 text-[14px] leading-relaxed max-w-[400px]">
-              Spectrum AI enhances, upscales, and restores images with unprecedented quality — giving every creator access to professional-grade visual AI.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Btn onClick={onSignIn}>Get Started <ArrowRight className="w-3 h-3" /></Btn>
-              <button onClick={() => setVideoOpen(true)}
-                className="flex items-center gap-2.5 text-white/65 hover:text-white transition-colors text-[12px] font-medium group">
-                <span className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white/50 transition-colors">
-                  <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
-                </span>
-                Watch overview
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-5 pt-3 border-t border-white/10 mt-1">
-              {[{ v: 4.2, s: "M+", l: "Images enhanced" }, { v: 99, s: "%", l: "Quality score" }, { v: 8, s: "×", l: "Max upscale" }].map(s => (
-                <div key={s.l}>
-                  <p className="text-2xl font-bold tracking-[-0.04em] text-white">
-                    <AnimatedCounter target={s.v} suffix={s.s} decimals={s.v % 1 !== 0 ? 1 : 0} />
-                  </p>
-                  <p className="text-[10px] text-white/35 uppercase tracking-widest mt-1 font-medium">{s.l}</p>
-                </div>
+        <div className="relative z-10 w-full max-w-[1100px] mx-auto px-6 md:px-10 flex flex-col items-center text-center gap-7 pt-16">
+          <div className="overflow-hidden">
+            <h1 className="text-6xl md:text-7xl xl:text-8xl font-bold tracking-[-0.04em] leading-[1.0]">
+              {["Transforming", "Visuals", "With", "Intelligence"].map(w => (
+                <span key={w} className="hero-word inline-block mr-3 opacity-0">{w}</span>
               ))}
-            </div>
+            </h1>
           </div>
 
+          <p className="text-white/55 text-base md:text-lg leading-relaxed max-w-xl">
+            Spectrum AI enhances, upscales, and restores images with unprecedented quality — giving every creator access to professional-grade visual AI.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Btn onClick={onSignIn}>Get Started <ArrowRight className="w-3 h-3" /></Btn>
+            <button onClick={() => setVideoOpen(true)}
+              className="flex items-center gap-2.5 text-white/65 hover:text-white transition-colors text-[12px] font-medium group">
+              <span className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white/50 transition-colors">
+                <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
+              </span>
+              Watch overview
+            </button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-8 pt-5 border-t border-white/10 mt-2 max-w-md w-full">
+            {[{ v: 4.2, s: "M+", l: "Images enhanced" }, { v: 99, s: "%", l: "Quality score" }, { v: 8, s: "×", l: "Max upscale" }].map(s => (
+              <div key={s.l} className="text-center">
+                <p className="text-2xl font-bold tracking-[-0.04em] text-white">
+                  <AnimatedCounter target={s.v} suffix={s.s} decimals={s.v % 1 !== 0 ? 1 : 0} />
+                </p>
+                <p className="text-[10px] text-white/35 uppercase tracking-widest mt-1 font-medium">{s.l}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

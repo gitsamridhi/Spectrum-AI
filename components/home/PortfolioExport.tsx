@@ -36,6 +36,8 @@ export default function PortfolioExport() {
   const [items,    setItems]    = useState(EXPORT_ITEMS.map(i => ({ ...i })));
   const [format,   setFormat]   = useState('pdf');
   const [progress, setProgress] = useState(0);
+  const [downloaded, setDownloaded] = useState(false);
+  const [shared,      setShared]    = useState(false);
 
   const included    = items.filter(i => i.included);
   const totalSize   = included.reduce((acc, i) => {
@@ -55,6 +57,26 @@ export default function PortfolioExport() {
       if (p >= 100) { p = 100; clearInterval(iv); setTimeout(() => setStep(5), 400); }
       setProgress(Math.min(Math.round(p), 100));
     }, 280);
+  };
+
+  const handleDownload = () => {
+    const manifest = `Spectrum AI — Portfolio Export\nFormat: ${FORMATS.find(f => f.id === format)?.label}\nTotal size: ~${totalSizeLabel}\n\nIncluded:\n${included.map(i => `- ${i.label} (${i.size})`).join('\n')}`;
+    const blob = new Blob([manifest], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'portfolio-export.txt'; a.click();
+    URL.revokeObjectURL(url);
+    setDownloaded(true); setTimeout(() => setDownloaded(false), 1800);
+  };
+
+  const handleShareExport = async () => {
+    const url = 'https://spectrum.ai/exports/sarah-chen-portfolio';
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Sarah Chen — Portfolio Export', url }); } catch { /* user cancelled */ }
+    } else {
+      navigator.clipboard?.writeText(url).catch(() => {});
+    }
+    setShared(true); setTimeout(() => setShared(false), 1800);
   };
 
   const STEP_LABELS: Record<Step, string> = {
@@ -133,8 +155,8 @@ export default function PortfolioExport() {
                 <span className="text-[11px]" style={{ color: T.textMuted }}>
                   {included.length} items · ~{totalSizeLabel}
                 </span>
-                <button onClick={() => setStep(2)}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[12px] font-semibold text-white cursor-pointer hover:opacity-90"
+                <button onClick={() => setStep(2)} disabled={included.length === 0}
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[12px] font-semibold text-white cursor-pointer hover:opacity-90 disabled:cursor-not-allowed"
                   style={{ background: included.length > 0 ? PA.blue : T.bgCard,
                            color: included.length > 0 ? '#fff' : T.textMuted }}>
                   Continue <ChevronRight className="w-3.5 h-3.5" />
@@ -254,13 +276,15 @@ export default function PortfolioExport() {
                 {included.length} items · {totalSizeLabel} · {FORMATS.find(f=>f.id===format)?.label}
               </p>
               <div className="flex items-center justify-center gap-3 flex-wrap">
-                <button className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[12px] font-semibold text-white cursor-pointer hover:opacity-90"
-                  style={{ background: 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
-                  <Download className="w-3.5 h-3.5" />Download
+                <button onClick={handleDownload}
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[12px] font-semibold text-white cursor-pointer hover:opacity-90"
+                  style={{ background: downloaded ? PA.teal : 'linear-gradient(135deg, #EC4899, #A855F7)', boxShadow: '0 0 16px rgba(236,72,153,0.28)' }}>
+                  {downloaded ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Download className="w-3.5 h-3.5" />}{downloaded ? 'Downloaded' : 'Download'}
                 </button>
-                <button className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[12px] font-semibold cursor-pointer"
-                  style={{ background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
-                  <Share2 className="w-3.5 h-3.5" />Share
+                <button onClick={handleShareExport}
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[12px] font-semibold cursor-pointer transition-colors"
+                  style={shared ? { background: PA.tealBg, color: PA.teal, border: `1px solid ${PA.tealBdr}` } : { background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
+                  {shared ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}{shared ? 'Shared' : 'Share'}
                 </button>
                 <button onClick={() => { setStep(1); setProgress(0); }}
                   className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[12px] font-medium cursor-pointer"

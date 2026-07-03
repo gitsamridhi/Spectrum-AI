@@ -124,6 +124,7 @@ function DiffLine({ line, side }: { line: DiffLine; side: 'before' | 'after' }) 
 
 export default function PortfolioVersionHistory() {
   const { T } = useTheme();
+  const [versions, setVersions]   = useState<Version[]>(VERSIONS);
   const [selected, setSelected]   = useState<string>('v5');
   const [compare,  setCompare]    = useState<string>('v4');
   const [viewMode, setViewMode]   = useState<ViewMode>('split');
@@ -131,11 +132,32 @@ export default function PortfolioVersionHistory() {
   const [labelInput, setLabelInput]   = useState('');
   const [showLabelForm, setShowLabelForm] = useState(false);
 
-  const selectedVersion = VERSIONS.find(v => v.id === selected)!;
-  const compareVersion  = VERSIONS.find(v => v.id === compare)!;
+  const selectedVersion = versions.find(v => v.id === selected)!;
+  const compareVersion  = versions.find(v => v.id === compare)!;
 
   const added   = DIFF_AFTER.filter(l => l.status === 'added' || l.status === 'changed-new').length;
   const removed = DIFF_BEFORE.filter(l => l.status === 'removed' || l.status === 'changed-old').length;
+
+  const saveLabel = () => {
+    if (labelInput.trim()) {
+      setVersions(vs => vs.map(v => v.id === selected ? { ...v, label: labelInput.trim() } : v));
+    }
+    setLabelInput(''); setShowLabelForm(false);
+  };
+
+  const restoreVersion = () => {
+    const source = versions.find(v => v.id === selected);
+    if (!source) { setShowRestore(false); return; }
+    const newId = `v${Date.now()}`;
+    const newVersion: Version = {
+      id: newId, version: `v${versions.length + 3}.0`, label: `Restored from ${source.version}`,
+      section: source.section, date: 'Just now', author: 'Sarah Chen', authorInit: 'SC', authorColor: PA.teal,
+      changes: source.changes, isCurrent: true, tags: ['Restored'],
+    };
+    setVersions(vs => [newVersion, ...vs.map(v => ({ ...v, isCurrent: false }))]);
+    setSelected(newId);
+    setShowRestore(false);
+  };
 
   return (
     <div className="flex-1 flex overflow-hidden">
@@ -153,7 +175,7 @@ export default function PortfolioVersionHistory() {
           </div>
           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
             style={{ background:T.bgCard, color:T.textMuted, border:`1px solid ${T.border}` }}>
-            {VERSIONS.length}
+            {versions.length}
           </span>
         </div>
 
@@ -162,7 +184,7 @@ export default function PortfolioVersionHistory() {
           <div className="relative">
             <div className="absolute left-[22px] top-0 bottom-0 w-px" style={{ background:T.borderMuted }} />
 
-            {VERSIONS.map((v, i) => {
+            {versions.map((v, i) => {
               const isSel  = selected === v.id;
               const isCmp  = compare  === v.id;
               return (
@@ -260,7 +282,7 @@ export default function PortfolioVersionHistory() {
               <button
                 className="px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-white cursor-pointer"
                 style={{ background:'linear-gradient(135deg, #EC4899, #A855F7)' }}
-                onClick={() => { setLabelInput(''); setShowLabelForm(false); }}>
+                onClick={saveLabel}>
                 Save
               </button>
             </div>
@@ -419,7 +441,7 @@ export default function PortfolioVersionHistory() {
               <h3 className="text-[14px] font-bold mb-1" style={{ color:T.text }}>Restore to {selectedVersion?.version}?</h3>
               <p className="text-[12px] leading-relaxed mb-5" style={{ color:T.textMuted }}>
                 This will create a new version with the content from <strong>{selectedVersion?.version}</strong>.
-                Your current version {VERSIONS.find(v=>v.isCurrent)?.version} will be preserved in history.
+                Your current version {versions.find(v=>v.isCurrent)?.version} will be preserved in history.
               </p>
               <div className="flex gap-2">
                 <button onClick={() => setShowRestore(false)}
@@ -427,7 +449,7 @@ export default function PortfolioVersionHistory() {
                   style={{ background:T.bgCard, color:T.textSub, border:`1px solid ${T.border}` }}>
                   Cancel
                 </button>
-                <button onClick={() => setShowRestore(false)}
+                <button onClick={restoreVersion}
                   className="flex-1 py-2 rounded-xl text-[12px] font-semibold text-white cursor-pointer hover:opacity-90"
                   style={{ background:PA.amber }}>
                   Restore Version
