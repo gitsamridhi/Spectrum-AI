@@ -88,18 +88,52 @@ const TIMELINE_EVENTS = [
 
 export default function PortfolioApprovals() {
   const { T } = useTheme();
-  const [cards]          = useState<ApprovalCard[]>(CARDS);
+  const [cards, setCards]     = useState<ApprovalCard[]>(CARDS);
   const [detail, setDetail]   = useState<ApprovalCard | null>(null);
   const [comment, setComment] = useState('');
   const [hoverCol, setHoverCol] = useState<string | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<ApprovalCard['type'] | null>(null);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [reviewerExpanded, setReviewerExpanded] = useState(false);
+  const [extraComments, setExtraComments] = useState<Record<string, Comment[]>>({});
 
   const cols: ColId[] = ['draft', 'review', 'approved', 'published', 'rejected'];
-  const cardsFor = (col: ColId) => cards.filter(c => c.col === col);
+  const cardsFor = (col: ColId) => cards.filter(c => c.col === col && (!typeFilter || c.type === typeFilter));
   const totalActive = cards.filter(c => c.col !== 'published' && c.col !== 'rejected').length;
 
   const detailComments = detail
-    ? ALL_COMMENTS.slice(0, Math.min(detail.comments + 1, ALL_COMMENTS.length))
+    ? [...ALL_COMMENTS.slice(0, Math.min(detail.comments + 1, ALL_COMMENTS.length)), ...(extraComments[detail.id] ?? [])]
     : [];
+
+  const moveCard = (id: string, col: ColId) => {
+    setCards(cs => cs.map(c => c.id === id ? { ...c, col } : c));
+    setDetail(d => d && d.id === id ? { ...d, col } : d);
+    setMoreOpen(false);
+  };
+
+  const addCard = (col: ColId) => {
+    const id = `c${Date.now()}`;
+    const newCard: ApprovalCard = { id, col, title: 'New Submission — Untitled', type: 'bio', priority: 'med', date: 'Just now', comments: 0 };
+    setCards(cs => [newCard, ...cs]);
+    setDetail(newCard);
+  };
+
+  const deleteCard = (id: string) => {
+    setCards(cs => cs.filter(c => c.id !== id));
+    setDetail(d => d && d.id === id ? null : d);
+    setMoreOpen(false);
+  };
+
+  const sendComment = () => {
+    if (!comment.trim() || !detail) return;
+    setExtraComments(ec => ({
+      ...ec,
+      [detail.id]: [...(ec[detail.id] ?? []), { id: Date.now(), author: 'Sarah Chen', init: 'SC', color: PA.teal, time: 'Just now', text: comment.trim() }],
+    }));
+    setCards(cs => cs.map(c => c.id === detail.id ? { ...c, comments: c.comments + 1 } : c));
+    setComment('');
+  };
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -128,14 +162,35 @@ export default function PortfolioApprovals() {
           })}
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-medium cursor-pointer transition-all"
-            style={{ background:T.bgCard, color:T.textSub, border:`1px solid ${T.border}` }}
-            onMouseEnter={e=>(e.currentTarget.style.background=T.bgHover)}
-            onMouseLeave={e=>(e.currentTarget.style.background=T.bgCard)}>
-            <Filter className="w-3 h-3" />Filter
+        <div className="ml-auto flex items-center gap-2 relative">
+          <button onClick={() => setFilterOpen(o => !o)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-medium cursor-pointer transition-all"
+            style={filterOpen || typeFilter
+              ? { background:PA.blueBg, color:PA.blue, border:`1px solid ${PA.blueBdr}` }
+              : { background:T.bgCard, color:T.textSub, border:`1px solid ${T.border}` }}>
+            <Filter className="w-3 h-3" />Filter{typeFilter ? `: ${TYPE_META[typeFilter].label}` : ''}
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
+          {filterOpen && (
+            <div className="absolute right-0 top-full mt-1.5 w-40 rounded-xl overflow-hidden z-30 shadow-lg"
+              style={{ background:T.bg, border:`1px solid ${T.border}` }}>
+              <button onClick={() => { setTypeFilter(null); setFilterOpen(false); }}
+                className="w-full text-left px-3 py-2 text-[11px] cursor-pointer transition-colors"
+                style={!typeFilter ? { background:PA.blueBg, color:PA.blue } : { color:T.textSub }}>
+                All types
+              </button>
+              {(Object.keys(TYPE_META) as ApprovalCard['type'][]).map(t => (
+                <button key={t} onClick={() => { setTypeFilter(t); setFilterOpen(false); }}
+                  className="w-full text-left px-3 py-2 text-[11px] cursor-pointer transition-colors"
+                  style={typeFilter === t ? { background:PA.blueBg, color:PA.blue } : { color:T.textSub }}
+                  onMouseEnter={e => { if (typeFilter !== t) e.currentTarget.style.background = T.bgHover; }}
+                  onMouseLeave={e => { if (typeFilter !== t) e.currentTarget.style.background = 'transparent'; }}>
+                  {TYPE_META[t].label}
+                </button>
+              ))}
+            </div>
+          )}
+          <button onClick={() => addCard('draft')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
             style={{ background:'linear-gradient(135deg, #EC4899, #A855F7)' }}>
             <Plus className="w-3.5 h-3.5" />New Submission
           </button>
@@ -176,7 +231,8 @@ export default function PortfolioApprovals() {
                         {col.length}
                       </span>
                     </div>
-                    <button className="w-5 h-5 flex items-center justify-center rounded-lg cursor-pointer transition-colors"
+                    <button onClick={() => addCard(colId)}
+                      className="w-5 h-5 flex items-center justify-center rounded-lg cursor-pointer transition-colors"
                       style={{ color:T.textMuted }}
                       onMouseEnter={e=>(e.currentTarget.style.background=T.bgHover)}
                       onMouseLeave={e=>(e.currentTarget.style.background='transparent')}>
@@ -307,24 +363,45 @@ export default function PortfolioApprovals() {
 
               {/* Primary action */}
               {detail.col === 'review' && (
-                <div className="px-5 py-3.5 flex gap-2" style={{ borderBottom:`1px solid ${T.border}` }}>
-                  <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-semibold text-white cursor-pointer hover:opacity-90"
+                <div className="px-5 py-3.5 flex gap-2 relative" style={{ borderBottom:`1px solid ${T.border}` }}>
+                  <button onClick={() => moveCard(detail.id, 'approved')}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-semibold text-white cursor-pointer hover:opacity-90"
                     style={{ background:PA.teal }}>
                     <CheckCircle2 className="w-3.5 h-3.5" />Approve
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-semibold cursor-pointer hover:opacity-90"
+                  <button onClick={() => moveCard(detail.id, 'rejected')}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-semibold cursor-pointer hover:opacity-90"
                     style={{ background:PA.redBg, color:PA.red, border:`1px solid ${PA.redBdr}` }}>
                     <XCircle className="w-3.5 h-3.5" />Reject
                   </button>
-                  <button className="w-9 flex items-center justify-center rounded-xl cursor-pointer"
+                  <button onClick={() => setMoreOpen(o => !o)}
+                    className="w-9 flex items-center justify-center rounded-xl cursor-pointer"
                     style={{ background:T.bgCard, border:`1px solid ${T.border}`, color:T.textSub }}>
                     <MoreHorizontal className="w-4 h-4" />
                   </button>
+                  {moreOpen && (
+                    <div className="absolute right-5 top-full mt-1 w-40 rounded-xl overflow-hidden z-30 shadow-lg"
+                      style={{ background:T.bg, border:`1px solid ${T.border}` }}>
+                      <button onClick={() => moveCard(detail.id, 'draft')}
+                        className="w-full text-left px-3 py-2 text-[11px] cursor-pointer transition-colors" style={{ color:T.textSub }}
+                        onMouseEnter={e => (e.currentTarget.style.background = T.bgHover)}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                        Move to Draft
+                      </button>
+                      <button onClick={() => deleteCard(detail.id)}
+                        className="w-full text-left px-3 py-2 text-[11px] cursor-pointer transition-colors" style={{ color:PA.red }}
+                        onMouseEnter={e => (e.currentTarget.style.background = PA.redBg)}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                        Delete Submission
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
               {detail.col === 'draft' && (
                 <div className="px-5 py-3.5" style={{ borderBottom:`1px solid ${T.border}` }}>
-                  <button className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
+                  <button onClick={() => moveCard(detail.id, 'review')}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
                     style={{ background:'linear-gradient(135deg, #EC4899, #A855F7)' }}>
                     <ArrowRight className="w-3.5 h-3.5" />Submit for Review
                   </button>
@@ -332,7 +409,8 @@ export default function PortfolioApprovals() {
               )}
               {detail.col === 'approved' && (
                 <div className="px-5 py-3.5" style={{ borderBottom:`1px solid ${T.border}` }}>
-                  <button className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
+                  <button onClick={() => moveCard(detail.id, 'published')}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11.5px] font-semibold text-white cursor-pointer hover:opacity-90"
                     style={{ background:'linear-gradient(135deg, #EC4899, #A855F7)' }}>
                     <Eye className="w-3.5 h-3.5" />Publish Now
                   </button>
@@ -365,7 +443,8 @@ export default function PortfolioApprovals() {
               {detail.reviewer && (
                 <div className="px-5 py-4" style={{ borderBottom:`1px solid ${T.border}` }}>
                   <p className="text-[9px] font-bold uppercase tracking-widest mb-2.5" style={{ color:T.textMuted }}>Assigned Reviewer</p>
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+                  <div onClick={() => setReviewerExpanded(e => !e)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer"
                     style={{ background:T.bgSub, border:`1px solid ${T.border}` }}>
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center text-[9px] font-black text-white shrink-0"
                       style={{ background:detail.reviewerColor }}>
@@ -375,8 +454,18 @@ export default function PortfolioApprovals() {
                       <p className="text-[12px] font-semibold" style={{ color:T.text }}>{detail.reviewer}</p>
                       <p className="text-[9.5px]" style={{ color:T.textMuted }}>Agency · Active now</p>
                     </div>
-                    <ChevronRight className="w-3.5 h-3.5 ml-auto" style={{ color:T.textMuted }} />
+                    <ChevronRight className={`w-3.5 h-3.5 ml-auto transition-transform ${reviewerExpanded ? 'rotate-90' : ''}`} style={{ color:T.textMuted }} />
                   </div>
+                  {reviewerExpanded && (
+                    <div className="mt-2 px-3 py-2.5 rounded-xl space-y-1.5" style={{ background:T.bgSub, border:`1px solid ${T.border}` }}>
+                      {[['Email', `${detail.reviewer?.toLowerCase().replace(/\s+/g, '')}@agency.com`], ['Response time', 'Within 24 hours'], ['Reviews completed', '38']].map(([k, v]) => (
+                        <div key={k} className="flex justify-between">
+                          <span className="text-[10px]" style={{ color:T.textMuted }}>{k}</span>
+                          <span className="text-[10px] font-medium" style={{ color:T.text }}>{v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -418,11 +507,12 @@ export default function PortfolioApprovals() {
                 <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[7.5px] font-black text-white shrink-0"
                   style={{ background:PA.teal }}>SC</div>
                 <input value={comment} onChange={e => setComment(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') sendComment(); }}
                   placeholder="Add a comment…"
                   className="flex-1 px-3 py-1.5 rounded-xl text-[11.5px] outline-none"
                   style={{ background:T.inputBg, border:`1px solid ${T.border}`, color:T.text }} />
-                <button
-                  className="w-7 h-7 flex items-center justify-center rounded-xl cursor-pointer transition-all"
+                <button onClick={sendComment} disabled={!comment.trim()}
+                  className="w-7 h-7 flex items-center justify-center rounded-xl cursor-pointer transition-all disabled:cursor-not-allowed"
                   style={{ background: comment.trim() ? PA.blue : T.bgCard, color: comment.trim() ? '#fff' : T.textMuted }}>
                   <Send className="w-3 h-3" />
                 </button>

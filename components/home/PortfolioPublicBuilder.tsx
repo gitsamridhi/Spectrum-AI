@@ -48,15 +48,27 @@ export default function PortfolioPublicBuilder() {
   const [device,      setDevice]      = useState<DevicePreview>('desktop');
   const [slug,        setSlug]        = useState('sarahchen');
   const [copied,      setCopied]      = useState(false);
+  const [shared,      setShared]      = useState(false);
 
   const selectedTheme = THEMES[theme];
+  const publicUrl = `https://spectrum.ai/${slug}`;
 
   const toggleSection = (id: string) =>
     setSections(ss => ss.map(s => s.id === id ? { ...s, on: !s.on } : s));
 
   const handleCopy = () => {
+    navigator.clipboard?.writeText(publicUrl).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
+  };
+
+  const handleShareProfile = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Sarah Chen — Spectrum AI Portfolio', url: publicUrl }); } catch { /* user cancelled */ }
+    } else {
+      navigator.clipboard?.writeText(publicUrl).catch(() => {});
+    }
+    setShared(true); setTimeout(() => setShared(false), 1800);
   };
 
   const visibleSections = sections.filter(s => s.on);
@@ -162,9 +174,10 @@ export default function PortfolioPublicBuilder() {
               {copied ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
               {copied ? 'Copied!' : 'Copy Link'}
             </button>
-            <button className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[11.5px] font-semibold cursor-pointer"
-              style={{ background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
-              <Share2 className="w-3.5 h-3.5" />Share Profile
+            <button onClick={handleShareProfile}
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[11.5px] font-semibold cursor-pointer transition-colors"
+              style={shared ? { background: PA.tealBg, color: PA.teal, border: `1px solid ${PA.tealBdr}` } : { background: T.bgCard, color: T.textSub, border: `1px solid ${T.border}` }}>
+              {shared ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}{shared ? 'Shared' : 'Share Profile'}
             </button>
           </div>
 

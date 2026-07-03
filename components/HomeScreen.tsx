@@ -22,8 +22,9 @@ import MarketingStudioView   from '@/components/home/MarketingStudioView';
 import SocialStudioView      from '@/components/home/SocialStudioView';
 import ProductStudioView     from '@/components/home/ProductStudioView';
 import PortfolioBuilderView  from '@/components/home/PortfolioBuilderView';
+import AuditionCoachView     from '@/components/home/AuditionCoachView';
 
-const VIEWS_WITH_OWN_SIDEBAR = new Set(['image', 'video', 'voice', 'projects', 'cinema', 'marketing', 'social', 'product', 'portfolio']);
+const VIEWS_WITH_OWN_SIDEBAR = new Set(['image', 'video', 'voice', 'projects', 'cinema', 'marketing', 'social', 'product', 'portfolio', 'audition']);
 
 function HomeScreenInner() {
   const { logoutUser, userEmail, answers } = useOnboarding();
@@ -33,6 +34,7 @@ function HomeScreenInner() {
   const [paletteOpen,      setPaletteOpen]      = useState(false);
   const [pinnedChar,       setPinnedChar]       = useState<PinnedChar | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [cinemaPhase,      setCinemaPhase]      = useState<'hero' | 'workspace'>('hero');
 
   const displayName = answers.displayName || userEmail?.split('@')[0] || 'User';
   const avatar      = displayName[0]?.toUpperCase() ?? 'U';
@@ -91,26 +93,32 @@ function HomeScreenInner() {
       case 'voice':      return <VoiceGeneratorView onBack={goHome} />;
       case 'assistant':  return <AssistantView />;
       case 'characters': return <CharacterLibraryView pinnedChar={pinnedChar} onPinCharacter={setPinnedChar} />;
-      case 'cinema':     return <CinemaStudioView onBack={goHome} />;
+      case 'cinema':     return <CinemaStudioView onBack={goHome} onPhaseChange={setCinemaPhase} />;
       case 'marketing':  return <MarketingStudioView onBack={goHome} />;
       case 'social':     return <SocialStudioView onBack={goHome} />;
       case 'product':    return <ProductStudioView onBack={goHome} />;
       case 'portfolio':  return <PortfolioBuilderView onBack={goHome} />;
+      case 'audition':   return <AuditionCoachView onBack={goHome} />;
       default:           return <MainContent displayName={displayName} onSearchClick={() => setPaletteOpen(true)} onToolClick={handleSetActive} />;
     }
   };
 
+  const hideSidebar = activeNav === 'cinema' && cinemaPhase === 'hero';
+
   return (
     <div className="fixed inset-0 flex font-sans overflow-hidden" style={{ background: T.bg, zoom: '0.9' } as React.CSSProperties}>
-      <Sidebar
-        active={toolsOpen ? 'all' : activeNav}
-        setActive={handleSetActive}
-        displayName={displayName}
-        avatar={avatar}
-        onLogout={logoutUser}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed(c => !c)}
-      />
+      {!hideSidebar && (
+        <Sidebar
+          active={toolsOpen ? 'all' : activeNav}
+          setActive={handleSetActive}
+          displayName={displayName}
+          avatar={avatar}
+          onLogout={logoutUser}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(c => !c)}
+          forceDark={activeNav === 'cinema'}
+        />
+      )}
       <div className="flex-1 flex overflow-hidden">
         {renderMain()}
       </div>

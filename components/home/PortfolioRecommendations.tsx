@@ -187,11 +187,26 @@ const CATEGORY_COUNTS: Record<Category, number> = {
 
 const PRIORITY_ORDER: Priority[] = ['critical', 'high', 'medium', 'low'];
 
-export default function PortfolioRecommendations() {
+const REC_CATEGORY_TARGET: Record<Exclude<Category, 'all'>, string> = {
+  missing:   'sections',
+  portfolio: 'media',
+  resume:    'resume',
+  media:     'media',
+  profile:   'public',
+  actions:   'sections',
+};
+
+export default function PortfolioRecommendations({ onSwitchTab }: { onSwitchTab?: (id: string) => void }) {
   const { T } = useTheme();
   const [category, setCategory] = useState<Category>('all');
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [expanded,  setExpanded]  = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1200);
+  };
 
   const filtered = ALL_RECS.filter(r => {
     if (dismissed.has(r.id)) return false;
@@ -279,11 +294,12 @@ export default function PortfolioRecommendations() {
 
         {/* Refresh */}
         <div className="shrink-0 p-3" style={{ borderTop:`1px solid ${T.border}` }}>
-          <button className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-[10.5px] font-medium cursor-pointer transition-all"
+          <button onClick={handleRefresh} disabled={refreshing}
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-[10.5px] font-medium cursor-pointer transition-all disabled:opacity-70"
             style={{ background:T.bgCard, color:T.textSub, border:`1px solid ${T.border}` }}
             onMouseEnter={e=>(e.currentTarget.style.background=T.bgHover)}
             onMouseLeave={e=>(e.currentTarget.style.background=T.bgCard)}>
-            <RefreshCw className="w-3 h-3" />Refresh Analysis
+            <RefreshCw className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} />{refreshing ? 'Refreshing…' : 'Refresh Analysis'}
           </button>
         </div>
       </div>
@@ -400,7 +416,7 @@ export default function PortfolioRecommendations() {
 
                       {/* Actions */}
                       <div className="flex items-center gap-2">
-                        <button
+                        <button onClick={() => onSwitchTab?.(REC_CATEGORY_TARGET[rec.category])}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-white cursor-pointer hover:opacity-90"
                           style={{ background:'linear-gradient(135deg, #EC4899, #A855F7)' }}>
                           <Zap className="w-3 h-3" />{rec.cta}

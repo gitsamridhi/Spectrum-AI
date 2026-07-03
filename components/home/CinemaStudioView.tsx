@@ -598,10 +598,13 @@ function WorkspaceView({ initialPrompt, onBack }: { initialPrompt: string; onBac
 }
 
 /* ── Root ─────────────────────────────────────────────────── */
-export default function CinemaStudioView({ onBack }: { onBack: () => void }) {
+export default function CinemaStudioView({ onBack, onPhaseChange }: { onBack: () => void; onPhaseChange?: (phase: 'hero' | 'workspace') => void }) {
   const alreadySeen = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('cinema-hero-seen') === '1';
   const [phase,  setPhase]  = useState<'hero' | 'workspace'>(alreadySeen ? 'workspace' : 'hero');
   const [prompt, setPrompt] = useState('');
+
+  useEffect(() => { onPhaseChange?.(phase); }, [phase, onPhaseChange]);
+
   return (
     <div style={{ flex: 1, display: 'flex', overflow: 'hidden', background: '#09090b' }}>
       <AnimatePresence mode="wait">
