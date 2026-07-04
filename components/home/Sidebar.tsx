@@ -41,6 +41,7 @@ const TOOLS = [
   { icon: Mic,             label: 'Voice Generator',   id: 'voice'     },
   { icon: Bot,             label: 'Assistant',         id: 'assistant' },
   { icon: LayoutDashboard, label: 'Portfolio Builder', id: 'portfolio' },
+  { icon: Drama,           label: 'Audition Coach',    id: 'audition'  },
 ];
 
 const ADVANCED = [
@@ -48,7 +49,6 @@ const ADVANCED = [
   { icon: Megaphone,    label: 'Marketing Studio', id: 'marketing' },
   { icon: Smartphone,   label: 'Social Studio',    id: 'social'    },
   { icon: Package,      label: 'Product Studio',   id: 'product'   },
-  { icon: Drama,        label: 'Audition Coach',   id: 'audition'  },
 ];
 
 const Logo = () => (
