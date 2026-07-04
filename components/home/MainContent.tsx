@@ -196,6 +196,7 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
   const [isDeleting,   setIsDeleting]   = useState(false);
   const [isPaused,     setIsPaused]     = useState(false);
   const [bannerIdx,    setBannerIdx]    = useState(0);
+  const [bannerNoTransition, setBannerNoTransition] = useState(false);
   const [showWelcome,  setShowWelcome]  = useState(false);
 
   useEffect(() => {
@@ -229,11 +230,23 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
     setIsPaused(true);
   }, [displayWords, isDeleting, isPaused, greetIdx, displayName]);
 
-  // Banner auto-slide every 3.5s
+  // Banner auto-slide every 3.5s — loops forward seamlessly via a cloned first slide
   useEffect(() => {
-    const id = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 3500);
+    const id = setInterval(() => setBannerIdx(i => i + 1), 3500);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (bannerIdx !== BANNERS.length) return;
+    const t = setTimeout(() => { setBannerNoTransition(true); setBannerIdx(0); }, 620);
+    return () => clearTimeout(t);
+  }, [bannerIdx]);
+
+  useEffect(() => {
+    if (!bannerNoTransition) return;
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setBannerNoTransition(false)));
+    return () => cancelAnimationFrame(raf);
+  }, [bannerNoTransition]);
 
   const toggleLike = (i: number) =>
     setLiked(prev => { const s = new Set(prev); s.has(i) ? s.delete(i) : s.add(i); return s; });
@@ -392,14 +405,14 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
         {/* Platform banner – 3 auto-sliding variants */}
         <div className="rounded-2xl overflow-hidden relative hover:shadow-xl" style={{ minHeight: 148 }}>
           <div className="flex h-full" style={{
-            width: `${BANNERS.length * 100}%`,
-            transform: `translateX(-${bannerIdx * (100 / BANNERS.length)}%)`,
-            transition: 'transform 0.6s cubic-bezier(0.4,0,0.2,1)',
+            width: `${(BANNERS.length + 1) * 100}%`,
+            transform: `translateX(-${bannerIdx * (100 / (BANNERS.length + 1))}%)`,
+            transition: bannerNoTransition ? 'none' : 'transform 0.6s cubic-bezier(0.4,0,0.2,1)',
           }}>
-            {BANNERS.map((banner, bi) => (
+            {[...BANNERS, BANNERS[0]].map((banner, bi) => (
               <div key={bi}
                 className="relative cursor-pointer shrink-0 h-full"
-                style={{ width: `${100 / BANNERS.length}%`, background: banner.gradient }}
+                style={{ width: `${100 / (BANNERS.length + 1)}%`, background: banner.gradient }}
                 onClick={() => onToolClick(banner.nav)}>
 
                 <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
@@ -439,12 +452,15 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
 
           {/* Dot indicators */}
           <div className="absolute bottom-2.5 left-6 flex items-center gap-1.5 z-10">
-            {BANNERS.map((_, di) => (
-              <button key={di}
-                className="rounded-full cursor-pointer transition-all"
-                style={{ width: di === bannerIdx ? 16 : 5, height: 5, background: di === bannerIdx ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)' }}
-                onClick={e => { e.stopPropagation(); setBannerIdx(di); }} />
-            ))}
+            {BANNERS.map((_, di) => {
+              const active = di === bannerIdx % BANNERS.length;
+              return (
+                <button key={di}
+                  className="rounded-full cursor-pointer transition-all"
+                  style={{ width: active ? 16 : 5, height: 5, background: active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)' }}
+                  onClick={e => { e.stopPropagation(); setBannerNoTransition(false); setBannerIdx(di); }} />
+              );
+            })}
           </div>
         </div>
       </section>
@@ -697,19 +713,17 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
           style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)' }}
           onClick={() => setShowWelcome(false)}>
           <div className="max-w-sm w-full mx-4 rounded-3xl overflow-hidden shadow-2xl"
-            style={{ background: T.bg, border: `1px solid ${T.border}` }}
+            style={{ background: T.bg }}
             onClick={e => e.stopPropagation()}>
-            <div className="h-28 relative flex items-center justify-center"
+            <div className="h-24 relative flex items-center justify-center"
               style={{ background: `linear-gradient(135deg, ${ORANGE}, ${PINK})` }}>
-              <div className="absolute inset-0 opacity-15"
-                style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
               <div className="relative text-center text-white">
-                <div className="text-[28px] font-black tracking-[-0.04em]">Spectrum AI</div>
+                <div className="text-[20px] font-semibold">Spectrum AI</div>
                 <div className="text-[11px] opacity-80 mt-0.5">Your complete AI creative studio</div>
               </div>
             </div>
             <div className="p-6">
-              <h3 className="text-[16px] font-bold mb-3" style={{ color: T.text }}>
+              <h3 className="text-[15px] font-semibold mb-3" style={{ color: T.text }}>
                 Welcome, {displayName}!
               </h3>
               <div className="space-y-2.5 mb-5">
@@ -720,7 +734,7 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
                   ['♪', 'Synthesize voice with AI'],
                 ].map(([icon, text]) => (
                   <div key={text} className="flex items-center gap-3">
-                    <span className="text-[13px] font-bold w-4 text-center" style={{ color: ORANGE }}>{icon}</span>
+                    <span className="text-[13px] font-semibold w-4 text-center" style={{ color: ORANGE }}>{icon}</span>
                     <span className="text-[12.5px]" style={{ color: T.textSub }}>{text}</span>
                   </div>
                 ))}
@@ -728,12 +742,13 @@ export default function MainContent({ displayName, onSearchClick, onToolClick }:
               <div className="flex gap-2">
                 <FillBtn
                   bg={`linear-gradient(135deg,${ORANGE},${PINK})`} fill={PINK}
-                  className="flex-1 py-2.5 rounded-xl text-[12px] font-bold justify-center"
+                  className="flex-1 py-2.5 rounded-xl text-[12px] font-semibold"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   onClick={() => { setShowWelcome(false); onToolClick('explore'); }}>
                   Start exploring
                 </FillBtn>
                 <button className="px-4 py-2.5 rounded-xl text-[12px] font-medium cursor-pointer transition-colors"
-                  style={{ background: T.bgCard, border: `1px solid ${T.border}`, color: T.textSub }}
+                  style={{ background: T.bgCard, color: T.textSub }}
                   onClick={() => setShowWelcome(false)}>
                   Dismiss
                 </button>

@@ -554,6 +554,14 @@ function LandingPage({ onSignIn, onGoHome }: { onSignIn: () => void; onGoHome?: 
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
+  // Preload the "How it works" step images so hovering a step swaps instantly, no load flash
+  useEffect(() => {
+    ["/pexels-ganajp-15698413.jpg", "/pexels-zmaysq-1725935641-38189217.jpg"].forEach(src => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, []);
+
   const [route, setRoute] = useState("enhance");
   const [size, setSize] = useState("2x");
   const [length, setLength] = useState("photo");
